@@ -1,5 +1,6 @@
 const exhibitions = [
   // Thứ 2
+  /*
   {
     id: 1,
     title: "Triển lãm Thường Xuyên",
@@ -24,7 +25,7 @@ const exhibitions = [
     description: "Những tác phẩm điêu khắc độc đáo và ấn tượng.",
     image: "",
   },
-
+  */
   // Thứ 3
   {
     id: 4,
@@ -73,12 +74,13 @@ const exhibitions = [
     id: 9,
     title: 'Triển lãm Ảnh "Khoảnh Khắc Cuộc Sống"',
     days: 3,
-    times: "10:00 - 17:00",
+    times: "10:00 - 18:00",
     description: "Những khoảnh khắc đáng nhớ được ghi lại qua ống kính.",
     image: "",
   },
 
   // Thứ 5
+  /*
   {
     id: 10,
     title: "Triển lãm Hello Kitty: Khi Tôi Thay Đổi, Cô Ấy Cũng Vậy.",
@@ -103,7 +105,7 @@ const exhibitions = [
     description: "Những khoảnh khắc đáng nhớ được ghi lại qua ống kính.",
     image: "",
   },
-
+  */
   // Thứ 6
   {
     id: 13,
@@ -156,7 +158,7 @@ const exhibitions = [
     description: "Tìm hiểu về văn hóa và nghệ thuật của hai quốc gia.",
     image: "",
   },
-
+  /*
   {
     id: 19,
     title: "Triển lãm Thường Xuyên",
@@ -182,6 +184,7 @@ const exhibitions = [
     description: "Giảm giá vé vào cửa cho tất cả khách tham quan.",
     image: "",
   },
+  */
 ];
 
 export default exhibitions;
