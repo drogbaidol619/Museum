@@ -13,8 +13,8 @@ img {
 }
 .navButton button {
   font-family: "Lato", serif;
-  font-size: large ;
-  font-weight: 600;
+  font-size: normal ;
+  font-weight: 550;
   font-style: normal;
 }
 .navTextButton button {
