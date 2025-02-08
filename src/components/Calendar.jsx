@@ -79,13 +79,13 @@ function MyApp() {
       />
       <div className="text-white  ">
         {selectedEvent && (
-          <div className="text-lg font-bold">
+          <div className="text-lg font-bold roboto">
             <i className="bi bi-calendar-check"></i> Triển Lãm mở cửa từ{" "}
             {checkTime(selectedEvent)}
           </div>
         )}
         {!selectedEvent && (
-          <p className="text-lg font-bold">
+          <p className="text-lg font-bold roboto">
             <i className="bi bi-calendar-check"></i> Không có sự kiện nào trong
             ngày này.
           </p>
