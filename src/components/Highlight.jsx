@@ -1,7 +1,6 @@
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useState } from "react";
 import gallery from "../contents/Gallery";
-import Picture from "./Picture";
 import "../App.css";
 
 let currentDay = localStorage.getItem("currentDay");
@@ -16,13 +15,15 @@ if (currentDay !== today) {
   localStorage.setItem("displayedCount", displayedCount);
 }
 
-const productsToDisplay = gallery.slice(displayedCount, displayedCount + 5);
-displayedCount += 5;
-
-if (displayedCount >= gallery.length) {
-  displayedCount = 0;
+const productsToDisplay = [];
+for (let i = 0; i < 5; i++) {
+  console.log(gallery.length); //15
+  const index = (displayedCount + i) % gallery.length; // số bị chia nhỏ hơn số chia, kết quả của phép chia là chính số bị chia.
+  console.log(index);
+  productsToDisplay.push(gallery[index]);
 }
 
+displayedCount = (displayedCount + 5) % gallery.length;
 localStorage.setItem("displayedCount", displayedCount);
 
 function Highlight() {
@@ -38,12 +39,12 @@ function Highlight() {
   const firstGallery = firstProduct ? (
     <div className="flex flex-col gap-4">
       <img
-        className="object-cover max-h-screen rounded-md"
+        className="object-cover object-bottom max-h-screen rounded-md"
         src={firstProduct.image}
       ></img>
       <div className="roboto text-4xl font-normal flex gap-4 items-start">
         {firstProduct.title}{" "}
-        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md">
+        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {firstProduct.type}
         </span>
       </div>
@@ -67,12 +68,12 @@ function Highlight() {
   const secondGallery = secondProduct ? (
     <div className="flex flex-col gap-4">
       <img
-        className="object-cover max-h-screen rounded-md"
+        className="object-cover object-center max-h-screen rounded-md"
         src={secondProduct.image}
       ></img>
       <div className="roboto text-4xl font-normal flex gap-4 items-start">
         {secondProduct.title}{" "}
-        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md">
+        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {secondProduct.type}
         </span>
       </div>
@@ -94,14 +95,14 @@ function Highlight() {
   }
 
   const thirdGallery = thirdProduct ? (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 flex-auto">
       <img
-        className="object-cover max-h-screen rounded-md"
+        className="object-cover object-center max-h-screen rounded-md"
         src={thirdProduct.image}
       ></img>
       <div className="roboto text-4xl font-normal flex gap-2 items-start">
         {thirdProduct.title}{" "}
-        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md">
+        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {thirdProduct.type}
         </span>
       </div>
@@ -123,14 +124,14 @@ function Highlight() {
   }
 
   const fourthGallery = fourthProduct ? (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 flex-auto">
       <img
-        className="object-cover max-h-screen rounded-md"
+        className="object-cover object-center max-h-screen rounded-md"
         src={fourthProduct.image}
       ></img>
       <div className="roboto text-4xl font-normal flex items-start">
         {fourthProduct.title}{" "}
-        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md">
+        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {fourthProduct.type}
         </span>
       </div>
@@ -152,14 +153,14 @@ function Highlight() {
   }
 
   const fifthGallery = fifthProduct ? (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 flex-auto">
       <img
-        className="object-cover max-h-screen rounded-md"
+        className="object-cover object-center max-h-screen rounded-md"
         src={fifthProduct.image}
       ></img>
       <div className="roboto text-4xl font-normal flex items-start">
         {fifthProduct.title}{" "}
-        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md">
+        <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {fifthProduct.type}
         </span>
       </div>
@@ -172,19 +173,19 @@ function Highlight() {
   );
 
   return (
-    <div className="bg-white min-w-screen min-h-screen pl-20 pr-14 pt-28 flex flex-col">
+    <div className="bg-white min-w-screen max-h-fit pl-20 pr-14 pt-28 flex flex-col flex-auto">
       <h1 className="text-5xl font-bold roboto mb-10">Sự Kiện Nổi Bật</h1>
-      <div className="grid grid-rows-2 gap-8">
+      <div className="grid grid-rows-2 gap-8 ">
         {/* Hàng 1 */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-6 max-h-fit">
           <div className="col-span-2 ">{firstGallery}</div>
           <div className="">{secondGallery}</div>
         </div>
         {/* Hàng 2 */}
-        <div className="grid grid-cols-3 gap-6">
-          <div className="">{thirdGallery}</div>
-          <div className="">{fourthGallery}</div>
-          <div className="">{fifthGallery}</div>
+        <div className="grid grid-cols-3 gap-6 max-h-fit pb-24">
+          <div className="flex flex-col flex-auto">{thirdGallery}</div>
+          <div className="flex flex-col flex-auto">{fourthGallery}</div>
+          <div className="flex flex-col flex-auto">{fifthGallery}</div>
         </div>
       </div>
     </div>

@@ -57,7 +57,6 @@ function MyApp() {
     setSelectedEvent(foundEvent || null);
   };
 
-  const [openTime, setOpenTime] = useState("9:30");
   function checkTime(event) {
     if (event.id === 4 || event.id === 5 || event.id === 6) {
       return "9:30 đến 17:00";
@@ -74,18 +73,18 @@ function MyApp() {
       <Calendar
         onChange={handleDateChange}
         value={value}
-        className="rounded-md"
+        className="rounded-md object-contain"
         tileClassName={tileClassName}
       />
-      <div className="text-white  ">
+      <div className="text-white ">
         {selectedEvent && (
-          <div className="text-lg font-bold roboto">
+          <div className="text-lg font-bold roboto text-center">
             <i className="bi bi-calendar-check"></i> Triển Lãm mở cửa từ{" "}
             {checkTime(selectedEvent)}
           </div>
         )}
         {!selectedEvent && (
-          <p className="text-lg font-bold roboto">
+          <p className="text-lg font-bold roboto text-center">
             <i className="bi bi-calendar-check"></i> Không có sự kiện nào trong
             ngày này.
           </p>

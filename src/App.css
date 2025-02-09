@@ -55,3 +55,7 @@ img {
   background: #006edc !important;
   color: white !important;
 }
+
+.react-calendar{
+  width: auto !important;
+}
