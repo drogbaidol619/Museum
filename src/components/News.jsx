@@ -32,7 +32,7 @@ function News() {
 
   return (
     <div className="bg-neutral-900 text-white min-w-screen max-h-fit pl-20 pr-14 py-28 flex flex-col flex-auto">
-      <h1 className="text-5xl font-bold roboto mb-10">Tin Tức</h1>
+      <h1 className="text-5xl font-normal roboto mb-10">Tin Tức</h1>
       <div className="grid grid-rows-2 gap-28">
         {/*Hàng 1*/}
         <div className="grid grid-cols-3 max-h-fit">

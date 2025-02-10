@@ -48,7 +48,7 @@ function Highlight() {
           {firstProduct.type}
         </span>
       </div>
-      <div className="roboto text-xl font-extralight text-justify">
+      <div className="roboto text-xl font-light text-justify">
         {firstProduct.description}
       </div>
     </div>
@@ -77,7 +77,7 @@ function Highlight() {
           {secondProduct.type}
         </span>
       </div>
-      <div className="roboto text-xl font-extralight text-justify">
+      <div className="roboto text-xl font-light text-justify">
         {secondProduct.description}
       </div>
     </div>
@@ -106,7 +106,7 @@ function Highlight() {
           {thirdProduct.type}
         </span>
       </div>
-      <div className="roboto text-xl font-extralight text-justify">
+      <div className="roboto text-xl font-light text-justify">
         {thirdProduct.description}
       </div>
     </div>
@@ -135,7 +135,7 @@ function Highlight() {
           {fourthProduct.type}
         </span>
       </div>
-      <div className="roboto text-xl font-extralight text-justify">
+      <div className="roboto text-xl font-light text-justify">
         {fourthProduct.description}
       </div>
     </div>
@@ -164,7 +164,7 @@ function Highlight() {
           {fifthProduct.type}
         </span>
       </div>
-      <div className="roboto text-xl font-extralight text-justify">
+      <div className="roboto text-xl font-light text-justify">
         {fifthProduct.description}
       </div>
     </div>
@@ -174,7 +174,7 @@ function Highlight() {
 
   return (
     <div className="bg-white min-w-screen max-h-fit pl-20 pr-14 pt-28 flex flex-col flex-auto">
-      <h1 className="text-5xl font-bold roboto mb-10">Sự Kiện Nổi Bật</h1>
+      <h1 className="text-5xl font-normal roboto mb-10">Sự Kiện Nổi Bật</h1>
       <div className="grid grid-rows-2 gap-8 ">
         {/* Hàng 1 */}
         <div className="grid grid-cols-3 gap-6 max-h-fit">

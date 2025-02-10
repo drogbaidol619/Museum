@@ -1,5 +1,5 @@
 import Picture from "./Picture";
-import museumLogo from "../assets/Museum-logo.png";
+import museumLogo from "../assets/Museum-logo-removebg.png";
 import { useState, React } from "react";
 import "../App.css";
 
@@ -34,12 +34,12 @@ function changeFont(event) {
 
 function NavBar() {
   return (
-    <nav className="max-h-48 w-full" style={{ backgroundColor: "#ffe5dc" }}>
+    <nav className="max-h-48 w-full" style={{ backgroundColor: "#6B4423" }}>
       <div className="grid grid-cols-5 p-6 gap-4 object-contain">
         <div className="col-span-1 ">
           <Picture className="object-cover" url={museumLogo} alt="none" />
         </div>
-        <div className="col-span-4 grid grid-rows-2 gap-2">
+        <div className="col-span-4 grid grid-rows-2 gap-2 text-white roboto">
           <div className="grid grid-cols-4">
             <div className="col-start-4 flex items-center navTextButton">
               <div className="Text mr-4">Front Size:</div>
@@ -69,7 +69,7 @@ function NavBar() {
               </button>
             </div>
           </div>
-          <div className="flex justify-around items-end navButton">
+          <div className="flex justify-around items-end navButton pb-2">
             <button className="">Collections</button>
             <button className="">Tour Guide</button>
             <button className="">Visit Ticket</button>

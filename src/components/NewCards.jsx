@@ -10,10 +10,8 @@ function NewCards(props) {
         src={props.image}
         alt="none"
       />
-      <div className="roboto text-3xl font-extrabold text-center">
-        {props.title}
-      </div>
-      <div className="roboto text-xl font-extralight text-justify">
+      <div className="roboto text-2xl font-bold text-center">{props.title}</div>
+      <div className="roboto text-balance font-light text-justify">
         {props.description}
       </div>
     </div>
