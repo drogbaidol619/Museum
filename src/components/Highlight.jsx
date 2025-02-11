@@ -42,7 +42,7 @@ function Highlight() {
         className="object-cover object-bottom max-h-screen rounded-md"
         src={firstProduct.image}
       ></img>
-      <div className="roboto text-4xl font-normal flex gap-4 items-start">
+      <div className="roboto text-4xl font-normal flex flex-wrap gap-4 items-start">
         {firstProduct.title}{" "}
         <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {firstProduct.type}
@@ -71,7 +71,7 @@ function Highlight() {
         className="object-cover object-center max-h-screen rounded-md"
         src={secondProduct.image}
       ></img>
-      <div className="roboto text-4xl font-normal flex gap-4 items-start">
+      <div className="roboto text-4xl font-normal flex flex-wrap gap-4 items-start">
         {secondProduct.title}{" "}
         <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {secondProduct.type}
@@ -100,7 +100,7 @@ function Highlight() {
         className="object-cover object-center max-h-screen rounded-md"
         src={thirdProduct.image}
       ></img>
-      <div className="roboto text-4xl font-normal flex gap-2 items-start">
+      <div className="roboto text-4xl font-normal flex flex-wrap gap-2 items-start">
         {thirdProduct.title}{" "}
         <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {thirdProduct.type}
@@ -129,7 +129,7 @@ function Highlight() {
         className="object-cover object-center max-h-screen rounded-md"
         src={fourthProduct.image}
       ></img>
-      <div className="roboto text-4xl font-normal flex items-start">
+      <div className="roboto text-4xl font-normal flex flex-wrap items-start">
         {fourthProduct.title}{" "}
         <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {fourthProduct.type}
@@ -158,7 +158,7 @@ function Highlight() {
         className="object-cover object-center max-h-screen rounded-md"
         src={fifthProduct.image}
       ></img>
-      <div className="roboto text-4xl font-normal flex items-start">
+      <div className="roboto text-4xl font-normal flex flex-wrap items-start">
         {fifthProduct.title}{" "}
         <span className="px-3 py-2 bg-green-800 text-white text-lg rounded-md text-center">
           {fifthProduct.type}

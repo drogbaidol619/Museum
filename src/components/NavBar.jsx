@@ -2,6 +2,7 @@ import Picture from "./Picture";
 import museumLogo from "../assets/Museum-logo-removebg.png";
 import { useState, React } from "react";
 import "../App.css";
+import { Link } from "react-router-dom";
 
 function changeFont(event) {
   var id = event.target.id;
@@ -32,12 +33,21 @@ function changeFont(event) {
   }
 }
 
+const scrollToTop = (event) => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth", // Optional: For smooth scrolling
+  });
+};
+
 function NavBar() {
   return (
     <nav className="max-h-48 w-full" style={{ backgroundColor: "#6B4423" }}>
       <div className="grid grid-cols-5 p-6 gap-4 object-contain">
         <div className="col-span-1 ">
-          <Picture className="object-cover" url={museumLogo} alt="none" />
+          <Link style={{ cursor: "pointer" }} to="/">
+            <Picture className="object-cover" url={museumLogo} alt="none" />
+          </Link>
         </div>
         <div className="col-span-4 grid grid-rows-2 gap-2 text-white roboto">
           <div className="grid grid-cols-4">
@@ -70,11 +80,18 @@ function NavBar() {
             </div>
           </div>
           <div className="flex justify-around items-end navButton pb-2">
-            <button className="">Collections</button>
-            <button className="">Tour Guide</button>
-            <button className="">Visit Ticket</button>
-            <button className="">About</button>
-            <button className="">Log In</button>
+            <Link style={{ cursor: "pointer" }} to="./collections">
+              Collections
+            </Link>
+            <Link style={{ cursor: "pointer" }} to="/tourguide">
+              Tour Guide
+            </Link>
+            <Link style={{ cursor: "pointer" }} to="/about">
+              About
+            </Link>
+            <Link style={{ cursor: "pointer" }} to="/login">
+              Log In
+            </Link>
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@ const scrollToTop = (event) => {
 function App() {
   return (
     <div>
+      {/*nút nhấn về đầu trang*/}
       <BackToTop onCheck={scrollToTop} />
       <div className="flex flex-col max-w-screen overflow-x-clip">
         <NavBar />
@@ -25,7 +26,6 @@ function App() {
         <News />
         <Footer />
       </div>
-      {/*nút nhấn về đầu trang*/}
     </div>
   );
 }

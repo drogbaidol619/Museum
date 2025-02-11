@@ -22,15 +22,16 @@ function BackToTop(props) {
       {isVisible && (
         <div className="max-h-0">
           <button
+            className="fixed bottom-15 right-15 size-16 backdrop-brightness-50 p-1 border-1 "
             style={{ cursor: "pointer" }}
             onClick={(event) => {
               props.onCheck(event);
             }}
           >
-            <i
-              style={{ backgroundColor: "#00c9ac" }}
-              className="bi bi-arrow-up text-xl rounded-4xl text-white fixed bottom-9 right-5 object-cover size-10 text-center pt-1"
-            ></i>
+            <div className="flex flex-col text-white">
+              <i className="bi bi-chevron-double-up"></i>
+              <p className="roboto text-xs font-normal">PAGE TOP</p>
+            </div>
           </button>
         </div>
       )}
