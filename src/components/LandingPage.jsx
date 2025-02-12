@@ -17,13 +17,13 @@ function LandingPage() {
 
   return (
     <div className="LandingPage min-w-screen min-h-screen bg-center">
-      <div className="grid grid-cols-3 pl-12 pr-14 pt-20 max-w-screen gap-14">
+      <div className="grid grid-cols-3 pl-12 pr-14 py-20 max-w-screen gap-14">
         <div className="bg-stone-800 col-span-2 rounded-md">
           <div className="flex flex-col flex-auto gap-10 py-10 px-8">
             <p className="underline text-white text-4xl font-extrabold roboto">
               Thông tin của ngày
             </p>
-            <div className="grid grid-rows-3 text-white gap-4 min-h-56">
+            <div className="grid grid-rows-3 text-white gap-2 min-h-56">
               {/* Kiểm tra nếu có sự kiện trong ngày */}
               {eventsToday.length > 0 ? (
                 eventsToday.map((event) => (
