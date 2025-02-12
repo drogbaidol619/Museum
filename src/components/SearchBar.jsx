@@ -5,11 +5,19 @@ import "../App.css";
 import AdvancedSearch from "./AdvancedSearch";
 import AdvancedSearchOption from "./AdvancedSearchOption";
 
-function SearchBar() {
+function SearchBar(props) {
   const [searchBar, setSearchBar] = useState(false);
+  const [inputValue, setInputValue] = useState(""); // Lưu trữ giá trị input tạm thời
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value); // Cập nhật inputValue khi input thay đổi
+  };
+  const handleSearchClick = () => {
+    props.onText(inputValue); // Gọi hàm onText với giá trị inputValue
+  };
 
   return (
-    <div className=" pl-12 pr-14 pt-10 flex flex-col flex-auto gap-8 items-center">
+    <div className=" pl-12 pr-14 pt-10 flex flex-col flex-auto gap-8 items-center border-1">
       <p className="text-center roboto text-sm font-normal">
         View approximately 500 outstanding works owned by the Tokyo National
         Museum in fields such as paintings, calligraphy, sculpture, decorative
@@ -18,9 +26,11 @@ function SearchBar() {
       </p>
       <div className="flex flex-auto justify-between border-1 roboto w-[80%] mb-10">
         <input
+          onChange={handleInputChange}
           className="w-[60%] pl-6 border-r-1 bg-gray-200"
           type="search"
           placeholder="Keywords"
+          value={inputValue}
         />
         <div className="grid grid-cols-4 items-center w-[40%] overflow-hidden">
           <button
@@ -32,6 +42,7 @@ function SearchBar() {
             <i className="bi bi-chevron-down"></i>
           </button>
           <button
+            onClick={handleSearchClick}
             className="text-2xl font-bold text-white min-h-15 bg-neutral-700"
             style={{ cursor: "pointer" }}
           >
