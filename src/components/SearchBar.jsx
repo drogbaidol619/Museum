@@ -2,8 +2,10 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
+import Form from "react-bootstrap/Form";
 import AdvancedSearch from "./AdvancedSearch";
 import AdvancedSearchOption from "./AdvancedSearchOption";
+import Gallery from "../contents/Gallery";
 
 function SearchBar(props) {
   const [searchBar, setSearchBar] = useState(false);
@@ -14,6 +16,48 @@ function SearchBar(props) {
   };
   const handleSearchClick = () => {
     props.onText(inputValue); // Gọi hàm onText với giá trị inputValue
+  };
+
+  const [searchCriteria, setSearchCriteria] = useState({
+    country: "",
+    type: "",
+    artist: "",
+    genre: "",
+  });
+  // xử lí dữ liệu dạng option
+  const handleOptionChange = (optionName, value) => {
+    setSearchCriteria({ ...searchCriteria, [optionName.toLowerCase()]: value });
+  };
+  //xử lí dữ liệu text
+  const handleAdvancedTextChange = (value) => {
+    setSearchCriteria({ ...searchCriteria, artist: value });
+  };
+  // xử lí khi nhấn nút advanced search
+  const handleAdvancedSearchClick = () => {
+    const filteredGallery = Gallery.filter((item) => {
+      const countryMatch =
+        searchCriteria.country === "" ||
+        item.country
+          .toLowerCase()
+          .includes(searchCriteria.country.toLowerCase());
+      const typeMatch =
+        searchCriteria.type === "" ||
+        item.type.toLowerCase().includes(searchCriteria.type.toLowerCase());
+      const artistMatch =
+        searchCriteria.artist === "" ||
+        item.artist.name
+          .toLowerCase()
+          .includes(searchCriteria.artist.toLowerCase());
+      const genreMatch =
+        searchCriteria.genre === "" ||
+        item.genre.toLowerCase().includes(searchCriteria.genre.toLowerCase());
+
+      return countryMatch && typeMatch && artistMatch && genreMatch;
+    });
+    // Sử dụng filteredGallery để hiển thị kết quả
+    console.log("Filtered Gallery:", filteredGallery);
+    // render kết quả tìm kiếm
+    props.onAdvancedClick(filteredGallery, searchBar);
   };
 
   return (
@@ -28,10 +72,18 @@ function SearchBar(props) {
         <input
           onChange={handleInputChange}
           className="w-[60%] pl-6 border-r-1 bg-gray-200"
+          list="suggestions"
           type="search"
           placeholder="Keywords"
           value={inputValue}
         />
+        <datalist id="suggestions">
+          {Gallery.map((item, index) => (
+            <option key={index} value={item.title}>
+              {item.title}
+            </option>
+          ))}
+        </datalist>
         <div className="grid grid-cols-4 items-center w-[40%] overflow-hidden">
           <button
             onClick={() => setSearchBar(!searchBar)}
@@ -53,23 +105,34 @@ function SearchBar(props) {
       {/*Advanced search*/}
       {searchBar ? (
         <div className="flex flex-col pl-12 pr-14 pb-4 pt-10 gap-4 bg-gray-200 min-w-screen items-center">
-          <div className="grid grid-rows-3">
+          <div className="grid grid-rows-2">
             {/*Hàng 1*/}
             <div className="grid grid-cols-2 gap-10">
-              <AdvancedSearch name="Title" />
-              <AdvancedSearchOption name="Type" />
+              <AdvancedSearchOption
+                name="Country"
+                onOptionChange={handleOptionChange}
+              />
+              <AdvancedSearchOption
+                name="Type"
+                onOptionChange={handleOptionChange}
+              />
             </div>
             {/*Hàng 2*/}
             <div className="grid grid-cols-2 gap-10">
-              <AdvancedSearch name="Artist" />
-              <AdvancedSearchOption name="Genre" />
-            </div>
-            {/*Hàng 3*/}
-            <div className="grid grid-cols-2 gap-10">
-              <AdvancedSearchOption name="Country" />
+              <AdvancedSearch
+                name="Artist"
+                onChangeAdvancedText={handleAdvancedTextChange}
+              />
+              <AdvancedSearchOption
+                name="Genre"
+                onOptionChange={handleOptionChange}
+              />
             </div>
           </div>
-          <button className="bg-gray-800 text-white text-xl roboto min-h-10 py-2 px-4 max-w-fit">
+          <button
+            onClick={handleAdvancedSearchClick}
+            className="bg-gray-800 text-white text-xl roboto min-h-10 py-2 px-4 max-w-fit"
+          >
             Search
           </button>
         </div>

@@ -31,16 +31,24 @@ function AdvancedSearchOption(props) {
     return null;
   };
 
+  const [selectedValue, setSelectedValue] = useState("");
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value); // Cập nhật state khi select thay đổi
+    props.onOptionChange(props.name, event.target.value); // Truyền giá trị lên component cha
+  };
+
   return (
     <div className="grid grid-cols-2 roboto border-t-1 py-4 px-4">
       <label className="flex flex-auto w-full items-center">
-        {" "}
         <p className="text-balance font-bold">
           <i className="bi bi-card-text"></i> {props.name}
         </p>
       </label>
-      <select className="min-h-12 bg-white pl-4 roboto border-1 px-2">
-        {" "}
+      <select
+        value={selectedValue}
+        onChange={handleChange} // Gọi hàm xử lý sự kiện khi select thay đổi
+        className="min-h-12 bg-white pl-4 roboto border-1 px-2"
+      >
         {getOptions()}
       </select>
     </div>
