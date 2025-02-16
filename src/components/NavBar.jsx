@@ -80,7 +80,7 @@ function NavBar() {
             </div>
           </div>
           <div className="flex justify-around items-end navButton pb-2">
-            <Link style={{ cursor: "pointer" }} to="./collections">
+            <Link style={{ cursor: "pointer" }} to="/collections">
               Collections
             </Link>
             <Link style={{ cursor: "pointer" }} to="/tourguide">

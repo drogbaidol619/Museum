@@ -4,6 +4,14 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
 import Collections from "./components/Collections";
+import BackToTop from "./components/BackToTop";
+
+const scrollToTop = (event) => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth", // Optional: For smooth scrolling
+  });
+};
 
 function CollectionsPage() {
   const [searchText, setSearchText] = useState("");
@@ -34,6 +42,7 @@ function CollectionsPage() {
         isAdvancedSearch={isAdvancedSearch}
       />
       <Footer />
+      <BackToTop onCheck={scrollToTop} />
     </div>
   );
 }

@@ -58,3 +58,6 @@ img {
 .react-calendar{
   width: auto !important;
 }
+.upperRoman {
+  list-style-type: upper-roman !important;
+ }

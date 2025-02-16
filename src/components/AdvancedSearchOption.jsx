@@ -5,36 +5,25 @@ import "../App.css";
 import Gallery from "../contents/Gallery";
 
 function AdvancedSearchOption(props) {
-  const getOptions = () => {
-    if (props.name === "Genre") {
-      const uniqueGenres = [...new Set(Gallery.map((item) => item.genre))]; // Lọc giá trị trùng lặp
-      return uniqueGenres.map((genre) => (
-        <option key={genre} value={genre}>
-          {genre}
-        </option>
-      ));
-    } else if (props.name === "Type") {
-      const uniqueTypes = [...new Set(Gallery.map((item) => item.type))]; // Lọc giá trị trùng lặp
-      return uniqueTypes.map((type) => (
-        <option key={type} value={type}>
-          {type}
-        </option>
-      ));
-    } else if (props.name === "Country") {
-      const uniqueTypes = [...new Set(Gallery.map((item) => item.country))]; // Lọc giá trị trùng lặp
-      return uniqueTypes.map((type) => (
-        <option key={type} value={type}>
-          {type}
-        </option>
-      ));
-    }
-    return null;
-  };
+  const [options, setOptions] = useState([]); // State để lưu các option đã xử lý
+  const [selectedValue, setSelectedValue] = useState(""); // Giá trị ban đầu là ""
 
-  const [selectedValue, setSelectedValue] = useState("");
+  useEffect(() => {
+    if (props.name === "Genre") {
+      const uniqueGenres = [...new Set(Gallery.map((item) => item.genre))];
+      setOptions(uniqueGenres);
+    } else if (props.name === "Type") {
+      const uniqueTypes = [...new Set(Gallery.map((item) => item.type))];
+      setOptions(uniqueTypes);
+    } else if (props.name === "Country") {
+      const uniqueCountries = [...new Set(Gallery.map((item) => item.country))];
+      setOptions(uniqueCountries);
+    }
+  }, [props.name]); // Chạy useEffect mỗi khi props.name thay đổi
+
   const handleChange = (event) => {
-    setSelectedValue(event.target.value); // Cập nhật state khi select thay đổi
-    props.onOptionChange(props.name, event.target.value); // Truyền giá trị lên component cha
+    setSelectedValue(event.target.value);
+    props.onOptionChange(props.name, event.target.value);
   };
 
   return (
@@ -46,10 +35,16 @@ function AdvancedSearchOption(props) {
       </label>
       <select
         value={selectedValue}
-        onChange={handleChange} // Gọi hàm xử lý sự kiện khi select thay đổi
+        onChange={handleChange}
         className="min-h-12 bg-white pl-4 roboto border-1 px-2"
       >
-        {getOptions()}
+        <option value="">{/* Option rỗng ban đầu */} </option>{" "}
+        {/* Thêm option này */}
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
       </select>
     </div>
   );

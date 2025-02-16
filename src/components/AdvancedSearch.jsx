@@ -8,7 +8,7 @@ function AdvancedSearch(props) {
   const [advancedText, setAdvancedText] = useState("");
   function changeAdvancedText(event) {
     setAdvancedText(event.target.value);
-    props.onChangeAdvancedText(event.target.value);
+    props.onChangeAdvancedText(event.target.value); // truyền dữ liệu lên component cha
   }
 
   return (
