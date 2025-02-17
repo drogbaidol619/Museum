@@ -61,3 +61,7 @@ img {
 .upperRoman {
   list-style-type: upper-roman !important;
  }
+
+button {
+  cursor: pointer;
+}
