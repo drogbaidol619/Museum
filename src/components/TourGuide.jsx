@@ -2,62 +2,129 @@ import { useState, useEffect, React } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../App.css";
 import main from "../assets/main-facility.png";
+import cafe from "../assets/cafe.jpg";
+import Menu from "../assets/Ocean-menu.pdf";
+import tiramisu from "../assets/tiramisu.png";
+import flan from "../assets/flan.jpg";
+import luuniem1 from "../assets/luuniem-1.jpg";
+import luuniem2 from "../assets/luuniem-2.jpg";
 
 function TourGuide() {
+  const [scrollYtest, setScrollYtest] = useState(0);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollYtest(window.scrollY);
+
+      console.log(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const CachDen = (event) => {
+    window.scrollTo({
+      top: 579,
+      behavior: "smooth", // Optional: For smooth scrolling
+    });
+  };
+  const Gio = (event) => {
+    window.scrollTo({
+      top: 1026,
+      behavior: "smooth", // Optional: For smooth scrolling
+    });
+  };
+  const LienHe = (event) => {
+    window.scrollTo({
+      top: 1159,
+      behavior: "smooth", // Optional: For smooth scrolling
+    });
+  };
+  const BanDo = (event) => {
+    window.scrollTo({
+      top: 1500,
+      behavior: "smooth", // Optional: For smooth scrolling
+    });
+  };
+  const Cafe = (event) => {
+    window.scrollTo({
+      top: 2700,
+      behavior: "smooth", // Optional: For smooth scrolling
+    });
+  };
+  const LuuNiem = (event) => {
+    window.scrollTo({
+      top: 3780,
+      behavior: "smooth", // Optional: For smooth scrolling
+    });
+  };
+
+  const [button1, setButton1] = useState(false);
+  const [button2, setButton2] = useState(false);
+  const [button3, setButton3] = useState(false);
+
   return (
-    <div className="flex flex-col min-w-screen min-h-screen text-white roboto ">
+    <div className="flex flex-col min-w-screen min-h-screen text-white">
       {/*Cột điều hướng*/}
-      <div className="bg-neutral-700 flex flex-col gap-10 pl-12 pr-14 py-10">
+      <div className="bg-neutral-700 flex flex-col gap-10 pl-12 pr-14 py-10 roboto">
         {/*Cột điều hướng 1*/}
-        <button className="py-6 px-4 bg-neutral-900 text-2xl font-bold">
+        <button
+          onClick={() => setButton1((prevButton1) => !prevButton1)}
+          className="py-6 px-4 bg-neutral-900 text-2xl font-bold"
+        >
           <i className="bi bi-caret-down"></i> Hướng dẫn đường đến và thông tin
           giờ
         </button>
-        <div className="grid grid-cols-3 text-xl gap-10">
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Cách đến
-          </button>
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Giờ mở/đóng cửa
-          </button>
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Thông tin liên hệ
-          </button>
-        </div>
+        {button1 ? (
+          <div className="grid grid-cols-3 text-xl gap-10">
+            <button onClick={CachDen} className="p-4 border-b-1">
+              <i className="bi bi-caret-down"></i> Cách đến
+            </button>
+            <button onClick={Gio} className="p-4 border-b-1">
+              <i className="bi bi-caret-down"></i> Giờ mở/đóng cửa
+            </button>
+            <button onClick={LienHe} className="p-4 border-b-1">
+              <i className="bi bi-caret-down"></i> Thông tin liên hệ
+            </button>
+          </div>
+        ) : null}
+
         {/*Cột điều hướng 2*/}
-        <button className="py-6 px-4 bg-neutral-900 text-2xl font-bold">
+        <button
+          onClick={() => setButton2((prevButton2) => !prevButton2)}
+          className="py-6 px-4 bg-neutral-900 text-2xl font-bold"
+        >
           <i className="bi bi-caret-down"></i> Bản đồ viện Bảo Tàng
         </button>
-        <div className="grid grid-cols-4 text-xl gap-10">
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Khu Nhà Chính
+        {button2 ? (
+          <button onClick={BanDo} className="p-4 border-b-1 text-xl">
+            <i className="bi bi-caret-down"></i> Hướng dẫn sơ đồ tham quan
           </button>
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Nhà Trưng Bày Di Sản Thế Giới
-          </button>
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Không Gian Văn Hóa Phật Giáo
-          </button>
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Kho Lưu Trữ Bảo Vật Quốc Gia
-          </button>
-        </div>
+        ) : null}
         {/*Cột điều hướng 3*/}
-        <button className="py-6 px-4 bg-neutral-900 text-2xl font-bold">
+        <button
+          onClick={() => setButton3((prevButton3) => !prevButton3)}
+          className="py-6 px-4 bg-neutral-900 text-2xl font-bold"
+        >
           <i className="bi bi-caret-down"></i> Thông tin khác
         </button>
-        <div className="grid grid-cols-2 text-xl gap-10">
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Nhà hàng và Cafe
-          </button>
-          <button className="p-4 border-b-1">
-            <i className="bi bi-caret-down"></i> Cửa hàng lưu niệm
-          </button>
-        </div>
+        {button3 ? (
+          <div className="grid grid-cols-2 text-xl gap-10">
+            <button onClick={Cafe} className="p-4 border-b-1">
+              <i className="bi bi-caret-down"></i> Nhà hàng và Cafe
+            </button>
+            <button onClick={LuuNiem} className="p-4 border-b-1">
+              <i className="bi bi-caret-down"></i> Cửa hàng lưu niệm
+            </button>
+          </div>
+        ) : null}
       </div>
       {/*Khung thông tin*/}
-      <div className="pl-12 pr-14 py-10 min-w-screen max-h-fit flex flex-col text-black">
-        <h1 className="text-4xl font-bold roboto py-6">
+      <div className="pl-12 pr-14 py-10 min-w-screen max-h-fit flex flex-col text-black roboto">
+        <h1 className="text-4xl font-bold py-6">
           Hướng dẫn đường đến và thông tin giờ
         </h1>
         <div className="grid grid-cols-3 gap-10">
@@ -132,6 +199,7 @@ function TourGuide() {
         <h1 className="text-4xl font-bold roboto py-6">
           Hướng dẫn sơ đồ tham quan
         </h1>
+        {/*Khu nhà chính*/}
         <div className="flex flex-col gap-4">
           <img
             className="object-center object-contain max-h-screen"
@@ -201,6 +269,89 @@ function TourGuide() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      {/*Khung thông tin ngoài - cafe*/}
+      <div className="pl-12 pr-14 py-10 min-w-screen max-h-fit flex flex-col text-white roboto bg-neutral-800">
+        <h1 className="text-4xl font-bold roboto py-6">Thông tin khác</h1>
+        <div className="grid grid-cols-2 gap-8">
+          {/*Cột trái*/}
+          <div className="w-fit">
+            <h1 className="text-2xl roboto border-b-1 pb-2">
+              Nhà hàng & Café Ocean
+            </h1>
+            <div className="flex flex-col pt-4 text-base gap-8">
+              <ul className="list-disc list-inside ">
+                <li className="pb-2">
+                  Giờ mở cửa: 10:30am–5:00pm (ngưng nhận trước 4:20pm)
+                </li>
+                <p className="pb-2">
+                  Mở cửa từ 10:30am đến 8:00pm vào Thứ Sáu và Thứ Bảy. (gọi món
+                  lần cuối lúc 7h20 tối)
+                </p>
+                <li className="pb-2">SĐT：(03)45781234</li>
+                <li className="pb-2">Menu có thể thay đổi theo tùy mùa</li>
+              </ul>
+              <a
+                className="p-4 border-1 text-center text-xl flex justify-between w-[60%]"
+                href={Menu}
+                download="Ocean-menu.pdf"
+              >
+                Ocean Cafe Menu <i className="bi bi-caret-right"></i>
+              </a>
+            </div>
+          </div>
+          {/*Cột phải*/}
+          <div className="relative h-[32rem]">
+            <img
+              className="object-center object-contain absolute -top-64"
+              src={cafe}
+              alt="none"
+            />
+          </div>
+        </div>
+      </div>
+      {/*Khung thông tin ngoài - lưu niệm*/}
+      <div className="pl-12 pr-14 py-10 min-w-screen max-h-fit flex flex-col text-black roboto">
+        <div className="flex gap-10 transform -translate-y-50">
+          {/*Vật 1*/}
+          <div className="flex flex-col gap-4 w-[50%]">
+            <img src={tiramisu} alt="none" />
+            <p className="text-2xl">Tiramisu</p>
+            <p className="text-base">35.000 đ</p>
+          </div>
+          {/*Vật 2*/}
+          <div className="flex flex-col gap-4 w-[50%]">
+            <img src={flan} alt="none" />
+            <p className="text-2xl">Bánh flan</p>
+            <p className="text-base">24.000 đ</p>
+          </div>
+        </div>
+        <h1 className="text-2xl roboto border-b-1 pb-2 transform -translate-y-30">
+          Cửa hàng lưu niệm
+        </h1>
+        <div className="flex gap-4 -translate-y-24">
+          <div className="w-[50%]">
+            <img src={luuniem1} alt="none" />
+          </div>
+          <div className="w-[50%]">
+            <img src={luuniem2} alt="none" />
+          </div>
+        </div>
+        <div className="-translate-y-18">
+          <p>Nơi tốt nhất để mua sắm quà lưu niệm!</p>
+          <p className=" text-justify">
+            Tọa lạc tại sảnh Tòa nhà chính ,Cửa hàng lưu niệm của Bảo tàng cung
+            cấp nhiều mặt hàng được làm dựa trên các hiện vật và họa tiết truyền
+            thống trong bộ sưu tập của bảo tàng. Các món quà lưu niệm được bán ở
+            đây bao gồm áo thun in họa tiết trống đồng, túi vải thổ cẩm, nón lá
+            mini, các sản phẩm văn phòng phẩm, dấu trang, tranh dân gian Đông
+            Hồ, bưu thiếp, quạt giấy truyền thống và các mặt hàng đặc trưng
+            khác. Các sản phẩm thủ công mỹ nghệ truyền thống Việt Nam của các
+            nghệ nhân đương đại như gốm sứ Bát Tràng, đồ mây tre đan, và các sản
+            phẩm sơn mài cũng được bày bán ở đây. Ngoài ra, cửa hàng còn có một
+            số ấn phẩm song ngữ Việt-Anh về nghệ thuật và văn hóa Việt Nam.
+          </p>
         </div>
       </div>
     </div>
