@@ -69,3 +69,7 @@ button {
 .Login{
   background-image: linear-gradient(to top, #0061ff, #008fff, #00b4ff, #00d3ff, #60efff);
 }
+
+input {
+  outline: none;
+}
