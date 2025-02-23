@@ -61,7 +61,7 @@ function LogInPage() {
         setFormState("loginSuccess"); // Đăng nhập thành công
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 500);
       }
     } catch (error) {
       console.error("Lỗi:", error);
@@ -101,7 +101,7 @@ function LogInPage() {
         setFormState("signupSuccess"); // Đăng ký thành công
         setTimeout(() => {
           navigate("/");
-        }, 1000);
+        }, 500);
       } else {
         setFormState("errorAccountExist"); // Lỗi Tài khoản đã tồn tại
       }

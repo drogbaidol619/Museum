@@ -2,9 +2,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import pg from "pg";
+import bcrypt from "bcrypt";
 
 const app = express();
 const port = 3000;
+const saltRounds = 10;
 
 const db = new pg.Client({
   user: "postgres",
@@ -22,20 +24,26 @@ app.use(express.json());
 // API endpoint cho /login
 app.post("/login", async (req, res) => {
   const username = req.body.username;
-  const password = req.body.password;
+  const loginPassword = req.body.password;
   try {
     const result = await db.query("SELECT * FROM users WHERE username = $1", [
       username,
     ]);
     if (result.rows.length > 0) {
       const user = result.rows[0];
-      const storedPassword = user.password;
-
-      if (password === storedPassword) {
-        res.json({ verified: true });
-      } else {
-        res.json({ verified: false, message: "Incorrect Password" });
-      }
+      const storedHashPassword = user.password;
+      //verifying the password
+      bcrypt.compare(loginPassword, storedHashPassword, (err, result) => {
+        if (err) {
+          console.error("Error comparing passwords:", err);
+        } else {
+          if (result) {
+            res.json({ verified: true }); // mật khẩu đúng
+          } else {
+            res.json({ verified: false, message: "Incorrect Password" });
+          }
+        }
+      });
     } else {
       res.json({ verified: false, message: "User not found" });
     }
@@ -58,9 +66,12 @@ app.post("/signup", async (req, res) => {
         message: "Email already exists. Try logging in.",
       });
     } else {
+      // Hashing the password using async/await
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      console.log(hashedPassword);
       const result = await db.query(
         "insert into users(email, username,password) values ($1,$2,$3)",
-        [email, username, password]
+        [email, username, hashedPassword]
       );
       res.json({ verified: true, message: "Sign up success." });
     }
