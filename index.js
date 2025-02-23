@@ -53,12 +53,16 @@ app.post("/signup", async (req, res) => {
     ]);
 
     if (checkResult.rows.length > 0) {
-      res.send("Email already exists. Try logging in.");
+      res.json({
+        verified: false,
+        message: "Email already exists. Try logging in.",
+      });
     } else {
       const result = await db.query(
         "insert into users(email, username,password) values ($1,$2,$3)",
         [email, username, password]
       );
+      res.json({ verified: true, message: "Sign up success." });
     }
   } catch (error) {
     console.error("Error creating user:", error);
