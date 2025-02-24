@@ -2,7 +2,7 @@ import Picture from "./Picture";
 import museumLogo from "../assets/Museum-logo-removebg.png";
 import { useState, React } from "react";
 import "../App.css";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 function changeFont(event) {
   var id = event.target.id;
@@ -41,6 +41,9 @@ const scrollToTop = (event) => {
 };
 
 function NavBar() {
+  const [searchParams] = useSearchParams();
+  const isAdmin = searchParams.get("admin") === "true";
+
   return (
     <nav className="max-h-48 w-full" style={{ backgroundColor: "#6B4423" }}>
       <div className="grid grid-cols-5 p-6 gap-4 object-contain">
@@ -92,13 +95,15 @@ function NavBar() {
             <Link style={{ cursor: "pointer" }} to="/login">
               Log In
             </Link>
-            <a
-              target="_blank"
-              style={{ cursor: "pointer" }}
-              href="https://demo.thingsboard.io/home"
-            >
-              ThinksBoard
-            </a>
+            {isAdmin && (
+              <a
+                target="_blank"
+                style={{ cursor: "pointer" }}
+                href="https://demo.thingsboard.io/home"
+              >
+                ThingsBoard
+              </a>
+            )}
           </div>
         </div>
       </div>

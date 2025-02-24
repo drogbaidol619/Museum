@@ -11,6 +11,7 @@ import env from "dotenv";
 const app = express();
 const port = 3000;
 const saltRounds = 10;
+env.config();
 
 const db = new pg.Client({
   user: process.env.PG_USER,
@@ -20,23 +21,11 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 db.connect();
-env.config();
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-  session({
-    secret: process.env.SESSION,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-// API endpoint cho /login
 app.post("/login", async (req, res) => {
   const username = req.body.username;
   const loginPassword = req.body.password;
@@ -47,23 +36,49 @@ app.post("/login", async (req, res) => {
     if (result.rows.length > 0) {
       const user = result.rows[0];
       const storedHashPassword = user.password;
-      //verifying the password
-      bcrypt.compare(loginPassword, storedHashPassword, (err, result) => {
-        if (err) {
-          console.error("Error comparing passwords:", err);
-        } else {
-          if (result) {
-            res.json({ verified: true }); // mật khẩu đúng
+      const storedEmail = user.email;
+
+      // Kiểm tra username và mật khẩu
+      if (
+        username === process.env.ADMIN_USERNAME &&
+        storedEmail === process.env.ADMIN_EMAIL
+      ) {
+        bcrypt.compare(loginPassword, storedHashPassword, (err, result) => {
+          if (err) {
+            console.error("Error comparing passwords:", err);
+            res
+              .status(500)
+              .json({ verified: false, message: "Internal server error" });
           } else {
-            res.json({ verified: false, message: "Incorrect Password" });
+            if (result) {
+              res.json({ verified: true, admin: true }); // Mật khẩu đúng, admin
+            } else {
+              res.json({ verified: false, message: "Incorrect Password" });
+            }
           }
-        }
-      });
+        });
+      } else {
+        bcrypt.compare(loginPassword, storedHashPassword, (err, result) => {
+          if (err) {
+            console.error("Error comparing passwords:", err);
+            res
+              .status(500)
+              .json({ verified: false, message: "Internal server error" });
+          } else {
+            if (result) {
+              res.json({ verified: true, admin: false }); // Mật khẩu đúng, không phải admin
+            } else {
+              res.json({ verified: false, message: "Incorrect Password" });
+            }
+          }
+        });
+      }
     } else {
       res.json({ verified: false, message: "User not found" });
     }
-  } catch {
-    console.log(error);
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ verified: false, message: "Internal server error" });
   }
 });
 

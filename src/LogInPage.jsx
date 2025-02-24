@@ -10,7 +10,7 @@ function LogInPage() {
     email: "",
   });
   const [formState, setFormState] = useState("idle"); // 'idle', 'loginSuccess', 'signupSuccess', 'error'
-
+  const [admin, setAdmin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [action, setAction] = useState("Log In");
   const navigate = useNavigate();
@@ -57,7 +57,14 @@ function LogInPage() {
         setFormState("errorPassword"); // Lỗi sai mật khẩu
       } else if (!data.verified && data.message === "User not found") {
         setFormState("errorAccountNotExist"); // Lỗi tài khoản chưa tồn tại
+      } else if (data.verified && data.admin) {
+        setAdmin(true); // kiểm tra admin
+        setFormState("loginSuccess"); // Đăng nhập thành công
+        setTimeout(() => {
+          navigate(`/?admin=${data.admin}`);
+        }, 500);
       } else if (data.verified) {
+        setAdmin(false);
         setFormState("loginSuccess"); // Đăng nhập thành công
         setTimeout(() => {
           navigate("/");
