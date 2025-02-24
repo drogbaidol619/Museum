@@ -92,6 +92,13 @@ function NavBar() {
             <Link style={{ cursor: "pointer" }} to="/login">
               Log In
             </Link>
+            <a
+              target="_blank"
+              style={{ cursor: "pointer" }}
+              href="https://demo.thingsboard.io/home"
+            >
+              ThinksBoard
+            </a>
           </div>
         </div>
       </div>

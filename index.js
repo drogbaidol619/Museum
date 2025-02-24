@@ -3,23 +3,38 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import pg from "pg";
 import bcrypt from "bcrypt";
+import session from "express-session";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import env from "dotenv";
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
 
 const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "secrets",
-  password: "tranhoangminh123",
-  port: 5433,
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DB,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
 });
 db.connect();
+env.config();
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // API endpoint cho /login
 app.post("/login", async (req, res) => {
@@ -47,7 +62,9 @@ app.post("/login", async (req, res) => {
     } else {
       res.json({ verified: false, message: "User not found" });
     }
-  } catch {}
+  } catch {
+    console.log(error);
+  }
 });
 
 app.post("/signup", async (req, res) => {
