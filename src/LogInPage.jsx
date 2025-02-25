@@ -57,18 +57,14 @@ function LogInPage() {
         setFormState("errorPassword"); // Lỗi sai mật khẩu
       } else if (!data.verified && data.message === "User not found") {
         setFormState("errorAccountNotExist"); // Lỗi tài khoản chưa tồn tại
-      } else if (data.verified && data.admin) {
-        setAdmin(true); // kiểm tra admin
-        setFormState("loginSuccess"); // Đăng nhập thành công
-        setTimeout(() => {
-          navigate(`/?admin=${data.admin}`);
-        }, 500);
       } else if (data.verified) {
-        setAdmin(false);
+        const isAdmin = data.admin || false; // Lấy giá trị admin hoặc false nếu không có
+        setAdmin(isAdmin);
+        localStorage.setItem("isAdmin", isAdmin.toString()); // Lưu trữ giá trị boolean dưới dạng chuỗi
         setFormState("loginSuccess"); // Đăng nhập thành công
         setTimeout(() => {
-          navigate("/");
-        }, 500);
+          navigate(isAdmin ? `/?admin=true` : "/"); // Điều hướng dựa trên giá trị isAdmin
+        }, 100);
       }
     } catch (error) {
       console.error("Lỗi:", error);
