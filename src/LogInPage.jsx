@@ -2,6 +2,7 @@ import { useState, React } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import axios from "axios";
 
 function LogInPage() {
   const [user, setUser] = useState({
@@ -10,7 +11,6 @@ function LogInPage() {
     email: "",
   });
   const [formState, setFormState] = useState("idle"); // 'idle', 'loginSuccess', 'signupSuccess', 'error'
-  const [admin, setAdmin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [action, setAction] = useState("Log In");
   const navigate = useNavigate();
@@ -33,43 +33,33 @@ function LogInPage() {
     e.preventDefault();
     setFormState("loading"); // Đang tải
     try {
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: user.username,
-          password: user.password,
-        }),
+      const response = await axios.post("http://localhost:3000/login", {
+        username: user.username,
+        password: user.password,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setFormState("errorFetch"); // Lỗi
-        alert(errorData.message || "Đã xảy ra lỗi. Vui lòng thử lại.");
-        return;
-      }
-
-      const data = await response.json();
+      const data = response.data;
       console.log(data);
-      if (!data.verified && data.message === "Incorrect Password") {
-        setFormState("errorPassword"); // Lỗi sai mật khẩu
-      } else if (!data.verified && data.message === "User not found") {
-        setFormState("errorAccountNotExist"); // Lỗi tài khoản chưa tồn tại
-      } else if (data.verified) {
+      if (data.verified) {
         const isAdmin = data.admin || false; // Lấy giá trị admin hoặc false nếu không có
-        setAdmin(isAdmin);
-        localStorage.setItem("isAdmin", isAdmin.toString()); // Lưu trữ giá trị boolean dưới dạng chuỗi
+        sessionStorage.setItem("isAdmin", isAdmin.toString());
         setFormState("loginSuccess"); // Đăng nhập thành công
         setTimeout(() => {
-          navigate(isAdmin ? `/?admin=true` : "/"); // Điều hướng dựa trên giá trị isAdmin
+          navigate("/");
         }, 100);
       }
     } catch (error) {
-      console.error("Lỗi:", error);
-      setFormState("errorFetch"); // Lỗi
-      alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+      if (error.response && error.response.status === 401) {
+        // Lỗi 401 do sai mật khẩu
+        setFormState("errorPassword");
+      } else if (error.response && error.response.status === 404) {
+        // Lỗi 404 do tài khoản không tồn tại
+        alert("Tài khoản không tồn tại. Vui lòng thử lại.");
+      } else {
+        // Lỗi khác
+        setFormState("errorFetch");
+        alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
     }
   };
   {
@@ -79,24 +69,11 @@ function LogInPage() {
     e.preventDefault();
     setFormState("loading"); // Đang tải
     try {
-      const response = await fetch("http://localhost:3000/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: user.username,
-          password: user.password,
-          email: user.email,
-        }),
+      const response = await axios.post("http://localhost:3000/signup", {
+        username: user.username,
+        password: user.password,
+        email: user.email,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setFormState("errorFetch"); // Lỗi
-        alert(errorData.message || "Đã xảy ra lỗi. Vui lòng thử lại.");
-        return;
-      }
 
       const data = await response.json();
       console.log(data);

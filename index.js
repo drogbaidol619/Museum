@@ -48,6 +48,15 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.post("/check-session", (req, res) => {
+  if (req.isAuthenticated()) {
+    const isAdmin = req.user.admin || false; // Lấy giá trị admin hoặc false nếu không có
+    res.json({ verified: true, admin: isAdmin });
+  } else {
+    res.status(401).json({ verified: false, message: "User not found" });
+  }
+});
+
 app.post("/signup", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -115,7 +124,6 @@ app.post("/login", (req, res, next) => {
 
 passport.use(
   new Strategy(async function verify(username, password, cb) {
-    console.log(username);
     try {
       const result = await db.query("SELECT * FROM users WHERE username = $1", [
         username,
@@ -126,16 +134,20 @@ passport.use(
         const storedEmail = user.email;
 
         // Kiểm tra username và mật khẩu
-        if (
-          username === process.env.ADMIN_USERNAME &&
-          storedEmail === process.env.ADMIN_EMAIL
-        ) {
+        const isAdmin =
+          user.username === process.env.ADMIN_USERNAME &&
+          user.email === process.env.ADMIN_EMAIL;
+        if (isAdmin) {
           bcrypt.compare(password, storedHashPassword, (err, result) => {
             if (err) {
               return cb(err);
             } else {
               if (result) {
-                return cb(null, user, { verified: true, admin: true }); // Admin
+                return cb(
+                  null,
+                  { ...user, admin: isAdmin },
+                  { verified: true, admin: isAdmin }
+                ); // Admin
               } else {
                 return cb(null, false, {
                   verified: false,

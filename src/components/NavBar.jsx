@@ -2,7 +2,7 @@ import Picture from "./Picture";
 import museumLogo from "../assets/Museum-logo-removebg.png";
 import { useState, React } from "react";
 import "../App.css";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function changeFont(event) {
   var id = event.target.id;
@@ -33,16 +33,8 @@ function changeFont(event) {
   }
 }
 
-const scrollToTop = (event) => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth", // Optional: For smooth scrolling
-  });
-};
-
 function NavBar() {
-  const [searchParams] = useSearchParams();
-  const isAdmin = searchParams.get("admin") === "true";
+  const isAdmin = sessionStorage.getItem("isAdmin");
 
   return (
     <nav className="max-h-48 w-full" style={{ backgroundColor: "#6B4423" }}>
@@ -95,7 +87,7 @@ function NavBar() {
             <Link style={{ cursor: "pointer" }} to="/login">
               Log In
             </Link>
-            {isAdmin && (
+            {isAdmin === "true" ? (
               <a
                 target="_blank"
                 style={{ cursor: "pointer" }}
@@ -103,7 +95,7 @@ function NavBar() {
               >
                 ThingsBoard
               </a>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

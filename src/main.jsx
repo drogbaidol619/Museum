@@ -6,26 +6,43 @@ import CollectionsPage from "./CollectionsPage.jsx";
 import TourGuidePage from "./TourGuidePage.jsx";
 import AboutPage from "./AboutPage.jsx";
 import LogIn from "./LogInPage.jsx";
+import CheckSession from "./components/CheckSession.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <CheckSession>
+        <App />
+      </CheckSession>
+    ),
     errorElement: <div>404 Not Found</div>,
   },
   {
     path: "/collections",
-    element: <CollectionsPage />,
+    element: (
+      <CheckSession>
+        <CollectionsPage />
+      </CheckSession>
+    ),
     errorElement: <div>404 Not Found</div>,
   },
   {
     path: "/tourguide",
-    element: <TourGuidePage />,
+    element: (
+      <CheckSession>
+        <TourGuidePage />
+      </CheckSession>
+    ),
     errorElement: <div>404 Not Found</div>,
   },
   {
     path: "/about",
-    element: <AboutPage />,
+    element: (
+      <CheckSession>
+        <AboutPage />
+      </CheckSession>
+    ),
     errorElement: <div>404 Not Found</div>,
   },
   {
