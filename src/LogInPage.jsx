@@ -40,9 +40,10 @@ function LogInPage() {
 
       const data = response.data;
       console.log(data);
-      if (data.verified) {
-        const isAdmin = data.admin || false; // Lấy giá trị admin hoặc false nếu không có
-        sessionStorage.setItem("isAdmin", isAdmin.toString());
+      if (data.verify) {
+        const isAdmin = data.isAdmin || false; // Lấy giá trị admin hoặc false nếu không có
+        localStorage.setItem("isAdmin", isAdmin.toString());
+        localStorage.setItem("accessToken", data.accessToken);
         setFormState("loginSuccess"); // Đăng nhập thành công
         setTimeout(() => {
           navigate("/");
@@ -54,7 +55,7 @@ function LogInPage() {
         setFormState("errorPassword");
       } else if (error.response && error.response.status === 404) {
         // Lỗi 404 do tài khoản không tồn tại
-        alert("Tài khoản không tồn tại. Vui lòng thử lại.");
+        setFormState("errorAccountNotExist");
       } else {
         // Lỗi khác
         setFormState("errorFetch");
@@ -77,7 +78,7 @@ function LogInPage() {
 
       const data = await response.json();
       console.log(data);
-      if (data.verified) {
+      if (data.verify) {
         setFormState("signupSuccess"); // Đăng ký thành công
         setTimeout(() => {
           navigate("/");

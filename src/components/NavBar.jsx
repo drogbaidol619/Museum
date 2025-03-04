@@ -34,7 +34,7 @@ function changeFont(event) {
 }
 
 function NavBar() {
-  const isAdmin = sessionStorage.getItem("isAdmin");
+  const isAdmin = localStorage.getItem("isAdmin");
 
   return (
     <nav className="max-h-48 w-full" style={{ backgroundColor: "#6B4423" }}>

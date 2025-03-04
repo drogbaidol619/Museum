@@ -6,43 +6,27 @@ import CollectionsPage from "./CollectionsPage.jsx";
 import TourGuidePage from "./TourGuidePage.jsx";
 import AboutPage from "./AboutPage.jsx";
 import LogIn from "./LogInPage.jsx";
-import CheckSession from "./components/CheckSession.jsx";
+import CheckToken from "./components/CheckToken.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <CheckSession>
-        <App />
-      </CheckSession>
-    ),
+    element: <App />,
     errorElement: <div>404 Not Found</div>,
   },
   {
     path: "/collections",
-    element: (
-      <CheckSession>
-        <CollectionsPage />
-      </CheckSession>
-    ),
+    element: <CollectionsPage />,
     errorElement: <div>404 Not Found</div>,
   },
   {
     path: "/tourguide",
-    element: (
-      <CheckSession>
-        <TourGuidePage />
-      </CheckSession>
-    ),
+    element: <TourGuidePage />,
     errorElement: <div>404 Not Found</div>,
   },
   {
     path: "/about",
-    element: (
-      <CheckSession>
-        <AboutPage />
-      </CheckSession>
-    ),
+    element: <AboutPage />,
     errorElement: <div>404 Not Found</div>,
   },
   {
@@ -50,6 +34,15 @@ const router = createBrowserRouter([
     element: <LogIn />,
     errorElement: <div>404 Not Found</div>,
   },
+  // {
+  //   path: "/database",
+  //   element: (
+  //     <CheckToken>
+  //       <DataBase />
+  //     </CheckToken>
+  //   ),
+  //   errorElement: <div>404 Not Found</div>,
+  // },
 ]);
 
 createRoot(document.getElementById("root")).render(
