@@ -7,6 +7,7 @@ import TourGuidePage from "./TourGuidePage.jsx";
 import AboutPage from "./AboutPage.jsx";
 import LogIn from "./LogInPage.jsx";
 import CheckToken from "./components/CheckToken.jsx";
+import DatabasePage from "./DatabasePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -34,15 +35,15 @@ const router = createBrowserRouter([
     element: <LogIn />,
     errorElement: <div>404 Not Found</div>,
   },
-  // {
-  //   path: "/database",
-  //   element: (
-  //     <CheckToken>
-  //       <DataBase />
-  //     </CheckToken>
-  //   ),
-  //   errorElement: <div>404 Not Found</div>,
-  // },
+  {
+    path: "/database",
+    element: (
+      <CheckToken>
+        <DatabasePage />
+      </CheckToken>
+    ),
+    errorElement: <div>404 Not Found</div>,
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(

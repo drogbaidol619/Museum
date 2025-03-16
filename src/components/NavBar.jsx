@@ -88,6 +88,11 @@ function NavBar() {
               Log In
             </Link>
             {isAdmin === "true" ? (
+              <Link style={{ cursor: "pointer" }} to="/database">
+                Database
+              </Link>
+            ) : null}
+            {isAdmin === "true" ? (
               <a
                 target="_blank"
                 style={{ cursor: "pointer" }}

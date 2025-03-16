@@ -1,10 +1,11 @@
-import { useState, React } from "react";
+import { useState, React, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 
 function LogInPage() {
+  const [accessTokenUser, setAccessTokenUser] = useState(false);
   const [user, setUser] = useState({
     username: "",
     password: "",
@@ -33,13 +34,18 @@ function LogInPage() {
     e.preventDefault();
     setFormState("loading"); // Đang tải
     try {
-      const response = await axios.post("http://localhost:3000/login", {
-        username: user.username,
-        password: user.password,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/login",
+        {
+          username: user.username,
+          password: user.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       const data = response.data;
-      console.log(data);
       if (data.verify) {
         const isAdmin = data.isAdmin || false; // Lấy giá trị admin hoặc false nếu không có
         localStorage.setItem("isAdmin", isAdmin.toString());
@@ -70,11 +76,17 @@ function LogInPage() {
     e.preventDefault();
     setFormState("loading"); // Đang tải
     try {
-      const response = await axios.post("http://localhost:3000/signup", {
-        username: user.username,
-        password: user.password,
-        email: user.email,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/signup",
+        {
+          username: user.username,
+          password: user.password,
+          email: user.email,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       const data = await response.json();
       console.log(data);
@@ -99,6 +111,39 @@ function LogInPage() {
       handleSignup(e);
     } else {
       handleLogin(e);
+    }
+  };
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      setAccessTokenUser(true);
+    } else {
+      setAccessTokenUser(false);
+    }
+  }, []);
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        // Kiểm tra mã trạng thái HTTP
+        localStorage.removeItem("accessToken");
+        setAccessTokenUser(false); // Cập nhật accessTokenUser
+        // Chuyển hướng
+        navigate("/");
+      } else {
+        setFormState("Đã xảy ra lỗi khi đăng xuất.");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
     }
   };
 
@@ -186,7 +231,17 @@ function LogInPage() {
           <button className="text-blue-800">Nhấn vào đây!</button>
         </div>
 
-        <div className="roboto flex gap-20 text-white justify-center w-full">
+        <div className="roboto flex gap-10 text-white justify-center w-full">
+          {/* Log Out */}
+          {accessTokenUser ? (
+            <button
+              onClick={handleLogout}
+              className={"bg-red-400 p-4 rounded-3xl w-full text-xl"}
+            >
+              Log Out
+            </button>
+          ) : null}
+
           {/* Log In/Sign Up Button */}
           <button
             onClick={(e) => {

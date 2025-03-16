@@ -4,10 +4,9 @@ import cors from "cors";
 import pg from "pg";
 import bcrypt from "bcrypt";
 import session from "express-session";
-import passport from "passport";
-import { Strategy } from "passport-local";
 import env from "dotenv";
 import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = 3000;
@@ -15,21 +14,25 @@ const saltRounds = 10;
 env.config();
 
 app.use(
-  session({
-    secret: process.env.SESSION,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 1 ngày
-      httpOnly: true,
-      secure: false, // Để true nếu sử dụng HTTPS
-      sameSite: "strict",
-    },
+  cors({
+    origin: "http://localhost:5173", // Thay đổi thành nguồn gốc frontend của bạn
+    credentials: true, // Cho phép gửi cookie
   })
 );
 
-// app.use(passport.initialize());
-// app.use(passport.session());
+// app.use(
+//   session({
+//     secret: process.env.SESSION,
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       maxAge: 1000 * 60 * 60 * 24, // 1 ngày
+//       httpOnly: true,
+//       secure: false, // Để true nếu sử dụng HTTPS
+//       sameSite: "lax",
+//     },
+//   })
+// );
 
 const db = new pg.Client({
   user: process.env.PG_USER,
@@ -40,14 +43,9 @@ const db = new pg.Client({
 });
 db.connect();
 
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Thay đổi thành nguồn gốc frontend của bạn
-    credentials: true, // Cho phép gửi cookie
-  })
-);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // JWT secret key
 const accessTokenSecret = process.env.JWT_SECRET;
@@ -90,7 +88,7 @@ app.post("/signup", async (req, res) => {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "strict",
+        sameSite: "lax",
       });
       res.json({ verify: true, message: "Sign up success.", accessToken }); // message gửi cho người dùng
     }
@@ -132,7 +130,7 @@ app.post("/login", async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false, // Để true nếu sử dụng HTTPS
-          sameSite: "strict",
+          sameSite: "lax",
           maxAge: 1000 * 60 * 60 * 24 * 7, // 7 ngày
         });
         res.json({
@@ -198,100 +196,57 @@ app.get("/protected", authenticateJWT, (req, res) => {
 
 app.post("/logout", (req, res) => {
   const { refreshToken } = req.cookies;
+  if (!refreshToken) {
+    // Xử lý trường hợp refreshToken không tồn tại (ví dụ: trả về lỗi, thực hiện hành động khác)
+    return res.status(401).json({ message: "Refresh token not found" });
+  }
   refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
   res.clearCookie("refreshToken");
   res.json({ message: "Logout success." });
 });
 
-// // Tạo session
-// app.post("/login", (req, res, next) => {
-//   passport.authenticate("local", (err, user, info) => {
-//     if (err) {
-//       return res
-//         .status(500)
-//         .json({ verified: false, message: "Internal server error" });
-//     }
-//     // Xác thực thất bại, info chứa thông tin từ cb(null, false, ...)
-//     if (!user) {
-//       return res.status(401).json(info);
-//     }
-//     req.logIn(user, (err) => {
-//       if (err) {
-//         return res
-//           .status(500)
-//           .json({ verified: false, message: "Internal server error" });
-//       }
-//       // Xác thực thành công, info chứa thông tin từ cb(null, user, ...)
-//       return res.json(info);
-//     });
-//   })(req, res, next); // gọi middleware như 1 hàm
-// });
+app.post("/esp8266_1_update", async (req, res) => {
+  try {
+    const { temperature, humidity, light, ssid, time, date, name } = req.body;
+    // Thực hiện truy vấn INSERT
+    await db.query(
+      "INSERT INTO esp8266_1 (temperature, humidity, light, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+      [temperature, humidity, light, ssid, time, date, name]
+    );
 
-// passport.use(
-//   new Strategy(async function verify(username, password, cb) {
-//     try {
-//       const result = await db.query("SELECT * FROM users WHERE username = $1", [
-//         username,
-//       ]);
-//       if (result.rows.length > 0) {
-//         const user = result.rows[0];
-//         const storedHashPassword = user.password;
-//         const storedEmail = user.email;
+    res.json({ message: "Data saved to database" });
+  } catch (error) {
+    console.error("Error saving data to database:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
-//         // Kiểm tra username và mật khẩu
-//         const isAdmin =
-//           user.username === process.env.ADMIN_USERNAME &&
-//           user.email === process.env.ADMIN_EMAIL;
-//         if (isAdmin) {
-//           bcrypt.compare(password, storedHashPassword, (err, result) => {
-//             if (err) {
-//               return cb(err);
-//             } else {
-//               if (result) {
-//                 return cb(
-//                   null,
-//                   { ...user, admin: isAdmin },
-//                   { verified: true, admin: isAdmin }
-//                 ); // Admin
-//               } else {
-//                 return cb(null, false, {
-//                   verified: false,
-//                   message: "Incorrect Password", // Sai mật khẩu
-//                 });
-//               }
-//             }
-//           });
-//         } else {
-//           bcrypt.compare(password, storedHashPassword, (err, result) => {
-//             if (err) {
-//               return cb(err);
-//             } else {
-//               if (result) {
-//                 return cb(null, user, { verified: true, admin: false }); // Người dùng
-//               } else {
-//                 return cb(null, false, {
-//                   verified: false,
-//                   message: "Incorrect Password", // Sai mật khẩu
-//                 });
-//               }
-//             }
-//           });
-//         }
-//       } else {
-//         return cb(null, false, { verified: false, message: "User not found" });
-//       }
-//     } catch (error) {
-//       return cb(error);
-//     }
-//   })
-// );
+app.post("/extract", async (req, res) => {
+  const { deviceSelect, startDate, endDate } = req.body;
 
-// passport.serializeUser((user, cb) => {
-//   cb(null, user);
-// });
-// passport.deserializeUser((user, cb) => {
-//   cb(null, user);
-// });
+  try {
+    const tableName = deviceSelect; // Giả sử tên bảng trùng với deviceSelect
+    let query = `SELECT * FROM "${tableName}"`;
+    const queryParams = [];
+
+    if (startDate && endDate) {
+      query += ` WHERE date >= $1 AND date <= $2`;
+      queryParams.push(startDate, endDate);
+    } else if (startDate) {
+      query += ` WHERE date >= $1`;
+      queryParams.push(startDate);
+    } else if (endDate) {
+      query += ` WHERE date <= $1`;
+      queryParams.push(endDate);
+    }
+
+    const result = await db.query(query, queryParams);
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi trích xuất dữ liệu." });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
