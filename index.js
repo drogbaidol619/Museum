@@ -210,7 +210,7 @@ app.post("/esp8266_1_update", async (req, res) => {
     const { temperature, humidity, light, ssid, time, date, name } = req.body;
     // Thực hiện truy vấn INSERT
     await db.query(
-      "INSERT INTO esp8266_1 (temperature, humidity, light, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+      'INSERT INTO "ESP8266_1" (temperature, humidity, light, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7)',
       [temperature, humidity, light, ssid, time, date, name]
     );
 
@@ -222,12 +222,20 @@ app.post("/esp8266_1_update", async (req, res) => {
 });
 
 app.post("/extract", async (req, res) => {
-  const { deviceSelect, startDate, endDate } = req.body;
+  const {
+    deviceSelect,
+    startDate,
+    endDate,
+    temperature_alarm,
+    humidity_alarm,
+    light_alarm,
+  } = req.body;
 
   try {
     const tableName = deviceSelect; // Giả sử tên bảng trùng với deviceSelect
     let query = `SELECT * FROM "${tableName}"`;
     const queryParams = [];
+    let whereClauses = [];
 
     if (startDate && endDate) {
       query += ` WHERE date >= $1 AND date <= $2`;
@@ -238,6 +246,22 @@ app.post("/extract", async (req, res) => {
     } else if (endDate) {
       query += ` WHERE date <= $1`;
       queryParams.push(endDate);
+    }
+
+    // Điều kiện lọc theo cảnh báo
+    if (temperature_alarm) {
+      whereClauses.push(`(temperature >= 40 OR temperature <= 10)`);
+    }
+    if (humidity_alarm) {
+      whereClauses.push(`(humidity >= 60 OR humidity <= 45)`);
+    }
+    if (light_alarm) {
+      whereClauses.push(`light >= 100`);
+    }
+
+    // Kết hợp các mệnh đề WHERE
+    if (whereClauses.length > 0) {
+      query += ` WHERE ${whereClauses.join(" AND ")}`;
     }
 
     const result = await db.query(query, queryParams);

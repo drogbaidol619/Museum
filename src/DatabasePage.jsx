@@ -19,6 +19,12 @@ function DatabasePage() {
     start: "",
     end: "",
   });
+  const [checkBox, setCheckBox] = useState({
+    temperature_alarm: false,
+    humidity_alarm: false,
+    light_alarm: false,
+    //sensor_alarm: false,
+  });
 
   const [device, setDevice] = useState("null");
   const [data, setData] = useState([]);
@@ -36,6 +42,9 @@ function DatabasePage() {
           deviceSelect: device, // tên device
           startDate: day.start, // ngày trích xuất
           endDate: day.end, // ngày kết thúc trích xuất
+          temperature_alarm: checkBox.temperature_alarm,
+          humidity_alarm: checkBox.humidity_alarm,
+          light_alarm: checkBox.light_alarm,
         },
         {
           withCredentials: true,
@@ -65,7 +74,7 @@ function DatabasePage() {
             <input
               type="text"
               name="start"
-              placeholder="Định dạng kiểu yyyy-mm-dd"
+              placeholder="Định dạng yyyy-mm-dd"
               className="w-full p-2 rounded-md bg-white"
               value={day.start}
               onChange={(e) => setDay({ ...day, start: e.target.value })}
@@ -76,11 +85,74 @@ function DatabasePage() {
             <input
               type="text"
               name="end"
-              placeholder="Định dạng kiểu yyyy-mm-dd"
+              placeholder="Định dạng yyyy-mm-dd"
               className="w-full p-2 rounded-md bg-white"
               value={day.end}
               onChange={(e) => setDay({ ...day, end: e.target.value })}
             />
+            {/*Khung checkbox */}
+            <div className="flex flex-col mt-5">
+              <p className="w-full pl-2 py-2  font-medium text-xl roboto">
+                Lọc dữ liệu cảnh báo
+              </p>
+              <div className="flex gap-4 p-2 bg-neutral-400">
+                <input
+                  type="checkbox"
+                  name="temperature_alarm"
+                  checked={checkBox.temperature_alarm}
+                  onChange={(e) =>
+                    setCheckBox({
+                      ...checkBox,
+                      temperature_alarm: e.target.checked,
+                    })
+                  }
+                />
+                <label htmlFor="temperature_alarm">Cảnh báo nhiệt độ</label>
+              </div>
+              <div className="flex gap-4 p-2 bg-neutral-400">
+                <input
+                  type="checkbox"
+                  name="humidity_alarm"
+                  checked={checkBox.humidity_alarm}
+                  onChange={(e) =>
+                    setCheckBox({
+                      ...checkBox,
+                      humidity_alarm: e.target.checked,
+                    })
+                  }
+                />
+                <label htmlFor="humidity_alarm">Cảnh báo độ ẩm</label>
+              </div>
+              <div className="flex gap-4 p-2 bg-neutral-400">
+                <input
+                  type="checkbox"
+                  name="light_alarm"
+                  checked={checkBox.light_alarm}
+                  onChange={(e) =>
+                    setCheckBox({
+                      ...checkBox,
+                      light_alarm: e.target.checked,
+                    })
+                  }
+                />
+                <label htmlFor="light_alarm">Cảnh báo ánh sáng</label>
+              </div>
+              {/* <div className="flex gap-4 p-2 bg-neutral-400">
+                <input
+                  type="checkbox"
+                  name="sensor_alarm"
+                  checked={checkBox.sensor_alarm}
+                  onChange={(e) =>
+                    setCheckBox({
+                      ...checkBox,
+                      sensor_alarm: e.target.checked,
+                    })
+                  }
+                />
+                <label htmlFor="sensor_alarm">Cảnh báo tác động</label>
+              </div> */}
+            </div>
+
             <button
               onClick={(e) => {
                 handleExtract(e);
@@ -92,52 +164,54 @@ function DatabasePage() {
           </form>
         </div>
         {/*Khung table*/}
-        <table className="table-auto roboto text-center w-full border-separate border border-gray-400">
-          <thead
-            className=" text-xl font-medium"
-            style={{ backgroundColor: "#68D69D", color: "#401D83" }}
-          >
-            <tr>
-              <td className="border border-gray-400">Id</td>
-              <td className="border border-gray-400">Name</td>
-              <td className="border border-gray-400">Temperature</td>
-              <td className="border border-gray-400">Humidity</td>
-              <td className="border border-gray-400">Light</td>
-              <td className="border border-gray-400">Ssid</td>
-              <td className="border border-gray-400">Time</td>
-              <td className="border border-gray-400">Date</td>
-            </tr>
-          </thead>
-          <tbody
-            className="text-balance font-normal"
-            style={{ backgroundColor: "#d0fbe1", color: "#005a9e" }}
-          >
-            {data.map((item, index) => (
-              <tr key={index}>
-                <td className="border border-gray-400">{index}</td>
-                <td className="border border-gray-400">{item.name}</td>
-                <td className="border border-gray-400">
-                  {item.temperature !== null ? item.temperature : "null"}
-                </td>
-                <td className="border border-gray-400">
-                  {item.humidity !== null ? item.humidity : "null"}
-                </td>
-                <td className="border border-gray-400">
-                  {item.light !== null ? item.light : "null"}
-                </td>
-                <td className="border border-gray-400">
-                  {item.ssid !== null ? item.ssid : "null"}
-                </td>
-                <td className="border border-gray-400">
-                  {item.time !== null ? item.time : "null"}
-                </td>
-                <td className="border border-gray-400">
-                  {item.date !== null ? item.date : "null"}
-                </td>
+        <div className="max-h-screen overflow-y-scroll w-full">
+          <table className="table-auto roboto text-center w-full border-separate border border-gray-400 ">
+            <thead
+              className=" text-xl font-medium"
+              style={{ backgroundColor: "#68D69D", color: "#401D83" }}
+            >
+              <tr>
+                <td className="border border-gray-400">Id</td>
+                <td className="border border-gray-400">Name</td>
+                <td className="border border-gray-400">Temperature</td>
+                <td className="border border-gray-400">Humidity</td>
+                <td className="border border-gray-400">Light</td>
+                <td className="border border-gray-400">Ssid</td>
+                <td className="border border-gray-400">Time</td>
+                <td className="border border-gray-400">Date</td>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody
+              className="text-balance font-normal"
+              style={{ backgroundColor: "#d0fbe1", color: "#005a9e" }}
+            >
+              {data.map((item, index) => (
+                <tr key={index}>
+                  <td className="border border-gray-400">{index}</td>
+                  <td className="border border-gray-400">{item.name}</td>
+                  <td className="border border-gray-400">
+                    {item.temperature !== null ? item.temperature : "null"}
+                  </td>
+                  <td className="border border-gray-400">
+                    {item.humidity !== null ? item.humidity : "null"}
+                  </td>
+                  <td className="border border-gray-400">
+                    {item.light !== null ? item.light : "null"}
+                  </td>
+                  <td className="border border-gray-400">
+                    {item.ssid !== null ? item.ssid : "null"}
+                  </td>
+                  <td className="border border-gray-400">
+                    {item.time !== null ? item.time : "null"}
+                  </td>
+                  <td className="border border-gray-400">
+                    {item.date !== null ? item.date : "null"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       <Footer />
       <BackToTop onCheck={scrollToTop} />
