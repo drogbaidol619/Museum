@@ -3,26 +3,46 @@
   "builds": [
     {
       "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }  
+    },
+    {
+      "src": "api/**/*.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/api/login",
+      "dest": "/api/login.js"
+    },
+    {
+      "src": "/api/signup",
+      "dest": "/api/signup.js"
+    },
+    {
+      "src": "/api/logout",
+      "dest": "/api/logout.js"
+    },
+    {
+      "src": "/api/refresh-token",
+      "dest": "/api/refresh-token.js"
+    },
+    {
+      "src": "/api/protected",
+      "dest": "/api/protected.js"
+    },
+    {
+      "src": "/api/esp8266_1_update",
+      "dest": "/api/esp8266_1_update.js"
+    },
+    {
+      "src": "/api/extract",
+      "dest": "/api/extract.js"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/old-route",
-      "destination": "/new-route",
-      "statusCode": 301
+      "dest": "/index.html"  
     }
   ]
 }
