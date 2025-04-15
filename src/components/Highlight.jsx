@@ -17,9 +17,7 @@ if (currentDay !== today) {
 
 const productsToDisplay = [];
 for (let i = 0; i < 5; i++) {
-  console.log(gallery.length); //15
   const index = (displayedCount + i) % gallery.length; // số bị chia nhỏ hơn số chia, kết quả của phép chia là chính số bị chia.
-  console.log(index);
   productsToDisplay.push(gallery[index]);
 }
 
