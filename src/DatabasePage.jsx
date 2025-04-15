@@ -37,7 +37,7 @@ function DatabasePage() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/extract",
+        "/api/extract",
         {
           deviceSelect: device, // tên device
           startDate: day.start, // ngày trích xuất
