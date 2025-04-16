@@ -11,7 +11,16 @@ export default async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).end(); // Method Not Allowed
   }
-  const { username, password } = req.body;
+
+  let reqBody;
+  try {
+    reqBody = JSON.parse(req.body);
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid JSON body" });
+  }
+
+  const { username, password } = reqBody;
+
   const db = new pg.Client({
     user: process.env.PG_USER,
     host: process.env.PG_HOST,
