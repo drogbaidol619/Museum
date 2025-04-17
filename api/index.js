@@ -197,18 +197,18 @@ export default async (req, res) => {
           .status(403)
           .json({ message: "Refresh Token not found, login again." });
       }
-      return jwt.verify(refreshToken, refreshTokenSecret, (err, user) => {
-        // Đảm bảo return ở đây
-        if (err) {
-          return res.status(403).json({ message: "Invalid Refresh Token" });
-        }
+
+      try {
+        const user = jwt.verify(refreshToken, refreshTokenSecret);
         const accessToken = jwt.sign(
           { userId: user.userId, email: user.email },
           accessTokenSecret,
           { expiresIn: "15m" }
         );
         return res.json({ accessToken });
-      });
+      } catch (err) {
+        return res.status(403).json({ message: "Invalid Refresh Token" });
+      }
     } else if (url === "/api/protected" && method === "GET") {
       const authResult = authenticateJWT(req);
       if (authResult.error) {
