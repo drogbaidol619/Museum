@@ -118,7 +118,7 @@ export default async (req, res) => {
               httpOnly: true,
               secure: true, // Nên là true nếu bạn đang sử dụng HTTPS trên production
               sameSite: "lax",
-              maxAge: 1000 * 60 * 60 * 24 * 1,
+              maxAge: 1000 * 60 * 60 * 1,
             })
           );
           return res.json({
@@ -166,7 +166,7 @@ export default async (req, res) => {
                 httpOnly: true,
                 secure: true, // Nên là true nếu bạn đang sử dụng HTTPS trên production
                 sameSite: "lax",
-                maxAge: 1000 * 60 * 60 * 24 * 1,
+                maxAge: 1000 * 60 * 60 * 1,
               })
             );
             return res.json({
