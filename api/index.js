@@ -160,7 +160,7 @@ export default async (req, res) => {
           const decryptedPassword = decryptedPasswordBytes.toString(
             CryptoJS.enc.Utf8
           );
-          const match = await bcrypt.compare(password, decryptedPassword);
+          const match = await bcrypt.compare(decryptedPassword, user.password);
           if (match) {
             const isAdminPasswordMatch =
               decryptedPassword === process.env.ADMIN_PASSWORD;
