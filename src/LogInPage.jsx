@@ -35,7 +35,7 @@ function LogInPage() {
     setFormState("loading"); // Đang tải
     try {
       const response = await axios.post(
-        "/login",
+        "/api/login",
         {
           username: user.username,
           password: user.password,
@@ -77,7 +77,7 @@ function LogInPage() {
     setFormState("loading"); // Đang tải
     try {
       const response = await axios.post(
-        "/signup",
+        "/api/signup",
         {
           username: user.username,
           password: user.password,
@@ -127,7 +127,7 @@ function LogInPage() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "/logout",
+        "/api/logout",
         {},
         {
           withCredentials: true,
