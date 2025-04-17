@@ -2,56 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }  
-    },
-    {
-      "src": "api/**/*.js",
+      "src": "api/*.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/dist/assets/$1",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/api/login",
-      "dest": "/api/login.js"
-    },
-    {
-      "src": "/api/signup",
-      "dest": "/api/signup.js"
-    },
-    {
-      "src": "/api/logout",
-      "dest": "/api/logout.js"
-    },
-    {
-      "src": "/api/refresh-token",
-      "dest": "/api/refresh-token.js"
-    },
-    {
-      "src": "/api/protected",
-      "dest": "/api/protected.js"
-    },
-    {
-      "src": "/api/esp8266_1_update",
-      "dest": "/api/esp8266_1_update.js"
-    },
-    {
-      "src": "/api/extract",
-      "dest": "/api/extract.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"  
+      "src": "/api/(.*)",
+      "dest": "/index.js"
     }
   ]
 }
-
-  
