@@ -156,11 +156,11 @@ export default async (req, res) => {
           const decryptedPasswordBytes = CryptoJS.AES.decrypt(
             password,
             process.env.LOGIN_ENCRYPTION_KEY
-          ); // Thay 'your-secret-key' bằng khóa bạn dùng ở frontend
+          );
           const decryptedPassword = decryptedPasswordBytes.toString(
             CryptoJS.enc.Utf8
           );
-          const match = await bcrypt.compare(password, user.password);
+          const match = await bcrypt.compare(password, decryptedPassword);
           if (match) {
             const isAdminPasswordMatch =
               decryptedPassword === process.env.ADMIN_PASSWORD;
