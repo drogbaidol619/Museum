@@ -40,6 +40,7 @@ function LogInPage() {
         user.password,
         secretKey
       ).toString();
+      console.log(encryptedPassword);
       const response = await axios.post(
         "/api/login",
         {
@@ -87,6 +88,7 @@ function LogInPage() {
         user.password,
         secretKey
       ).toString();
+      console.log(encryptedPassword);
       const response = await axios.post(
         "/api/signup",
         {
