@@ -3,6 +3,7 @@ const { Client } = pg;
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
+import CryptoJS from "crypto-js";
 
 const saltRounds = 10;
 const accessTokenSecret = process.env.JWT_SECRET;
@@ -95,7 +96,17 @@ export default async (req, res) => {
             message: "Email already exists. Try logging in.",
           });
         } else {
-          const hashedPassword = await bcrypt.hash(password, saltRounds);
+          const decryptedPasswordBytes = CryptoJS.AES.decrypt(
+            password,
+            SIGNUP_ENCRYPTION_KEY
+          );
+          const decryptedPassword = decryptedPasswordBytes.toString(
+            CryptoJS.enc.Utf8
+          );
+          const hashedPassword = await bcrypt.hash(
+            decryptedPassword,
+            saltRounds
+          );
           const result = await db.query(
             "INSERT INTO users(email, username, password) VALUES ($1, $2, $3) RETURNING *",
             [email, username, hashedPassword]
@@ -142,10 +153,17 @@ export default async (req, res) => {
         );
         if (result.rows.length > 0) {
           const user = result.rows[0];
+          const decryptedPasswordBytes = CryptoJS.AES.decrypt(
+            password,
+            process.env.LOGIN_ENCRYPTION_KEY
+          ); // Thay 'your-secret-key' bằng khóa bạn dùng ở frontend
+          const decryptedPassword = decryptedPasswordBytes.toString(
+            CryptoJS.enc.Utf8
+          );
           const match = await bcrypt.compare(password, user.password);
           if (match) {
             const isAdminPasswordMatch =
-              password === process.env.ADMIN_PASSWORD;
+              decryptedPassword === process.env.ADMIN_PASSWORD;
             const isAdminUsernameMatch =
               username === process.env.ADMIN_USERNAME;
             const isAdmin = isAdminPasswordMatch && isAdminUsernameMatch;

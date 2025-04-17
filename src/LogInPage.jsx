@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import CryptoJS from "crypto-js";
 
 function LogInPage() {
   const [accessTokenUser, setAccessTokenUser] = useState(false);
@@ -34,11 +35,16 @@ function LogInPage() {
     e.preventDefault();
     setFormState("loading"); // Đang tải
     try {
+      const secretKey = process.env.LOGIN_ENCRYPTION_KEY; // Key từ env
+      const encryptedPassword = CryptoJS.AES.encrypt(
+        user.password,
+        secretKey
+      ).toString();
       const response = await axios.post(
         "/api/login",
         {
           username: user.username,
-          password: user.password,
+          password: encryptedPassword,
         },
         {
           withCredentials: true,
@@ -76,11 +82,16 @@ function LogInPage() {
     e.preventDefault();
     setFormState("loading"); // Đang tải
     try {
+      const secretKey = process.env.SIGNUP_ENCRYPTION_KEY; // Key từ env
+      const encryptedPassword = CryptoJS.AES.encrypt(
+        user.password,
+        secretKey
+      ).toString();
       const response = await axios.post(
         "/api/signup",
         {
           username: user.username,
-          password: user.password,
+          password: encryptedPassword,
           email: user.email,
         },
         {
