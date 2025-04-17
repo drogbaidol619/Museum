@@ -17,7 +17,7 @@ function CheckToken({ children }) {
       }
       // So sánh acces Token từ localStorage với backend
       try {
-        await axios.get("http://localhost:3000/protected", {
+        await axios.get("/api/protected", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -28,9 +28,7 @@ function CheckToken({ children }) {
       } catch (error) {
         if (error.response && error.response.status === 401) {
           try {
-            const response = await axios.post(
-              "http://localhost:3000/refresh-token"
-            );
+            const response = await axios.post("/api/refresh-token");
 
             const { accessToken: newAccessToken } = response.data;
             localStorage.setItem("accessToken", newAccessToken); // lưu trữ access token mới

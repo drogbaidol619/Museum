@@ -109,7 +109,7 @@ export default async (req, res) => {
           const refreshToken = jwt.sign(
             { userId: user.id, email: user.email },
             refreshTokenSecret,
-            { expiresIn: "7d" }
+            { expiresIn: "1d" }
           );
           refreshTokens.push(refreshToken);
           res.setHeader(
@@ -118,7 +118,7 @@ export default async (req, res) => {
               httpOnly: true,
               secure: true, // Nên là true nếu bạn đang sử dụng HTTPS trên production
               sameSite: "lax",
-              maxAge: 1000 * 60 * 60 * 24 * 7,
+              maxAge: 1000 * 60 * 60 * 24 * 1,
             })
           );
           return res.json({
@@ -157,7 +157,7 @@ export default async (req, res) => {
             const refreshToken = jwt.sign(
               { userId: user.id, email: user.email },
               refreshTokenSecret,
-              { expiresIn: "7d" }
+              { expiresIn: "1d" }
             );
             refreshTokens.push(refreshToken);
             res.setHeader(
@@ -166,7 +166,7 @@ export default async (req, res) => {
                 httpOnly: true,
                 secure: true, // Nên là true nếu bạn đang sử dụng HTTPS trên production
                 sameSite: "lax",
-                maxAge: 1000 * 60 * 60 * 24 * 7,
+                maxAge: 1000 * 60 * 60 * 24 * 1,
               })
             );
             return res.json({
