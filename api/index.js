@@ -1,4 +1,5 @@
-const { Client } = require("pg");
+import pg from "pg";
+const { Client } = pg;
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
