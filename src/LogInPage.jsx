@@ -151,7 +151,7 @@ function LogInPage() {
       if (response.status === 200) {
         // Kiểm tra mã trạng thái HTTP
         localStorage.removeItem("accessToken");
-        localStorage.setItem("isAdmin", "false"); // Đặt lại giá trị isAdmin về false
+        localStorage.setItem("isAdmin", false); // Đặt lại giá trị isAdmin về false
         setAccessTokenUser(false); // Cập nhật accessTokenUser
         // Chuyển hướng
         navigate("/");
