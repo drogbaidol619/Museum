@@ -36,7 +36,7 @@ function LogInPage() {
     setFormState("loading"); // Đang tải
     try {
       const secretKey = process.env.LOGIN_ENCRYPTION_KEY; // Key từ env
-      console.log("Signup Secret Key:", secretKey); // Kiểm tra giá trị
+      console.log("Login Secret Key:", secretKey); // Kiểm tra giá trị
       const encryptedPassword = CryptoJS.AES.encrypt(
         user.password,
         secretKey
@@ -85,7 +85,7 @@ function LogInPage() {
     setFormState("loading"); // Đang tải
     try {
       const secretKey = process.env.SIGNUP_ENCRYPTION_KEY; // Key từ env
-      console.log("Login Secret Key:", secretKey); // Kiểm tra giá trị
+      console.log("Signup Secret Key:", secretKey); // Kiểm tra giá trị
       const encryptedPassword = CryptoJS.AES.encrypt(
         user.password,
         secretKey
