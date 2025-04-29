@@ -63,10 +63,10 @@ function SearchBar(props) {
   return (
     <div className=" pl-12 pr-14 pt-10 flex flex-col flex-auto gap-8 items-center border-1">
       <p className="text-center roboto text-sm font-normal">
-        View approximately 500 outstanding works owned by the Tokyo National
-        Museum in fields such as paintings, calligraphy, sculpture, decorative
-        arts, and archaeology. Works can be scrolled in lists by type or on
-        current display, or searched by artist or region.
+        View approximately 500 outstanding works owned by the National Museum in
+        fields such as paintings, calligraphy, sculpture, decorative arts, and
+        archaeology. Works can be scrolled in lists by type or on current
+        display, or searched by artist or region.
       </p>
       <div className="flex flex-auto justify-between border-1 roboto w-[80%] mb-10">
         <input

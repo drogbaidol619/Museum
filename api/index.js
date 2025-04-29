@@ -9,7 +9,7 @@ const accessTokenSecret = process.env.JWT_SECRET;
 const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
 const refreshTokens = [];
 
-// Hàm kiểm tra access token
+// Hàm kiểm tra  token
 const authenticateJWT = (req) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -83,6 +83,7 @@ export default async (req, res) => {
     const { url, method } = req;
 
     if (url === "/api/signup" && method === "POST") {
+      //sign up
       const { username, password, email } = req.body;
       try {
         const checkResult = await db.query(
@@ -116,7 +117,7 @@ export default async (req, res) => {
             "Set-Cookie",
             cookie.serialize("refreshToken", refreshToken, {
               httpOnly: true,
-              secure: true, // Nên là true nếu bạn đang sử dụng HTTPS trên production
+              secure: true, //true nếu sử dụng HTTPS trên production
               sameSite: "lax",
               maxAge: 1000 * 60 * 60 * 1,
             })
@@ -134,6 +135,7 @@ export default async (req, res) => {
           .json({ verified: false, message: "Internal server error" });
       }
     } else if (url === "/api/login" && method === "POST") {
+      // login
       const { username, password } = req.body;
       try {
         const result = await db.query(
@@ -240,11 +242,12 @@ export default async (req, res) => {
       );
       return res.json({ message: "Logout success." });
     } else if (url === "/api/esp8266_1_update" && method === "POST") {
-      const { temperature, humidity, light, ssid, time, date, name } = req.body;
+      const { temperature, humidity, light, motion, ssid, time, date, name } =
+        req.body;
       try {
         await db.query(
-          'INSERT INTO "ESP8266_1" (temperature, humidity, light, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-          [temperature, humidity, light, ssid, time, date, name]
+          'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          [temperature, humidity, light, motion, ssid, time, date, name]
         );
         return res.json({ message: "Data saved to database" });
       } catch (error) {
@@ -279,10 +282,10 @@ export default async (req, res) => {
         }
 
         if (temperature_alarm) {
-          whereClauses.push(`(temperature >= 40 OR temperature <= 10)`);
+          whereClauses.push(`(temperature >= 40 OR temperature <= 15)`);
         }
         if (humidity_alarm) {
-          whereClauses.push(`(humidity >= 60 OR humidity <= 45)`);
+          whereClauses.push(`(humidity >= 70 OR humidity <= 45)`);
         }
         if (light_alarm) {
           whereClauses.push(`light >= 100`);
