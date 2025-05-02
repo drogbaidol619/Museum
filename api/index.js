@@ -242,6 +242,11 @@ export default async (req, res) => {
       );
       return res.json({ message: "Logout success." });
     } else if (url === "/api/esp8266_1_update" && method === "POST") {
+      // Kiểm tra API key
+      const apiKey = req.headers["x-api-key"] || req.query.apiKey;
+      if (apiKey !== process.env.API_KEY) {
+        return res.status(401).json({ message: "Invalid API key" });
+      }
       const { temperature, humidity, light, motion, ssid, time, date, name } =
         req.body;
       try {
