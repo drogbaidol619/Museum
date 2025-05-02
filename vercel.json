@@ -20,15 +20,6 @@
       }
     },
     { 
-      "src": "/api/esp8266_1_update",
-      "dest": "/api/index.js",
-      "methods": ["POST"],
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST"
-      }
-    },
-    { 
       "src": "/api/(.*)", 
       "dest": "/api/index.js" 
     },
@@ -38,7 +29,7 @@
     }
   ],
   "protectionBypass": {
-    "/api/esp8266_1_update": {
+    "/api/(.*)": {
       "required": false
     }
   }
