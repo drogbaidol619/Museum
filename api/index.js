@@ -251,7 +251,7 @@ export default async (req, res) => {
         req.body;
       try {
         await db.query(
-          'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
           [temperature, humidity, light, motion, ssid, time, date, name]
         );
         return res.json({ message: "Data saved to database" });
