@@ -242,22 +242,41 @@ export default async (req, res) => {
       );
       return res.json({ message: "Logout success." });
     } else if (url === "/api/esp8266_1_update" && method === "POST") {
-      // Kiểm tra API key
       const apiKey = req.headers["x-api-key"] || req.query.apiKey;
       if (apiKey !== process.env.API_KEY) {
         return res.status(401).json({ message: "Invalid API key" });
       }
+
+      // Lấy dữ liệu từ body
       const { temperature, humidity, light, motion, ssid, time, date, name } =
         req.body;
+
       try {
+        // Đảm bảo số lượng giá trị khớp với số cột
         await db.query(
-          'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date ,name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-          [temperature, humidity, light, motion, ssid, time, date, name]
+          'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+          [
+            temperature || null,
+            humidity || null,
+            light || null,
+            motion || false,
+            ssid || "",
+            time || new Date().toLocaleTimeString(),
+            date || new Date().toISOString().split("T")[0],
+            name || "ESP8266_1",
+          ]
         );
         return res.json({ message: "Data saved to database" });
       } catch (error) {
-        console.error("Error saving data to database:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        console.error("Detailed error:", {
+          message: error.message,
+          query: error.query, // PostgreSQL sẽ trả về câu query bị lỗi
+          stack: error.stack,
+        });
+        return res.status(500).json({
+          message: "Database error",
+          detail: error.message,
+        });
       }
     } else if (url === "/api/extract" && method === "POST") {
       const {
