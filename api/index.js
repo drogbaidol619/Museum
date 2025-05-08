@@ -213,7 +213,7 @@ export default async (req, res) => {
         })
       );
       return res.json({ message: "Logout success." });
-    } else if (url === "/api/esp8266_1_update" && method === "POST") {
+    } else if (url.match(/^\/api\/esp8266_1_update\/?$/) && method === "POST") {
       const apiKey = req.headers["x-api-key"]; // Lấy API Key từ header 'x-api-key'
       if (!apiKey || apiKey !== process.env.ESP8266_API_KEY) {
         return res

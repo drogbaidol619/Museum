@@ -23,6 +23,11 @@
     {
       "src": "/(.*)",
       "dest": "/index.html"  
+    },
+    {
+      "src": "/api/esp8266_1_update/?",
+      "dest": "/api/index.js",
+      "methods": ["POST"]
     }
   ]
 }
