@@ -269,7 +269,7 @@ export default async (req, res) => {
         );
         return res.json({ message: "Data saved to database" });
       } catch (error) {
-        console.error("Detailed error:", {
+        console.error("Detailed error: Database ", {
           message: error.message,
           query: error.query, // PostgreSQL sẽ trả về câu query bị lỗi
           stack: error.stack,
