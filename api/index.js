@@ -31,7 +31,10 @@ export default async (req, res) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
   );
-  // res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, x-api-key"
+  );
 
   // Xử lý OPTIONS request (preflight)
   if (req.method === "OPTIONS") {
@@ -48,37 +51,6 @@ export default async (req, res) => {
 
   try {
     await db.connect();
-
-    // Middleware đơn giản để parse body
-    // let reqBody = {};
-    // if (req.method !== "GET") {
-    //   try {
-    //     const chunks = [];
-    //     for await (const chunk of req) {
-    //       chunks.push(chunk);
-    //     }
-    //     const bodyString = Buffer.concat(chunks).toString();
-    //     if (req.headers["content-type"]?.includes("application/json")) {
-    //       reqBody = JSON.parse(bodyString);
-    //     } else if (
-    //       req.headers["content-type"]?.includes(
-    //         "application/x-www-form-urlencoded"
-    //       )
-    //     ) {
-    //       reqBody = bodyString.split("&").reduce((acc, pair) => {
-    //         const [key, value] = pair.split("=");
-    //         acc[decodeURIComponent(key)] = decodeURIComponent(value);
-    //         return acc;
-    //       }, {});
-    //     }
-    //   } catch (error) {
-    //     return res.status(400).json({ message: "Invalid request body" });
-    //   }
-    // }
-    // req.body = reqBody;
-
-    // // Middleware đơn giản để parse cookies
-    // req.cookies = cookie.parse(req.headers.cookie || "");
 
     const { url, method } = req;
 
