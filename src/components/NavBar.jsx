@@ -96,7 +96,7 @@ function NavBar() {
               <a
                 target="_blank"
                 style={{ cursor: "pointer" }}
-                href="https://demo.thingsboard.io/home"
+                href="http://localhost:8080"
               >
                 ThingsBoard
               </a>
