@@ -200,7 +200,11 @@ function DatabasePage() {
                     {item.light !== null ? item.light : "null"}
                   </td>
                   <td className="border border-gray-400">
-                    {item.motion !== null ? item.motion : "null"}
+                    {item.motion === true
+                      ? "True"
+                      : item.motion === false
+                      ? "False"
+                      : "N/A"}
                   </td>
                   <td className="border border-gray-400">
                     {item.ssid !== null ? item.ssid : "null"}
