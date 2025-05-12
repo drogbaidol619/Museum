@@ -259,6 +259,7 @@ export default async (req, res) => {
         temperature_alarm,
         humidity_alarm,
         light_alarm,
+        sensor_alarm,
       } = req.body;
       try {
         const tableName = deviceSelect;
@@ -279,13 +280,16 @@ export default async (req, res) => {
         }
 
         if (temperature_alarm) {
-          whereClauses.push(`(temperature >= 40 OR temperature <= 15)`);
+          whereClauses.push(`(temperature >= 40 OR temperature <= 10)`);
         }
         if (humidity_alarm) {
-          whereClauses.push(`(humidity >= 70 OR humidity <= 45)`);
+          whereClauses.push(`(humidity >= 75 OR humidity <= 25)`);
         }
         if (light_alarm) {
-          whereClauses.push(`light >= 100`);
+          whereClauses.push(`light >= 50`);
+        }
+        if (sensor_alarm) {
+          whereClauses.push(`motion == true`);
         }
 
         if (whereClauses.length > 0) {

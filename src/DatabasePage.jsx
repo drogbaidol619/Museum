@@ -137,7 +137,7 @@ function DatabasePage() {
                 />
                 <label htmlFor="light_alarm">Cảnh báo ánh sáng</label>
               </div>
-              {/* <div className="flex gap-4 p-2 bg-neutral-400">
+              <div className="flex gap-4 p-2 bg-neutral-400">
                 <input
                   type="checkbox"
                   name="sensor_alarm"
@@ -150,7 +150,7 @@ function DatabasePage() {
                   }
                 />
                 <label htmlFor="sensor_alarm">Cảnh báo tác động</label>
-              </div> */}
+              </div>
             </div>
 
             <button
@@ -176,6 +176,7 @@ function DatabasePage() {
                 <td className="border border-gray-400">Temperature</td>
                 <td className="border border-gray-400">Humidity</td>
                 <td className="border border-gray-400">Light</td>
+                <td className="border border-gray-400">Motion</td>
                 <td className="border border-gray-400">Ssid</td>
                 <td className="border border-gray-400">Time</td>
                 <td className="border border-gray-400">Date</td>
@@ -197,6 +198,9 @@ function DatabasePage() {
                   </td>
                   <td className="border border-gray-400">
                     {item.light !== null ? item.light : "null"}
+                  </td>
+                  <td className="border border-gray-400">
+                    {item.motion !== null ? item.motion : "null"}
                   </td>
                   <td className="border border-gray-400">
                     {item.ssid !== null ? item.ssid : "null"}
