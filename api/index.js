@@ -31,26 +31,11 @@ const mqttClient = mqtt.connect(
     username: "localmuseum",
     password: "Tranhoangminh123",
     rejectUnauthorized: false,
-    reconnectPeriod: 5000,
+    reconnectPeriod: 3000, // Giảm xuống 3 giây để kết nối lại nhanh hơn
     keepalive: 30,
-    connectTimeout: 30000,
+    connectTimeout: 20000, // Giảm xuống 20 giây
   }
 );
-
-// Khi kết nối lại
-mqttClient.on("reconnect", () => {
-  console.log("Reconnecting to MQTT broker at", new Date().toLocaleString());
-});
-
-// Khi mất kết nối
-mqttClient.on("offline", () => {
-  console.log("MQTT client is offline at", new Date().toLocaleString());
-});
-
-// Khi đóng kết nối
-mqttClient.on("close", () => {
-  console.log("MQTT connection closed at", new Date().toLocaleString());
-});
 
 // Xử lý tin nhắn từ MQTT
 mqttClient.on("message", async (topic, message) => {
@@ -80,7 +65,7 @@ mqttClient.on("message", async (topic, message) => {
     const { temperature, humidity, lux, motion, date, time } = data;
 
     await db.query(
-      `INSERT INTO "ESP8266_2" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO "${tableName}" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         temperature || null,
         humidity || null,
@@ -105,6 +90,31 @@ mqttClient.on("message", async (topic, message) => {
       error.message || error
     );
   }
+});
+
+// Xử lý lỗi MQTT
+mqttClient.on("error", (err) => {
+  console.error(
+    "MQTT connection error at",
+    new Date().toLocaleString(),
+    ":",
+    err.message || err
+  );
+});
+
+// Khi kết nối lại
+mqttClient.on("reconnect", () => {
+  console.log("Reconnecting to MQTT broker at", new Date().toLocaleString());
+});
+
+// Khi mất kết nối
+mqttClient.on("offline", () => {
+  console.log("MQTT client is offline at", new Date().toLocaleString());
+});
+
+// Khi đóng kết nối
+mqttClient.on("close", () => {
+  console.log("MQTT connection closed at", new Date().toLocaleString());
 });
 
 // Xử lý lỗi MQTT
