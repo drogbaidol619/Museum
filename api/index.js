@@ -26,11 +26,10 @@ const authenticateJWT = (req) => {
 
 // Cấu hình MQTT
 const mqttClient = mqtt.connect(
-  "f8994947e94c407aa51583f566806837.s1.eu.hivemq.cloud:8883",
+  "f8994947e94c407aa51583f566806837.s1.eu.hivemq.cloud",
   {
     username: "localmuseum",
     password: "Tranhoangminh123",
-    rejectUnauthorized: false, // Bỏ qua xác minh chứng chỉ SSL (dùng tạm)
   }
 );
 
