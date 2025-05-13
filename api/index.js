@@ -26,10 +26,14 @@ const authenticateJWT = (req) => {
 
 // Cấu hình MQTT
 const mqttClient = mqtt.connect(
-  "mqtt://f8994947e94c407aa51583f566806837.s1.eu.hivemq.cloud",
+  "mqtts://f8994947e94c407aa51583f566806837.s1.eu.hivemq.cloud:8883", // Sử dụng giao thức mqtts và cổng 8883
   {
     username: "localmuseum",
     password: "Tranhoangminh123",
+    rejectUnauthorized: false, // Bỏ qua xác minh chứng chỉ SSL (dùng tạm thời)
+    reconnectPeriod: 5000, // Tự động kết nối lại sau 5 giây
+    keepalive: 60, // Gửi gói keep-alive mỗi 60 giây
+    connectTimeout: 60000, // Thời gian chờ CONNACK là 60 giây
   }
 );
 
