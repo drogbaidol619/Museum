@@ -31,9 +31,9 @@ const mqttClient = mqtt.connect(
     username: "localmuseum",
     password: "Tranhoangminh123",
     rejectUnauthorized: false,
-    reconnectPeriod: 3000, // Giảm xuống 3 giây để kết nối lại nhanh hơn
-    keepalive: 30,
-    connectTimeout: 20000, // Giảm xuống 20 giây
+    reconnectPeriod: 10000, // Tăng lên 10 giây
+    keepalive: 15, // Giảm xuống 15 giây
+    connectTimeout: 20000,
   }
 );
 
