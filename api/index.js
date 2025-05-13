@@ -38,9 +38,9 @@ const mqttClient = mqtt.connect(
 mqttClient.on("connect", () => {
   console.log("Connected to MQTT broker");
   const topics = [
-    "museum/esp8266_1/data",
+    // "museum/esp8266_1/data",
     "museum/esp8266_2/data",
-    "museum/esp8266_3/data",
+    // "museum/esp8266_3/data",
   ];
   mqttClient.subscribe(topics, (err) => {
     if (err) {
