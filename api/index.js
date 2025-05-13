@@ -3,6 +3,7 @@ const { Client } = pg;
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
+import mqtt from "mqtt";
 
 const saltRounds = 10;
 const accessTokenSecret = process.env.JWT_SECRET;
@@ -22,6 +23,72 @@ const authenticateJWT = (req) => {
     return { error: { status: 401, message: "Failed to authenticate token." } };
   }
 };
+
+// Cấu hình MQTT
+const mqttClient = mqtt.connect(
+  "mqtts://f8994947e94c407aa51583f566806837.s1.eu.hivemq.cloud:8883",
+  {
+    username: "localmuseum",
+    password: "Tranhoangminh123",
+    rejectUnauthorized: false, // Bỏ qua xác minh chứng chỉ SSL (dùng tạm)
+  }
+);
+
+// Khi kết nối thành công với MQTT broker
+mqttClient.on("connect", () => {
+  console.log("Connected to MQTT broker");
+  mqttClient.subscribe("museum/esp8266_2/data", (err) => {
+    if (err) {
+      console.error("Subscription error:", err);
+    } else {
+      console.log("Subscribed to topic: museum/esp8266_1/data");
+    }
+  });
+});
+
+// Xử lý tin nhắn từ MQTT
+mqttClient.on("message", async (topic, message) => {
+  try {
+    const data = JSON.parse(message.toString());
+    const db = new Client({
+      user: process.env.PG_USER,
+      host: process.env.PG_HOST,
+      database: process.env.PG_DB,
+      password: process.env.PG_PASSWORD,
+      port: process.env.PG_PORT,
+    });
+    await db.connect();
+
+    // Trích xuất tên thiết bị từ topic (ví dụ: museum/esp8266_2/data -> esp8266_2)
+    const deviceId = topic.split("/")[1]; // Lấy phần thứ hai của topic (esp8266_2)
+    const tableName = deviceId.toUpperCase(); // Chuyển thành ESP8266_2
+
+    const { temperature, humidity, lux, motion, date, time } = data;
+
+    await db.query(
+      `INSERT INTO "${tableName}" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        temperature || null,
+        humidity || null,
+        lux || null,
+        motion || false,
+        ssid || "NULL", // Giả định SSID mặc định, có thể thay bằng dữ liệu thực từ ESP nếu có
+        time || new Date().toLocaleTimeString(),
+        date || new Date().toISOString().split("T")[0],
+        deviceId.toUpperCase(), // Sử dụng tên bảng làm tên thiết bị
+      ]
+    );
+    console.log(`Data saved to ${tableName} from MQTT:`, data);
+    await db.end();
+  } catch (error) {
+    console.error("Error processing MQTT message:", error);
+  }
+});
+
+// Xử lý lỗi MQTT
+mqttClient.on("error", (err) => {
+  console.error("MQTT connection error:", err);
+});
 
 export default async (req, res) => {
   // Thiết lập CORS (tương tự như middleware cors)
@@ -213,45 +280,47 @@ export default async (req, res) => {
         })
       );
       return res.json({ message: "Logout success." });
-    } else if (url === "/api/esp8266_1_update" && method === "POST") {
-      const apiKey = req.headers["x-api-key"]; // Lấy API Key từ header 'x-api-key'
-      if (!apiKey || apiKey !== process.env.ESP8266_API_KEY) {
-        return res
-          .status(401)
-          .json({ error: { status: 401, message: "Invalid API Key." } });
-      }
-      // Lấy dữ liệu từ body
-      const { temperature, humidity, light, motion, ssid, time, date, name } =
-        req.body;
+    }
+    // } else if (url === "/api/esp8266_1_update" && method === "POST") {
+    //   const apiKey = req.headers["x-api-key"]; // Lấy API Key từ header 'x-api-key'
+    //   if (!apiKey || apiKey !== process.env.ESP8266_API_KEY) {
+    //     return res
+    //       .status(401)
+    //       .json({ error: { status: 401, message: "Invalid API Key." } });
+    //   }
+    //   // Lấy dữ liệu từ body
+    //   const { temperature, humidity, light, motion, ssid, time, date, name } =
+    //     req.body;
 
-      try {
-        // Đảm bảo số lượng giá trị khớp với số cột
-        await db.query(
-          'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-          [
-            temperature || null,
-            humidity || null,
-            light || null,
-            motion || false,
-            ssid || "",
-            time || new Date().toLocaleTimeString(),
-            date || new Date().toISOString().split("T")[0],
-            name || "ESP8266_1",
-          ]
-        );
-        return res.json({ message: "Data saved to database" });
-      } catch (error) {
-        console.error("Detailed error: Database ", {
-          message: error.message,
-          query: error.query, // PostgreSQL sẽ trả về câu query bị lỗi
-          stack: error.stack,
-        });
-        return res.status(500).json({
-          message: "Database error",
-          detail: error.message,
-        });
-      }
-    } else if (url === "/api/extract" && method === "POST") {
+    //   try {
+    //     // Đảm bảo số lượng giá trị khớp với số cột
+    //     await db.query(
+    //       'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+    //       [
+    //         temperature || null,
+    //         humidity || null,
+    //         light || null,
+    //         motion || false,
+    //         ssid || "",
+    //         time || new Date().toLocaleTimeString(),
+    //         date || new Date().toISOString().split("T")[0],
+    //         name || "ESP8266_1",
+    //       ]
+    //     );
+    //     return res.json({ message: "Data saved to database" });
+    //   } catch (error) {
+    //     console.error("Detailed error: Database ", {
+    //       message: error.message,
+    //       query: error.query, // PostgreSQL sẽ trả về câu query bị lỗi
+    //       stack: error.stack,
+    //     });
+    //     return res.status(500).json({
+    //       message: "Database error",
+    //       detail: error.message,
+    //     });
+    //   }
+    // }
+    else if (url === "/api/extract" && method === "POST") {
       const {
         deviceSelect,
         startDate,
