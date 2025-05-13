@@ -37,11 +37,16 @@ const mqttClient = mqtt.connect(
 // Khi kết nối thành công với MQTT broker
 mqttClient.on("connect", () => {
   console.log("Connected to MQTT broker");
-  mqttClient.subscribe("museum/esp8266_2/data", (err) => {
+  const topics = [
+    "museum/esp8266_1/data",
+    "museum/esp8266_2/data",
+    "museum/esp8266_3/data",
+  ];
+  mqttClient.subscribe(topics, (err) => {
     if (err) {
       console.error("Subscription error:", err);
     } else {
-      console.log("Subscribed to topic: museum/esp8266_1/data");
+      console.log("Subscribed to topics:", topics.join(", "));
     }
   });
 });
@@ -62,6 +67,7 @@ mqttClient.on("message", async (topic, message) => {
     // Trích xuất tên thiết bị từ topic (ví dụ: museum/esp8266_2/data -> esp8266_2)
     const deviceId = topic.split("/")[1]; // Lấy phần thứ hai của topic (esp8266_2)
     const tableName = deviceId.toUpperCase(); // Chuyển thành ESP8266_2
+    const name = tableName; // Biến name cùng tên với bảng
 
     const { temperature, humidity, lux, motion, date, time } = data;
 
@@ -72,10 +78,10 @@ mqttClient.on("message", async (topic, message) => {
         humidity || null,
         lux || null,
         motion || false,
-        ssid || "NULL", // Giả định SSID mặc định, có thể thay bằng dữ liệu thực từ ESP nếu có
+        ssid || "NULL", // Sử dụng ssid từ dữ liệu ESP nếu có
         time || new Date().toLocaleTimeString(),
         date || new Date().toISOString().split("T")[0],
-        deviceId.toUpperCase(), // Sử dụng tên bảng làm tên thiết bị
+        name,
       ]
     );
     console.log(`Data saved to ${tableName} from MQTT:`, data);
