@@ -25,22 +25,17 @@ const authenticateJWT = (req) => {
 };
 
 // Khi kết nối thành công với MQTT broker
-mqttClient.on("connect", () => {
-  console.log("Connected to MQTT broker at", new Date().toLocaleString());
-  const topics = ["museum/esp8266_2/data"];
-  mqttClient.subscribe(topics, { qos: 1 }, (err) => {
-    if (err) {
-      console.error(
-        "Subscription error at",
-        new Date().toLocaleString(),
-        ":",
-        err.message || err
-      );
-    } else {
-      console.log("Subscribed to topics:", topics.join(", "));
-    }
-  });
-});
+const mqttClient = mqtt.connect(
+  "mqtts://f8994947e94c407aa51583f566806837.s1.eu.hivemq.cloud:8883",
+  {
+    username: "localmuseum",
+    password: "Tranhoangminh123",
+    rejectUnauthorized: false,
+    reconnectPeriod: 5000,
+    keepalive: 30,
+    connectTimeout: 30000,
+  }
+);
 
 // Khi kết nối lại
 mqttClient.on("reconnect", () => {
@@ -85,7 +80,7 @@ mqttClient.on("message", async (topic, message) => {
     const { temperature, humidity, lux, motion, date, time } = data;
 
     await db.query(
-      `INSERT INTO "${tableName}" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO "ESP8266_2" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         temperature || null,
         humidity || null,
