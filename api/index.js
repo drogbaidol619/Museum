@@ -24,40 +24,51 @@ const authenticateJWT = (req) => {
   }
 };
 
-// Cấu hình MQTT
-const mqttClient = mqtt.connect(
-  "mqtts://f8994947e94c407aa51583f566806837.s1.eu.hivemq.cloud:8883", // Sử dụng giao thức mqtts và cổng 8883
-  {
-    username: "localmuseum",
-    password: "Tranhoangminh123",
-    rejectUnauthorized: false, // Bỏ qua xác minh chứng chỉ SSL (dùng tạm thời)
-    reconnectPeriod: 5000, // Tự động kết nối lại sau 5 giây
-    keepalive: 60, // Gửi gói keep-alive mỗi 60 giây
-    connectTimeout: 60000, // Thời gian chờ CONNACK là 60 giây
-  }
-);
-
 // Khi kết nối thành công với MQTT broker
 mqttClient.on("connect", () => {
-  console.log("Connected to MQTT broker");
-  const topics = [
-    // "museum/esp8266_1/data",
-    "museum/esp8266_2/data",
-    // "museum/esp8266_3/data",
-  ];
-  mqttClient.subscribe(topics, (err) => {
+  console.log("Connected to MQTT broker at", new Date().toLocaleString());
+  const topics = ["museum/esp8266_2/data"];
+  mqttClient.subscribe(topics, { qos: 1 }, (err) => {
     if (err) {
-      console.error("Subscription error:", err);
+      console.error(
+        "Subscription error at",
+        new Date().toLocaleString(),
+        ":",
+        err.message || err
+      );
     } else {
       console.log("Subscribed to topics:", topics.join(", "));
     }
   });
 });
 
+// Khi kết nối lại
+mqttClient.on("reconnect", () => {
+  console.log("Reconnecting to MQTT broker at", new Date().toLocaleString());
+});
+
+// Khi mất kết nối
+mqttClient.on("offline", () => {
+  console.log("MQTT client is offline at", new Date().toLocaleString());
+});
+
+// Khi đóng kết nối
+mqttClient.on("close", () => {
+  console.log("MQTT connection closed at", new Date().toLocaleString());
+});
+
 // Xử lý tin nhắn từ MQTT
 mqttClient.on("message", async (topic, message) => {
+  console.log(
+    `Received raw message on topic ${topic} at ${new Date().toLocaleString()}:`,
+    message.toString()
+  );
   try {
     const data = JSON.parse(message.toString());
+    console.log(
+      `Parsed data from ${topic} at ${new Date().toLocaleString()}:`,
+      data
+    );
     const db = new Client({
       user: process.env.PG_USER,
       host: process.env.PG_HOST,
@@ -67,10 +78,9 @@ mqttClient.on("message", async (topic, message) => {
     });
     await db.connect();
 
-    // Trích xuất tên thiết bị từ topic (ví dụ: museum/esp8266_2/data -> esp8266_2)
-    const deviceId = topic.split("/")[1]; // Lấy phần thứ hai của topic (esp8266_2)
-    const tableName = deviceId.toUpperCase(); // Chuyển thành ESP8266_2
-    const name = tableName; // Biến name cùng tên với bảng
+    const deviceId = topic.split("/")[1];
+    const tableName = deviceId.toUpperCase();
+    const name = tableName;
 
     const { temperature, humidity, lux, motion, date, time } = data;
 
@@ -81,22 +91,35 @@ mqttClient.on("message", async (topic, message) => {
         humidity || null,
         lux || null,
         motion || false,
-        ssid || "NULL", // Sử dụng ssid từ dữ liệu ESP nếu có
+        data.ssid || "NULL",
         time || new Date().toLocaleTimeString(),
         date || new Date().toISOString().split("T")[0],
         name,
       ]
     );
-    console.log(`Data saved to ${tableName} from MQTT:`, data);
+    console.log(
+      `Data saved to ${tableName} from MQTT at ${new Date().toLocaleString()}:`,
+      data
+    );
     await db.end();
   } catch (error) {
-    console.error("Error processing MQTT message:", error);
+    console.error(
+      "Error processing MQTT message at",
+      new Date().toLocaleString(),
+      ":",
+      error.message || error
+    );
   }
 });
 
 // Xử lý lỗi MQTT
 mqttClient.on("error", (err) => {
-  console.error("MQTT connection error:", err);
+  console.error(
+    "MQTT connection error at",
+    new Date().toLocaleString(),
+    ":",
+    err.message || err
+  );
 });
 
 export default async (req, res) => {
