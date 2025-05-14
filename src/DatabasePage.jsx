@@ -75,8 +75,7 @@ function DatabasePage() {
           motion_alarm: checkBox.motion_alarm,
         },
         {
-          withCredentials: true,
-          responseType: "blob", // Thêm responseType: "blob" để nhận file
+          responseType: "blob", // Chỉ giữ responseType: "blob" để nhận file
         }
       );
 
