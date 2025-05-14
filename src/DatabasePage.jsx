@@ -64,7 +64,7 @@ function DatabasePage() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "/api/excel",
+        "/api/csv",
         {
           deviceSelect: device, // tên device
           startDate: day.start, // ngày trích xuất
@@ -76,15 +76,24 @@ function DatabasePage() {
         },
         {
           withCredentials: true,
+          responseType: "blob", // Thêm responseType: "blob" để nhận file
         }
       );
-      const data = response.data;
-      alert(
-        `File CSV đã được lưu tại: ${
-          data.filePath || "D:\\museum"
-        }. Vui lòng kiểm tra!`
+
+      // Tạo URL từ blob và tự động tải file
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: "text/csv" })
       );
-      console.log(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${device}_${day.start}_${day.end}.csv`); // Tên file
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      console.log("File CSV downloaded successfully");
+      alert("File CSV đã được tải xuống thành công!");
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình xuất CSV. Vui lòng thử lại.");

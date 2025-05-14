@@ -307,7 +307,12 @@ export default async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: "Lỗi trích xuất dữ liệu." });
       }
-    } else if (url === "/api/excel" && method === "POST") {
+    } else if (url === "/api/csv" && method === "POST") {
+      const authResult = authenticateJWT(req);
+      if (authResult.error) {
+        return res.status(authResult.error.status).json(authResult.error);
+      }
+
       const {
         deviceSelect,
         startDate,
@@ -319,9 +324,11 @@ export default async (req, res) => {
       } = req.body;
 
       if (!deviceSelect || !startDate || !endDate) {
-        return res.status(400).json({
-          message: "Thiếu thông tin: deviceSelect, startDate hoặc endDate.",
-        });
+        return res
+          .status(400)
+          .json({
+            message: "Thiếu thông tin: deviceSelect, startDate hoặc endDate.",
+          });
       }
 
       try {
@@ -363,19 +370,8 @@ export default async (req, res) => {
             .json({ message: "Không có dữ liệu để xuất CSV." });
         }
 
-        // Đường dẫn lưu file
-        const outputDir = "D:\\museum";
-        if (!fs.existsSync(outputDir)) {
-          fs.mkdirSync(outputDir, { recursive: true });
-        }
-
-        // Tạo tên file: deviceSelect_startDate_endDate.csv
-        const fileName = `${deviceSelect}_${startDate}_${endDate}.csv`;
-        const filePath = path.join(outputDir, fileName);
-
-        // Tạo CSV writer
-        const csvWriter = createObjectCsvWriter({
-          path: filePath,
+        // Tạo CSV stringifier
+        const csvStringifier = createObjectCsvStringifier({
           header: [
             { id: "id", title: "ID" },
             { id: "temperature", title: "Temperature (°C)" },
@@ -388,7 +384,7 @@ export default async (req, res) => {
           ],
         });
 
-        // Chuẩn bị dữ liệu để viết vào CSV
+        // Chuẩn bị dữ liệu để tạo CSV
         const csvData = data.map((row) => ({
           id: row.id,
           temperature: row.temperature,
@@ -400,14 +396,23 @@ export default async (req, res) => {
           name: row.name,
         }));
 
-        // Ghi dữ liệu vào file CSV
-        await csvWriter.writeRecords(csvData);
-        console.log(`File CSV saved at: ${filePath}`);
+        // Tạo nội dung CSV dưới dạng chuỗi
+        const csvContent =
+          csvStringifier.getHeaderString() +
+          csvStringifier.stringifyRecords(csvData);
 
-        // Trả về thông báo thành công (vì file đã được lưu local)
-        return res
-          .status(200)
-          .json({ message: "File CSV đã được lưu tại D:\\museum", filePath });
+        // Tạo tên file: deviceSelect_startDate_endDate.csv
+        const fileName = `${deviceSelect}_${startDate}_${endDate}.csv`;
+
+        // Thiết lập header để tải file
+        res.setHeader("Content-Type", "text/csv");
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename="${fileName}"`
+        );
+
+        // Gửi nội dung CSV về client
+        return res.send(csvContent);
       } catch (error) {
         console.error("Error generating CSV file:", error);
         return res.status(500).json({ message: "Lỗi khi xuất file CSV." });
