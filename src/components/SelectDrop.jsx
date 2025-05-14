@@ -17,7 +17,7 @@ function SelectDrop(props) {
         onClick={handleShow}
         className="inline-flex w-full rounded-md p-3 text-base font-semibold justify-between bg-white text-gray-900 hover:bg-gray-50 roboto cursor-pointer select-none"
       >
-        {select !== "null" ? select : <p>Lựa chọn toàn bộ thiết bị</p>}
+        {select !== "null" ? select : <p>Lựa chọn thiết bị</p>}
         <i className="bi bi-chevron-down"></i>
       </button>
       <div

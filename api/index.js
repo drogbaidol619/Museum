@@ -291,7 +291,7 @@ export default async (req, res) => {
           whereClauses.push(`(humidity >= 75 OR humidity <= 25)`);
         }
         if (light_alarm) {
-          whereClauses.push(`light >= 50`);
+          whereClauses.push(`light <= 50`);
         }
         if (motion_alarm) {
           whereClauses.push(`motion = true`);
@@ -344,7 +344,7 @@ export default async (req, res) => {
           whereClauses.push(`(humidity >= 75 OR humidity <= 25)`);
         }
         if (light_alarm) {
-          whereClauses.push(`light >= 50`);
+          whereClauses.push(`light <= 50`);
         }
         if (motion_alarm) {
           whereClauses.push(`motion = true`);
