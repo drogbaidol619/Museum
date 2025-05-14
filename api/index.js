@@ -264,7 +264,7 @@ export default async (req, res) => {
         temperature_alarm,
         humidity_alarm,
         light_alarm,
-        sensor_alarm,
+        motion_alarm,
       } = req.body;
       try {
         const tableName = deviceSelect;
@@ -293,58 +293,7 @@ export default async (req, res) => {
         if (light_alarm) {
           whereClauses.push(`light >= 50`);
         }
-        if (sensor_alarm) {
-          whereClauses.push(`motion == true`);
-        }
-
-        if (whereClauses.length > 0) {
-          query += ` WHERE ${whereClauses.join(" AND ")}`;
-        }
-
-        const result = await db.query(query, queryParams);
-        return res.json(result.rows);
-      } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Lỗi trích xuất dữ liệu." });
-      }
-    } else if (url === "/api/extract" && method === "POST") {
-      const {
-        deviceSelect,
-        startDate,
-        endDate,
-        temperature_alarm,
-        humidity_alarm,
-        light_alarm,
-        sensor_alarm,
-      } = req.body;
-      try {
-        const tableName = deviceSelect;
-        let query = `SELECT * FROM "${tableName}"`;
-        const queryParams = [];
-        let whereClauses = [];
-
-        if (startDate && endDate) {
-          whereClauses.push(
-            `date >= $${queryParams.push(
-              startDate
-            )} AND date <= $${queryParams.push(endDate)}`
-          );
-        } else if (startDate) {
-          whereClauses.push(`date >= $${queryParams.push(startDate)}`);
-        } else if (endDate) {
-          whereClauses.push(`date <= $${queryParams.push(endDate)}`);
-        }
-
-        if (temperature_alarm) {
-          whereClauses.push(`(temperature >= 40 OR temperature <= 10)`);
-        }
-        if (humidity_alarm) {
-          whereClauses.push(`(humidity >= 75 OR humidity <= 25)`);
-        }
-        if (light_alarm) {
-          whereClauses.push(`light >= 50`);
-        }
-        if (sensor_alarm) {
+        if (motion_alarm) {
           whereClauses.push(`motion = true`);
         }
 
@@ -358,7 +307,7 @@ export default async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: "Lỗi trích xuất dữ liệu." });
       }
-    } else if (url === "/api/csv" && method === "POST") {
+    } else if (url === "/api/excel" && method === "POST") {
       const authResult = authenticateJWT(req);
       if (authResult.error) {
         return res.status(authResult.error.status).json(authResult.error);

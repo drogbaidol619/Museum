@@ -199,7 +199,7 @@ function DatabasePage() {
               }}
               className="flex justify-center items-center rounded-md bg-green-500 text-white roboto text-xl mt-10 h-10 p-2"
             >
-              Trích xuất dữ liệu
+              Xuất excel
             </button>
           </form>
         </div>
