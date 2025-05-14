@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import cookie from "cookie";
 import fs from "fs";
 import path from "path";
-import { createObjectCsvWriter } from "csv-writer";
+import { createObjectCsvStringifier } from "csv-writer";
 
 const saltRounds = 10;
 const accessTokenSecret = process.env.JWT_SECRET;
@@ -319,11 +319,9 @@ export default async (req, res) => {
       } = req.body;
 
       if (!deviceSelect || !startDate || !endDate) {
-        return res
-          .status(400)
-          .json({
-            message: "Thiếu thông tin: deviceSelect, startDate hoặc endDate.",
-          });
+        return res.status(400).json({
+          message: "Thiếu thông tin: deviceSelect, startDate hoặc endDate.",
+        });
       }
 
       try {
