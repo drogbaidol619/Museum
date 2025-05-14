@@ -308,11 +308,6 @@ export default async (req, res) => {
         return res.status(500).json({ error: "Lỗi trích xuất dữ liệu." });
       }
     } else if (url === "/api/excel" && method === "POST") {
-      const authResult = authenticateJWT(req);
-      if (authResult.error) {
-        return res.status(authResult.error.status).json(authResult.error);
-      }
-
       const {
         deviceSelect,
         startDate,
