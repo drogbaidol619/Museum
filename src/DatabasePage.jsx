@@ -23,7 +23,7 @@ function DatabasePage() {
     temperature_alarm: false,
     humidity_alarm: false,
     light_alarm: false,
-    //sensor_alarm: false,
+    //motion_alarm: false,
   });
 
   const [device, setDevice] = useState("null");
@@ -45,6 +45,7 @@ function DatabasePage() {
           temperature_alarm: checkBox.temperature_alarm,
           humidity_alarm: checkBox.humidity_alarm,
           light_alarm: checkBox.light_alarm,
+          motion_alarm: checkBox.motion_alarm,
         },
         {
           withCredentials: true,
@@ -56,6 +57,37 @@ function DatabasePage() {
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình trích xuất. Vui lòng thử lại.");
+    }
+  };
+
+  const handleExcel = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "/api/excel",
+        {
+          deviceSelect: device, // tên device
+          startDate: day.start, // ngày trích xuất
+          endDate: day.end, // ngày kết thúc trích xuất
+          temperature_alarm: checkBox.temperature_alarm,
+          humidity_alarm: checkBox.humidity_alarm,
+          light_alarm: checkBox.light_alarm,
+          motion_alarm: checkBox.motion_alarm,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      const data = response.data;
+      alert(
+        `File CSV đã được lưu tại: ${
+          data.filePath || "D:\\museum"
+        }. Vui lòng kiểm tra!`
+      );
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+      alert("Đã xảy ra lỗi trong quá trình xuất CSV. Vui lòng thử lại.");
     }
   };
 
@@ -140,24 +172,32 @@ function DatabasePage() {
               <div className="flex gap-4 p-2 bg-neutral-400">
                 <input
                   type="checkbox"
-                  name="sensor_alarm"
-                  checked={checkBox.sensor_alarm}
+                  name="motion_alarm"
+                  checked={checkBox.motion_alarm}
                   onChange={(e) =>
                     setCheckBox({
                       ...checkBox,
-                      sensor_alarm: e.target.checked,
+                      motion_alarm: e.target.checked,
                     })
                   }
                 />
-                <label htmlFor="sensor_alarm">Cảnh báo tác động</label>
+                <label htmlFor="motion_alarm">Cảnh báo tác động</label>
               </div>
             </div>
-
+            {/*Nút trích xuất dữ liệu */}
             <button
               onClick={(e) => {
                 handleExtract(e);
               }}
               className="flex justify-center items-center rounded-md bg-blue-600 text-white roboto text-xl mt-10 h-10 p-2"
+            >
+              Trích xuất dữ liệu
+            </button>
+            <button
+              onClick={(e) => {
+                handleExcel(e);
+              }}
+              className="flex justify-center items-center rounded-md bg-green-500 text-white roboto text-xl mt-10 h-10 p-2"
             >
               Trích xuất dữ liệu
             </button>
