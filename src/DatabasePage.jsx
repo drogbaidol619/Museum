@@ -6,6 +6,8 @@ import BackToTop from "./components/BackToTop";
 import SelectDrop from "./components/SelectDrop";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
