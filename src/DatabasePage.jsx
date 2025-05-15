@@ -383,17 +383,17 @@ function DatabasePage() {
           {data.length > 0 && (
             <div className="mt-10">
               <h2 className="text-2xl font-bold mb-5">Biểu đồ dữ liệu</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="chart-container" style={{ height: "300px" }}>
+              <div className="flex flex-row gap-5 overflow-x-auto">
+                <div className="chart-container w-full h-full">
                   <Line data={temperatureData} options={chartOptions} />
                 </div>
-                <div className="chart-container" style={{ height: "300px" }}>
+                <div className="chart-container w-full h-full">
                   <Line data={humidityData} options={chartOptions} />
                 </div>
-                <div className="chart-container" style={{ height: "300px" }}>
+                <div className="chart-container w-full h-full">
                   <Line data={lightData} options={chartOptions} />
                 </div>
-                <div className="chart-container" style={{ height: "300px" }}>
+                <div className="chart-container w-full h-full">
                   <Line data={motionData} options={chartOptions} />
                 </div>
               </div>
