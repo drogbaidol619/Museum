@@ -6,6 +6,30 @@ import BackToTop from "./components/BackToTop";
 import SelectDrop from "./components/SelectDrop";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
+
+// Đăng ký các thành phần của Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const scrollToTop = (event) => {
   window.scrollTo({
@@ -23,7 +47,7 @@ function DatabasePage() {
     temperature_alarm: false,
     humidity_alarm: false,
     light_alarm: false,
-    //motion_alarm: false,
+    motion_alarm: false,
   });
 
   const [device, setDevice] = useState("null");
@@ -97,6 +121,94 @@ function DatabasePage() {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình xuất CSV. Vui lòng thử lại.");
     }
+  };
+
+  // Chuẩn bị dữ liệu cho biểu đồ
+  const labels = data.map((item) => `${item.date} ${item.time}`); // Trục x: thời gian
+
+  const temperatureData = {
+    labels,
+    datasets: [
+      {
+        label: "Nhiệt độ (°C)",
+        data: data.map((item) => item.temperature),
+        fill: true,
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        tension: 0.3,
+      },
+    ],
+  };
+
+  const humidityData = {
+    labels,
+    datasets: [
+      {
+        label: "Độ ẩm (%)",
+        data: data.map((item) => item.humidity),
+        fill: true,
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        tension: 0.3,
+      },
+    ],
+  };
+
+  const lightData = {
+    labels,
+    datasets: [
+      {
+        label: "Ánh sáng (lux)",
+        data: data.map((item) => item.light),
+        fill: true,
+        backgroundColor: "rgba(255, 206, 86, 0.2)",
+        borderColor: "rgba(255, 206, 86, 1)",
+        tension: 0.3,
+      },
+    ],
+  };
+
+  const motionData = {
+    labels,
+    datasets: [
+      {
+        label: "Chuyển động",
+        data: data.map((item) => (item.motion ? 1 : 0)), // Chuyển thành 1/0 để vẽ
+        fill: true,
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        tension: 0.3,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: (ctx) => ctx.chart.data.datasets[0].label,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Thời gian",
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: (ctx) => ctx.chart.data.datasets[0].label,
+        },
+      },
+    },
   };
 
   return (
@@ -267,6 +379,26 @@ function DatabasePage() {
               ))}
             </tbody>
           </table>
+          {/* Biểu đồ */}
+          {data.length > 0 && (
+            <div className="mt-10">
+              <h2 className="text-2xl font-bold mb-5">Biểu đồ dữ liệu</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="chart-container" style={{ height: "300px" }}>
+                  <Line data={temperatureData} options={chartOptions} />
+                </div>
+                <div className="chart-container" style={{ height: "300px" }}>
+                  <Line data={humidityData} options={chartOptions} />
+                </div>
+                <div className="chart-container" style={{ height: "300px" }}>
+                  <Line data={lightData} options={chartOptions} />
+                </div>
+                <div className="chart-container" style={{ height: "300px" }}>
+                  <Line data={motionData} options={chartOptions} />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <Footer />
