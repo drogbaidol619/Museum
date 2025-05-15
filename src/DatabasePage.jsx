@@ -123,6 +123,45 @@ function DatabasePage() {
     }
   };
 
+  const handleExportCharts = async (e) => {
+    e.preventDefault();
+    try {
+      const pdf = new jsPDF("p", "mm", "a4");
+      const chartIds = [
+        "temperatureChart",
+        "humidityChart",
+        "lightChart",
+        "motionChart",
+      ];
+      let yPosition = 10;
+
+      for (let i = 0; i < chartIds.length; i++) {
+        const chartElement = document.getElementById(chartIds[i]);
+        if (chartElement) {
+          const canvas = await html2canvas(chartElement, { scale: 2 });
+          const imgData = canvas.toDataURL("image/png");
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+          pdf.addImage(imgData, "PNG", 10, yPosition, pdfWidth, pdfHeight);
+          yPosition += pdfHeight + 10;
+
+          if (yPosition > 250 && i < chartIds.length - 1) {
+            pdf.addPage();
+            yPosition = 10;
+          }
+        }
+      }
+
+      pdf.save(`${device}_charts_${day.start}_${day.end}.pdf`);
+      alert("Báo cáo biểu đồ đã được tải xuống thành công!");
+    } catch (error) {
+      console.error(error);
+      alert("Đã xảy ra lỗi trong quá trình xuất báo cáo. Vui lòng thử lại.");
+    }
+  };
+
   // Chuẩn bị dữ liệu cho biểu đồ
   const labels = data.map((item) => `${item.date} ${item.time}`); // Trục x: thời gian
 
@@ -321,6 +360,14 @@ function DatabasePage() {
             >
               Xuất excel
             </button>
+            <button
+              onClick={(e) => {
+                handleExportCharts(e);
+              }}
+              className="flex justify-center items-center rounded-md bg-green-500 text-white roboto text-xl mt-10 h-10 p-2"
+            >
+              Xuất báo cáo biểu đồ
+            </button>
           </form>
         </div>
         {/*Khung table*/}
@@ -384,16 +431,28 @@ function DatabasePage() {
             <div className="mt-10">
               <h2 className="text-2xl font-bold mb-5">Biểu đồ dữ liệu</h2>
               <div className="flex flex-col gap-5 overflow-x-auto">
-                <div className="chart-container w-full min-h-[500px]">
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="temperatureChart"
+                >
                   <Line data={temperatureData} options={chartOptions} />
                 </div>
-                <div className="chart-container w-full min-h-[500px]">
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="humidityChart"
+                >
                   <Line data={humidityData} options={chartOptions} />
                 </div>
-                <div className="chart-container w-full min-h-[500px]">
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="lightChart"
+                >
                   <Line data={lightData} options={chartOptions} />
                 </div>
-                <div className="chart-container w-full min-h-[500px]">
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="motionChart"
+                >
                   <Line data={motionData} options={chartOptions} />
                 </div>
               </div>
