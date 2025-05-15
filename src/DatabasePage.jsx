@@ -381,7 +381,6 @@ function DatabasePage() {
             >
               <tr>
                 <td className="border border-gray-400">Id</td>
-                <td className="border border-gray-400">Name</td>
                 <td className="border border-gray-400">Temperature</td>
                 <td className="border border-gray-400">Humidity</td>
                 <td className="border border-gray-400">Light</td>

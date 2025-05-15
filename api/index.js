@@ -373,7 +373,6 @@ export default async (req, res) => {
             { id: "motion", title: "Motion" },
             { id: "time", title: "Time" },
             { id: "date", title: "Date" },
-            { id: "name", title: "Name" },
           ],
         });
 
@@ -386,7 +385,6 @@ export default async (req, res) => {
           motion: row.motion ? "Yes" : "No",
           time: row.time,
           date: row.date,
-          name: row.name,
         }));
 
         // Tạo nội dung CSV dưới dạng chuỗi
