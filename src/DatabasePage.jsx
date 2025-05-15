@@ -384,16 +384,16 @@ function DatabasePage() {
             <div className="mt-10">
               <h2 className="text-2xl font-bold mb-5">Biểu đồ dữ liệu</h2>
               <div className="flex flex-col gap-5 overflow-x-auto">
-                <div className="chart-container w-full h-full">
+                <div className="chart-container w-full min-h-[500px]">
                   <Line data={temperatureData} options={chartOptions} />
                 </div>
-                <div className="chart-container w-full h-full">
+                <div className="chart-container w-full min-h-[500px]">
                   <Line data={humidityData} options={chartOptions} />
                 </div>
-                <div className="chart-container w-full h-full">
+                <div className="chart-container w-full min-h-[500px]">
                   <Line data={lightData} options={chartOptions} />
                 </div>
-                <div className="chart-container w-full h-full">
+                <div className="chart-container w-full min-h-[500px]">
                   <Line data={motionData} options={chartOptions} />
                 </div>
               </div>
