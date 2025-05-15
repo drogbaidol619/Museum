@@ -397,7 +397,6 @@ function DatabasePage() {
               {data.map((item, index) => (
                 <tr key={index}>
                   <td className="border border-gray-400">{index}</td>
-                  <td className="border border-gray-400">{item.name}</td>
                   <td className="border border-gray-400">
                     {item.temperature !== null ? item.temperature : "null"}
                   </td>
