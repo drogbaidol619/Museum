@@ -383,7 +383,7 @@ function DatabasePage() {
           {data.length > 0 && (
             <div className="mt-10">
               <h2 className="text-2xl font-bold mb-5">Biểu đồ dữ liệu</h2>
-              <div className="flex flex-row gap-5 overflow-x-auto">
+              <div className="flex flex-col gap-5 overflow-x-auto">
                 <div className="chart-container w-full h-full">
                   <Line data={temperatureData} options={chartOptions} />
                 </div>
