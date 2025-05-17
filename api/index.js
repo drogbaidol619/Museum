@@ -288,7 +288,6 @@ export default async (req, res) => {
         const tableName = deviceSelect;
         let query = `
       SELECT 
-        id,
         temperature,
         humidity,
         light,
