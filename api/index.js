@@ -286,7 +286,18 @@ export default async (req, res) => {
       } = req.body;
       try {
         const tableName = deviceSelect;
-        let query = `SELECT * FROM "${tableName}"`;
+        let query = `
+      SELECT 
+        id,
+        temperature,
+        humidity,
+        light,
+        motion,
+        ssid,
+        TO_CHAR(date, 'YYYY-MM-DD') as date,
+        TO_CHAR(time, 'HH24:MI:SS') as time
+      FROM "${tableName}"
+    `;
         const queryParams = [];
         let whereClauses = [];
 
@@ -318,7 +329,7 @@ export default async (req, res) => {
         if (whereClauses.length > 0) {
           query += ` WHERE ${whereClauses.join(" AND ")}`;
         }
-        query += ` ORDER BY date, time`; // Sắp xếp theo thời gian
+        query += ` ORDER BY date, time`;
 
         const result = await db.query(query, queryParams);
         const data = result.rows;
@@ -329,7 +340,6 @@ export default async (req, res) => {
             .json({ error: "Không có dữ liệu để trích xuất." });
         }
 
-        // Tính toán các giá trị cho nhiệt độ
         const temperatures = data
           .map((item) => item.temperature)
           .filter((val) => val !== null);
@@ -341,7 +351,6 @@ export default async (req, res) => {
             : 0;
         const totalPoints = temperatures.length;
 
-        // Tìm thời điểm của giá trị lớn nhất và nhỏ nhất
         const maxTempRecord = data.find((item) => item.temperature === maxTemp);
         const minTempRecord = data.find((item) => item.temperature === minTemp);
         const maxTempTime = maxTempRecord
@@ -351,11 +360,14 @@ export default async (req, res) => {
           ? `${minTempRecord.date} ${minTempRecord.time}`
           : "N/A";
 
-        // Thời điểm ghi nhận sớm nhất và muộn nhất
         const firstRecord =
-          data.length > 0 ? `${data[0].date} ${data[0].time}` : "N/A";
+          data.length > 0 && data[0].date && data[0].time
+            ? `${data[0].date} ${data[0].time}`
+            : "N/A";
         const lastRecord =
-          data.length > 0
+          data.length > 0 &&
+          data[data.length - 1].date &&
+          data[data.length - 1].time
             ? `${data[data.length - 1].date} ${data[data.length - 1].time}`
             : "N/A";
 
@@ -364,31 +376,24 @@ export default async (req, res) => {
           const startMoment = moment(firstRecord, "YYYY-MM-DD HH:mm:ss");
           const endMoment = moment(lastRecord, "YYYY-MM-DD HH:mm:ss");
           if (startMoment.isValid() && endMoment.isValid()) {
-            const diffInMinutes = endMoment.diff(startMoment, "minutes");
-            if (diffInMinutes >= 60) {
-              const hours = Math.floor(diffInMinutes / 60);
-              const minutes = diffInMinutes % 60;
-              elapsedTime = `${hours} hours ${minutes} minutes`;
-            } else {
-              elapsedTime = `${diffInMinutes} minutes`;
-            }
+            const diffInSeconds = endMoment.diff(startMoment, "seconds");
+            const minutes = Math.floor(diffInSeconds / 60);
+            const seconds = diffInSeconds % 60;
+            elapsedTime = `${minutes} minutes ${seconds} seconds`;
           }
         }
 
-        // Xác định Grouping Interval
         const { interval: groupingInterval } = getGroupingInterval(
           startDate,
           endDate
         );
 
-        // Trả về dữ liệu cùng với các giá trị tính toán
-        const formattedData = data.map((item) => ({
-          ...item,
-          date: moment(item.date).format("YYYY-MM-DD"),
-          time: moment(item.time, "HH:mm:ss").format("HH:mm:ss"),
-        }));
+        console.log("First Record:", firstRecord);
+        console.log("Last Record:", lastRecord);
+        console.log("Elapsed Time:", elapsedTime);
+
         return res.json({
-          data: formattedData,
+          data,
           temperatureStats: {
             maxTemp,
             maxTempTime,
