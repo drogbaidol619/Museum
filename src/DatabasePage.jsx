@@ -458,36 +458,38 @@ function DatabasePage() {
                 <div className="grid grid-cols-3 gap-2 text-black">
                   <div className="col-span-1 grid grid-cols-2 rounded-md p-5">
                     <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
-                      <p>Giá trị lớn nhất</p>
-                      <p>Giá trị nhỏ nhất</p>
-                      <p>Giá trị trung bình</p>
-                      <p>Tổng các điểm giá trị</p>
-                      <p>Thời điểm ghi nhận sớm nhất</p>
-                      <p>Thời điểm ghi nhận muộn nhất</p>
-                      <p>Khoảng thời gian ghi nhận</p>
-                      <p>Độ chia thời gian</p>
+                      <p className="h-fit">Giá trị lớn nhất</p>
+                      <p className="h-fit">Giá trị nhỏ nhất</p>
+                      <p className="h-fit">Giá trị trung bình</p>
+                      <p className="h-fit">Tổng các điểm giá trị</p>
+                      <p className="h-fit">Thời điểm ghi nhận sớm nhất</p>
+                      <p className="h-fit">Thời điểm ghi nhận muộn nhất</p>
+                      <p className="h-fit">Khoảng thời gian ghi nhận</p>
+                      <p className="h-fit">Độ chia thời gian</p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p>
+                      <p className="h-fit">
                         {temperatureStats.maxTemp !== null
                           ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
                           : "N/A"}
                       </p>
-                      <p>
+                      <p className="h-fit">
                         {temperatureStats.minTemp !== null
                           ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
                           : "N/A"}
                       </p>
-                      <p>
+                      <p className="h-fit">
                         {temperatureStats.avgTemp !== null
                           ? `${temperatureStats.avgTemp.toFixed(2)}°C`
                           : "N/A"}
                       </p>
-                      <p>{temperatureStats.totalPoints}</p>
-                      <p>{temperatureStats.firstRecord}</p>
-                      <p>{temperatureStats.lastRecord}</p>
-                      <p>{temperatureStats.elapsedTime}</p>
-                      <p>{temperatureStats.groupingInterval}</p>
+                      <p className="h-fit">{temperatureStats.totalPoints}</p>
+                      <p className="h-fit">{temperatureStats.firstRecord}</p>
+                      <p className="h-fit">{temperatureStats.lastRecord}</p>
+                      <p className="h-fit">{temperatureStats.elapsedTime}</p>
+                      <p className="h-fit">
+                        {temperatureStats.groupingInterval}
+                      </p>
                     </div>
                   </div>
                   <div
