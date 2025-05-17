@@ -359,10 +359,21 @@ export default async (req, res) => {
             ? `${data[data.length - 1].date} ${data[data.length - 1].time}`
             : "N/A";
 
-        // Tính khoảng thời gian ghi nhận (elapsedTime)
-        const startMoment = moment(firstRecord, "YYYY-MM-DD HH:mm:ss");
-        const endMoment = moment(lastRecord, "YYYY-MM-DD HH:mm:ss");
-        const elapsedTime = endMoment.diff(startMoment, "hours") + " hours";
+        let elapsedTime = "N/A";
+        if (firstRecord !== "N/A" && lastRecord !== "N/A") {
+          const startMoment = moment(firstRecord, "YYYY-MM-DD HH:mm:ss");
+          const endMoment = moment(lastRecord, "YYYY-MM-DD HH:mm:ss");
+          if (startMoment.isValid() && endMoment.isValid()) {
+            const diffInMinutes = endMoment.diff(startMoment, "minutes");
+            if (diffInMinutes >= 60) {
+              const hours = Math.floor(diffInMinutes / 60);
+              const minutes = diffInMinutes % 60;
+              elapsedTime = `${hours} hours ${minutes} minutes`;
+            } else {
+              elapsedTime = `${diffInMinutes} minutes`;
+            }
+          }
+        }
 
         // Xác định Grouping Interval
         const { interval: groupingInterval } = getGroupingInterval(

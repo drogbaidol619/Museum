@@ -461,7 +461,9 @@ function DatabasePage() {
                       <p className="border-b-2 border-gray-400">
                         Giá trị lớn nhất
                       </p>
-                      <p>Giá trị nhỏ nhất</p>
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị nhỏ nhất
+                      </p>
                       <p className="border-b-2 border-gray-400">
                         Giá trị trung bình
                       </p>
