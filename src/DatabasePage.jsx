@@ -388,7 +388,7 @@ function DatabasePage() {
         </div>
 
         {/* Báo cáo*/}
-        <div className="flex gap-10 w-full">
+        <div className="flex flex-col gap-10 w-full">
           {/*Khung table*/}
           {data.length > 0 && (
             <div className="col-span-2 max-h-screen overflow-y-scroll w-full">
