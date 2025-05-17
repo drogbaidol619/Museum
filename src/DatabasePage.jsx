@@ -388,80 +388,7 @@ function DatabasePage() {
         </div>
 
         {/* Báo cáo*/}
-        <div className="grid grid-cols-3 gap-3 w-full">
-          {/* Biểu đồ */}
-          {data.length > 0 && (
-            <div className="col-span-1">
-              <h1 className="text-2xl font-bold mb-5">
-                Bảng xem trước báo cáo biểu đồ
-              </h1>
-              <div className="flex flex-col gap-5 overflow-x-auto">
-                {/* Nhiệt độ */}
-                <div className="flex flex-col gap-2 text-black">
-                  <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
-                  <div className="grid grid-cols-2 rounded-md p-4">
-                    <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
-                      <p>Giá trị lớn nhất</p>
-                      <p>Giá trị nhỏ nhất</p>
-                      <p>Giá trị trung bình</p>
-                      <p>Tổng các điểm giá trị</p>
-                      <p>Thời điểm ghi nhận sớm nhất</p>
-                      <p>Thời điểm ghi nhận muộn nhất</p>
-                      <p>Khoảng thời gian ghi nhận</p>
-                      <p>Độ chia thời gian</p>
-                    </div>
-                    <div className="grid grid-rows-7 gap-1">
-                      <p>
-                        {temperatureStats.maxTemp !== null
-                          ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
-                          : "N/A"}
-                      </p>
-                      <p>
-                        {temperatureStats.minTemp !== null
-                          ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
-                          : "N/A"}
-                      </p>
-                      <p>
-                        {temperatureStats.avgTemp !== null
-                          ? `${temperatureStats.avgTemp.toFixed(2)}°C`
-                          : "N/A"}
-                      </p>
-                      <p>{temperatureStats.totalPoints}</p>
-                      <p>{temperatureStats.firstRecord}</p>
-                      <p>{temperatureStats.lastRecord}</p>
-                      <p>{temperatureStats.elapsedTime}</p>
-                      <p>{temperatureStats.groupingInterval}</p>
-                    </div>
-                  </div>
-                  <div
-                    className="chart-container w-full min-h-[500px]"
-                    id="temperatureChart"
-                  >
-                    <Line data={temperatureData} options={chartOptions} />
-                  </div>
-                </div>
-                {/* Độ ẩm */}
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="humidityChart"
-                >
-                  <Line data={humidityData} options={chartOptions} />
-                </div>
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="lightChart"
-                >
-                  <Line data={lightData} options={chartOptions} />
-                </div>
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="motionChart"
-                >
-                  <Line data={motionData} options={chartOptions} />
-                </div>
-              </div>
-            </div>
-          )}
+        <div className="flex gap-10 w-full">
           {/*Khung table*/}
           {data.length > 0 && (
             <div className="col-span-2 max-h-screen overflow-y-scroll w-full">
@@ -517,6 +444,82 @@ function DatabasePage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+          {/* Biểu đồ */}
+          {data.length > 0 && (
+            <div className="flex flex-col gap-5 w-full">
+              <h1 className="text-2xl font-bold mb-5">
+                Bảng xem trước báo cáo biểu đồ
+              </h1>
+              <div className="flex flex-col overflow-x-auto">
+                {/* Nhiệt độ */}
+                <div className="flex flex-col gap-2 text-black">
+                  <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
+                  <div className="flex gap-2">
+                    <div className="grid grid-cols-2 rounded-md p-4">
+                      <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
+                        <p>Giá trị lớn nhất</p>
+                        <p>Giá trị nhỏ nhất</p>
+                        <p>Giá trị trung bình</p>
+                        <p>Tổng các điểm giá trị</p>
+                        <p>Thời điểm ghi nhận sớm nhất</p>
+                        <p>Thời điểm ghi nhận muộn nhất</p>
+                        <p>Khoảng thời gian ghi nhận</p>
+                        <p>Độ chia thời gian</p>
+                      </div>
+                      <div className="grid grid-rows-7 gap-1">
+                        <p>
+                          {temperatureStats.maxTemp !== null
+                            ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
+                            : "N/A"}
+                        </p>
+                        <p>
+                          {temperatureStats.minTemp !== null
+                            ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
+                            : "N/A"}
+                        </p>
+                        <p>
+                          {temperatureStats.avgTemp !== null
+                            ? `${temperatureStats.avgTemp.toFixed(2)}°C`
+                            : "N/A"}
+                        </p>
+                        <p>{temperatureStats.totalPoints}</p>
+                        <p>{temperatureStats.firstRecord}</p>
+                        <p>{temperatureStats.lastRecord}</p>
+                        <p>{temperatureStats.elapsedTime}</p>
+                        <p>{temperatureStats.groupingInterval}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="chart-container w-full min-h-[500px]"
+                    id="temperatureChart"
+                  >
+                    <Line data={temperatureData} options={chartOptions} />
+                  </div>
+                </div>
+                {/* Độ ẩm */}
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="humidityChart"
+                >
+                  <Line data={humidityData} options={chartOptions} />
+                </div>
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="lightChart"
+                >
+                  <Line data={lightData} options={chartOptions} />
+                </div>
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="motionChart"
+                >
+                  <Line data={motionData} options={chartOptions} />
+                </div>
+              </div>
             </div>
           )}
         </div>
