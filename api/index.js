@@ -371,8 +371,13 @@ export default async (req, res) => {
         );
 
         // Trả về dữ liệu cùng với các giá trị tính toán
+        const formattedData = data.map((item) => ({
+          ...item,
+          date: moment(item.date).format("YYYY-MM-DD"),
+          time: moment(item.time, "HH:mm:ss").format("HH:mm:ss"),
+        }));
         return res.json({
-          data,
+          data: formattedData,
           temperatureStats: {
             maxTemp,
             maxTempTime,

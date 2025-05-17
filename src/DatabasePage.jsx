@@ -388,74 +388,19 @@ function DatabasePage() {
         </div>
 
         {/* Báo cáo*/}
-        <div>
-          {/*Khung table*/}
-          <div className="max-h-screen overflow-y-scroll w-full">
-            <table className="table-auto roboto text-center w-full border-separate border border-gray-400 ">
-              <thead
-                className=" text-xl font-medium"
-                style={{ backgroundColor: "#68D69D", color: "#401D83" }}
-              >
-                <tr>
-                  <td className="border border-gray-400">Id</td>
-                  <td className="border border-gray-400">Temperature</td>
-                  <td className="border border-gray-400">Humidity</td>
-                  <td className="border border-gray-400">Light</td>
-                  <td className="border border-gray-400">Motion</td>
-                  <td className="border border-gray-400">Ssid</td>
-                  <td className="border border-gray-400">Time</td>
-                  <td className="border border-gray-400">Date</td>
-                </tr>
-              </thead>
-              <tbody
-                className="text-balance font-normal"
-                style={{ backgroundColor: "#d0fbe1", color: "#005a9e" }}
-              >
-                {data.map((item, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-400">{index}</td>
-                    <td className="border border-gray-400">
-                      {item.temperature !== null ? item.temperature : "null"}
-                    </td>
-                    <td className="border border-gray-400">
-                      {item.humidity !== null ? item.humidity : "null"}
-                    </td>
-                    <td className="border border-gray-400">
-                      {item.light !== null ? item.light : "null"}
-                    </td>
-                    <td className="border border-gray-400">
-                      {item.motion === true
-                        ? "True"
-                        : item.motion === false
-                        ? "False"
-                        : "N/A"}
-                    </td>
-                    <td className="border border-gray-400">
-                      {item.ssid !== null ? item.ssid : "null"}
-                    </td>
-                    <td className="border border-gray-400">
-                      {item.time !== null ? item.time : "null"}
-                    </td>
-                    <td className="border border-gray-400">
-                      {item.date !== null ? item.date : "null"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="grid grid-cols-3 gap-3 w-full">
           {/* Biểu đồ */}
           {data.length > 0 && (
-            <div className="mt-10">
-              <h2 className="text-2xl font-bold mb-5">
+            <div className="col-span-1">
+              <h1 className="text-2xl font-bold mb-5">
                 Bảng xem trước báo cáo biểu đồ
-              </h2>
+              </h1>
               <div className="flex flex-col gap-5 overflow-x-auto">
                 {/* Nhiệt độ */}
                 <div className="flex flex-col gap-2 text-black">
                   <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
-                  <div className="grid grid-cols-2 border-2 border-gray-400 rounded-md">
-                    <div className="grid grid-rows-7 gap-1">
+                  <div className="grid grid-cols-2 rounded-md p-4">
+                    <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
                       <p>Giá trị lớn nhất</p>
                       <p>Giá trị nhỏ nhất</p>
                       <p>Giá trị trung bình</p>
@@ -515,6 +460,63 @@ function DatabasePage() {
                   <Line data={motionData} options={chartOptions} />
                 </div>
               </div>
+            </div>
+          )}
+          {/*Khung table*/}
+          {data.length > 0 && (
+            <div className="col-span-2 max-h-screen overflow-y-scroll w-full">
+              <table className="table-auto roboto text-center w-full border-separate border border-gray-400 ">
+                <thead
+                  className=" text-xl font-medium"
+                  style={{ backgroundColor: "#68D69D", color: "#401D83" }}
+                >
+                  <tr>
+                    <td className="border border-gray-400">Id</td>
+                    <td className="border border-gray-400">Temperature</td>
+                    <td className="border border-gray-400">Humidity</td>
+                    <td className="border border-gray-400">Light</td>
+                    <td className="border border-gray-400">Motion</td>
+                    <td className="border border-gray-400">Ssid</td>
+                    <td className="border border-gray-400">Time</td>
+                    <td className="border border-gray-400">Date</td>
+                  </tr>
+                </thead>
+                <tbody
+                  className="text-balance font-normal"
+                  style={{ backgroundColor: "#d0fbe1", color: "#005a9e" }}
+                >
+                  {data.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-400">{index}</td>
+                      <td className="border border-gray-400">
+                        {item.temperature !== null ? item.temperature : "null"}
+                      </td>
+                      <td className="border border-gray-400">
+                        {item.humidity !== null ? item.humidity : "null"}
+                      </td>
+                      <td className="border border-gray-400">
+                        {item.light !== null ? item.light : "null"}
+                      </td>
+                      <td className="border border-gray-400">
+                        {item.motion === true
+                          ? "True"
+                          : item.motion === false
+                          ? "False"
+                          : "N/A"}
+                      </td>
+                      <td className="border border-gray-400">
+                        {item.ssid !== null ? item.ssid : "null"}
+                      </td>
+                      <td className="border border-gray-400">
+                        {item.time !== null ? item.time : "null"}
+                      </td>
+                      <td className="border border-gray-400">
+                        {item.date !== null ? item.date : "null"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
