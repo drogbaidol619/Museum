@@ -458,36 +458,60 @@ function DatabasePage() {
                 <div className="flex flex-col gap-2 text-black">
                   <div className=" grid grid-cols-2 rounded-md p-5">
                     <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
-                      <p>Giá trị lớn nhất</p>
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị lớn nhất
+                      </p>
                       <p>Giá trị nhỏ nhất</p>
-                      <p>Giá trị trung bình</p>
-                      <p>Tổng các điểm giá trị</p>
-                      <p>Thời điểm ghi nhận sớm nhất</p>
-                      <p>Thời điểm ghi nhận muộn nhất</p>
-                      <p>Khoảng thời gian ghi nhận</p>
-                      <p>Độ chia thời gian</p>
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị trung bình
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận muộn nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Độ chia thời gian
+                      </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p>
+                      <p className="border-b-2 border-gray-400">
                         {temperatureStats.maxTemp !== null
                           ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
                           : "N/A"}
                       </p>
-                      <p>
+                      <p className="border-b-2 border-gray-400">
                         {temperatureStats.minTemp !== null
                           ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
                           : "N/A"}
                       </p>
-                      <p>
+                      <p className="border-b-2 border-gray-400">
                         {temperatureStats.avgTemp !== null
                           ? `${temperatureStats.avgTemp.toFixed(2)}°C`
                           : "N/A"}
                       </p>
-                      <p>{temperatureStats.totalPoints}</p>
-                      <p>{temperatureStats.firstRecord}</p>
-                      <p>{temperatureStats.lastRecord}</p>
-                      <p>{temperatureStats.elapsedTime}</p>
-                      <p>{temperatureStats.groupingInterval}</p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.totalPoints}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.firstRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.lastRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.elapsedTime}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.groupingInterval}
+                      </p>
                     </div>
                   </div>
                   <div
