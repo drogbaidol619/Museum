@@ -386,134 +386,138 @@ function DatabasePage() {
             </button>
           </form>
         </div>
-        {/*Khung table*/}
-        <div className="max-h-screen overflow-y-scroll w-full">
-          <table className="table-auto roboto text-center w-full border-separate border border-gray-400 ">
-            <thead
-              className=" text-xl font-medium"
-              style={{ backgroundColor: "#68D69D", color: "#401D83" }}
-            >
-              <tr>
-                <td className="border border-gray-400">Id</td>
-                <td className="border border-gray-400">Temperature</td>
-                <td className="border border-gray-400">Humidity</td>
-                <td className="border border-gray-400">Light</td>
-                <td className="border border-gray-400">Motion</td>
-                <td className="border border-gray-400">Ssid</td>
-                <td className="border border-gray-400">Time</td>
-                <td className="border border-gray-400">Date</td>
-              </tr>
-            </thead>
-            <tbody
-              className="text-balance font-normal"
-              style={{ backgroundColor: "#d0fbe1", color: "#005a9e" }}
-            >
-              {data.map((item, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-400">{index}</td>
-                  <td className="border border-gray-400">
-                    {item.temperature !== null ? item.temperature : "null"}
-                  </td>
-                  <td className="border border-gray-400">
-                    {item.humidity !== null ? item.humidity : "null"}
-                  </td>
-                  <td className="border border-gray-400">
-                    {item.light !== null ? item.light : "null"}
-                  </td>
-                  <td className="border border-gray-400">
-                    {item.motion === true
-                      ? "True"
-                      : item.motion === false
-                      ? "False"
-                      : "N/A"}
-                  </td>
-                  <td className="border border-gray-400">
-                    {item.ssid !== null ? item.ssid : "null"}
-                  </td>
-                  <td className="border border-gray-400">
-                    {item.time !== null ? item.time : "null"}
-                  </td>
-                  <td className="border border-gray-400">
-                    {item.date !== null ? item.date : "null"}
-                  </td>
+
+        {/* Báo cáo*/}
+        <div>
+          {/*Khung table*/}
+          <div className="max-h-screen overflow-y-scroll w-full">
+            <table className="table-auto roboto text-center w-full border-separate border border-gray-400 ">
+              <thead
+                className=" text-xl font-medium"
+                style={{ backgroundColor: "#68D69D", color: "#401D83" }}
+              >
+                <tr>
+                  <td className="border border-gray-400">Id</td>
+                  <td className="border border-gray-400">Temperature</td>
+                  <td className="border border-gray-400">Humidity</td>
+                  <td className="border border-gray-400">Light</td>
+                  <td className="border border-gray-400">Motion</td>
+                  <td className="border border-gray-400">Ssid</td>
+                  <td className="border border-gray-400">Time</td>
+                  <td className="border border-gray-400">Date</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {/* Biểu đồ */}
-        {data.length > 0 && (
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold mb-5">
-              Bảng xem trước báo cáo biểu đồ
-            </h2>
-            <div className="flex flex-col gap-5 overflow-x-auto">
-              {/* Nhiệt độ */}
-              <div className="flex flex-col gap-2 text-black">
-                <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
-                <div className="grid grid-cols-2 border-2 border-gray-400 rounded-md">
-                  <div className="grid grid-rows-7 gap-1">
-                    <p>Giá trị lớn nhất</p>
-                    <p>Giá trị nhỏ nhất</p>
-                    <p>Giá trị trung bình</p>
-                    <p>Tổng các điểm giá trị</p>
-                    <p>Thời điểm ghi nhận sớm nhất</p>
-                    <p>Thời điểm ghi nhận muộn nhất</p>
-                    <p>Khoảng thời gian ghi nhận</p>
-                    <p>Độ chia thời gian</p>
+              </thead>
+              <tbody
+                className="text-balance font-normal"
+                style={{ backgroundColor: "#d0fbe1", color: "#005a9e" }}
+              >
+                {data.map((item, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-400">{index}</td>
+                    <td className="border border-gray-400">
+                      {item.temperature !== null ? item.temperature : "null"}
+                    </td>
+                    <td className="border border-gray-400">
+                      {item.humidity !== null ? item.humidity : "null"}
+                    </td>
+                    <td className="border border-gray-400">
+                      {item.light !== null ? item.light : "null"}
+                    </td>
+                    <td className="border border-gray-400">
+                      {item.motion === true
+                        ? "True"
+                        : item.motion === false
+                        ? "False"
+                        : "N/A"}
+                    </td>
+                    <td className="border border-gray-400">
+                      {item.ssid !== null ? item.ssid : "null"}
+                    </td>
+                    <td className="border border-gray-400">
+                      {item.time !== null ? item.time : "null"}
+                    </td>
+                    <td className="border border-gray-400">
+                      {item.date !== null ? item.date : "null"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Biểu đồ */}
+          {data.length > 0 && (
+            <div className="mt-10">
+              <h2 className="text-2xl font-bold mb-5">
+                Bảng xem trước báo cáo biểu đồ
+              </h2>
+              <div className="flex flex-col gap-5 overflow-x-auto">
+                {/* Nhiệt độ */}
+                <div className="flex flex-col gap-2 text-black">
+                  <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
+                  <div className="grid grid-cols-2 border-2 border-gray-400 rounded-md">
+                    <div className="grid grid-rows-7 gap-1">
+                      <p>Giá trị lớn nhất</p>
+                      <p>Giá trị nhỏ nhất</p>
+                      <p>Giá trị trung bình</p>
+                      <p>Tổng các điểm giá trị</p>
+                      <p>Thời điểm ghi nhận sớm nhất</p>
+                      <p>Thời điểm ghi nhận muộn nhất</p>
+                      <p>Khoảng thời gian ghi nhận</p>
+                      <p>Độ chia thời gian</p>
+                    </div>
+                    <div className="grid grid-rows-7 gap-1">
+                      <p>
+                        {temperatureStats.maxTemp !== null
+                          ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
+                          : "N/A"}
+                      </p>
+                      <p>
+                        {temperatureStats.minTemp !== null
+                          ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
+                          : "N/A"}
+                      </p>
+                      <p>
+                        {temperatureStats.avgTemp !== null
+                          ? `${temperatureStats.avgTemp.toFixed(2)}°C`
+                          : "N/A"}
+                      </p>
+                      <p>{temperatureStats.totalPoints}</p>
+                      <p>{temperatureStats.firstRecord}</p>
+                      <p>{temperatureStats.lastRecord}</p>
+                      <p>{temperatureStats.elapsedTime}</p>
+                      <p>{temperatureStats.groupingInterval}</p>
+                    </div>
                   </div>
-                  <div className="grid grid-rows-7 gap-1">
-                    <p>
-                      {temperatureStats.maxTemp !== null
-                        ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
-                        : "N/A"}
-                    </p>
-                    <p>
-                      {temperatureStats.minTemp !== null
-                        ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
-                        : "N/A"}
-                    </p>
-                    <p>
-                      {temperatureStats.avgTemp !== null
-                        ? `${temperatureStats.avgTemp.toFixed(2)}°C`
-                        : "N/A"}
-                    </p>
-                    <p>{temperatureStats.totalPoints}</p>
-                    <p>{temperatureStats.firstRecord}</p>
-                    <p>{temperatureStats.lastRecord}</p>
-                    <p>{temperatureStats.elapsedTime}</p>
-                    <p>{temperatureStats.groupingInterval}</p>
+                  <div
+                    className="chart-container w-full min-h-[500px]"
+                    id="temperatureChart"
+                  >
+                    <Line data={temperatureData} options={chartOptions} />
                   </div>
+                </div>
+                {/* Độ ẩm */}
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="humidityChart"
+                >
+                  <Line data={humidityData} options={chartOptions} />
                 </div>
                 <div
                   className="chart-container w-full min-h-[500px]"
-                  id="temperatureChart"
+                  id="lightChart"
                 >
-                  <Line data={temperatureData} options={chartOptions} />
+                  <Line data={lightData} options={chartOptions} />
+                </div>
+                <div
+                  className="chart-container w-full min-h-[500px]"
+                  id="motionChart"
+                >
+                  <Line data={motionData} options={chartOptions} />
                 </div>
               </div>
-              {/* Độ ẩm */}
-              <div
-                className="chart-container w-full min-h-[500px]"
-                id="humidityChart"
-              >
-                <Line data={humidityData} options={chartOptions} />
-              </div>
-              <div
-                className="chart-container w-full min-h-[500px]"
-                id="lightChart"
-              >
-                <Line data={lightData} options={chartOptions} />
-              </div>
-              <div
-                className="chart-container w-full min-h-[500px]"
-                id="motionChart"
-              >
-                <Line data={motionData} options={chartOptions} />
-              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <Footer />
       <BackToTop onCheck={scrollToTop} />
