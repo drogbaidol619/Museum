@@ -54,6 +54,18 @@ function DatabasePage() {
 
   const [device, setDevice] = useState("null");
   const [data, setData] = useState([]);
+  const [temperatureStats, setTemperatureStats] = useState({
+    maxTemp: null,
+    maxTempTime: "N/A",
+    minTemp: null,
+    minTempTime: "N/A",
+    avgTemp: null,
+    totalPoints: 0,
+    firstRecord: "N/A",
+    lastRecord: "N/A",
+    elapsedTime: "N/A",
+    groupingInterval: "N/A",
+  });
 
   const handleDeviceClick = (deviceName) => {
     setDevice(deviceName); // Cập nhật state khi click
@@ -79,7 +91,9 @@ function DatabasePage() {
       );
       const data = response.data;
       setData(response.data); // Cập nhật state data với dữ liệu từ backend
-      console.log(data);
+      setTemperatureStats(temperatureStats);
+      console.log("Data:", data);
+      console.log("Temperature Stats:", temperatureStats);
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình trích xuất. Vui lòng thử lại.");
@@ -426,39 +440,80 @@ function DatabasePage() {
               ))}
             </tbody>
           </table>
-          {/* Biểu đồ */}
-          {data.length > 0 && (
-            <div className="mt-10">
-              <h2 className="text-2xl font-bold mb-5">Biểu đồ dữ liệu</h2>
-              <div className="flex flex-col gap-5 overflow-x-auto">
+        </div>
+        {/* Biểu đồ */}
+        {data.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold mb-5">
+              Bảng xem trước báo cáo biểu đồ
+            </h2>
+            <div className="flex flex-col gap-5 overflow-x-auto">
+              {/* Nhiệt độ */}
+              <div className="flex flex-col gap-2 text-black">
+                <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
+                <div className="grid grid-cols-2 border-2 border-gray-400 rounded-md">
+                  <div className="grid grid-rows-7 gap-1">
+                    <p>Giá trị lớn nhất</p>
+                    <p>Giá trị nhỏ nhất</p>
+                    <p>Giá trị trung bình</p>
+                    <p>Tổng các điểm giá trị</p>
+                    <p>Thời điểm ghi nhận sớm nhất</p>
+                    <p>Thời điểm ghi nhận muộn nhất</p>
+                    <p>Khoảng thời gian ghi nhận</p>
+                    <p>Độ chia thời gian</p>
+                  </div>
+                  <div className="grid grid-rows-7 gap-1">
+                    <p>
+                      {temperatureStats.maxTemp !== null
+                        ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
+                        : "N/A"}
+                    </p>
+                    <p>
+                      {temperatureStats.minTemp !== null
+                        ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
+                        : "N/A"}
+                    </p>
+                    <p>
+                      {temperatureStats.avgTemp !== null
+                        ? `${temperatureStats.avgTemp.toFixed(2)}°C`
+                        : "N/A"}
+                    </p>
+                    <p>{temperatureStats.totalPoints}</p>
+                    <p>{temperatureStats.firstRecord}</p>
+                    <p>{temperatureStats.lastRecord}</p>
+                    <p>{temperatureStats.elapsedTime}</p>
+                    <p>{temperatureStats.groupingInterval}</p>
+                  </div>
+                </div>
                 <div
                   className="chart-container w-full min-h-[500px]"
                   id="temperatureChart"
                 >
                   <Line data={temperatureData} options={chartOptions} />
                 </div>
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="humidityChart"
-                >
-                  <Line data={humidityData} options={chartOptions} />
-                </div>
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="lightChart"
-                >
-                  <Line data={lightData} options={chartOptions} />
-                </div>
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="motionChart"
-                >
-                  <Line data={motionData} options={chartOptions} />
-                </div>
+              </div>
+              {/* Độ ẩm */}
+              <div
+                className="chart-container w-full min-h-[500px]"
+                id="humidityChart"
+              >
+                <Line data={humidityData} options={chartOptions} />
+              </div>
+              <div
+                className="chart-container w-full min-h-[500px]"
+                id="lightChart"
+              >
+                <Line data={lightData} options={chartOptions} />
+              </div>
+              <div
+                className="chart-container w-full min-h-[500px]"
+                id="motionChart"
+              >
+                <Line data={motionData} options={chartOptions} />
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <Footer />
       <BackToTop onCheck={scrollToTop} />

@@ -5,12 +5,30 @@ import jwt from "jsonwebtoken";
 import cookie from "cookie";
 import fs from "fs";
 import path from "path";
+import moment from "moment";
 import { createObjectCsvStringifier } from "csv-writer";
 
 const saltRounds = 10;
 const accessTokenSecret = process.env.JWT_SECRET;
 const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
 const refreshTokens = [];
+
+// Hàm tính khoảng thời gian và xác định Grouping Interval
+const getGroupingInterval = (startDate, endDate) => {
+  const start = moment(startDate);
+  const end = moment(endDate);
+  const daysDiff = end.diff(start, "days");
+
+  if (daysDiff <= 1) {
+    return { interval: "10 minutes" }; // Cùng ngày
+  } else if (daysDiff <= 7) {
+    return { interval: "30 minutes" }; // 1 tuần
+  } else if (daysDiff <= 31) {
+    return { interval: "2 hours" }; // 1 tháng
+  } else {
+    return { interval: "1 day" }; // Lớn hơn 1 tháng
+  }
+};
 
 // Hàm kiểm tra  token
 const authenticateJWT = (req) => {
@@ -300,9 +318,74 @@ export default async (req, res) => {
         if (whereClauses.length > 0) {
           query += ` WHERE ${whereClauses.join(" AND ")}`;
         }
+        query += ` ORDER BY date, time`; // Sắp xếp theo thời gian
 
         const result = await db.query(query, queryParams);
-        return res.json(result.rows);
+        const data = result.rows;
+
+        if (data.length === 0) {
+          return res
+            .status(404)
+            .json({ error: "Không có dữ liệu để trích xuất." });
+        }
+
+        // Tính toán các giá trị cho nhiệt độ
+        const temperatures = data
+          .map((item) => item.temperature)
+          .filter((val) => val !== null);
+        const maxTemp = Math.max(...temperatures);
+        const minTemp = Math.min(...temperatures);
+        const avgTemp =
+          temperatures.length > 0
+            ? temperatures.reduce((a, b) => a + b, 0) / temperatures.length
+            : 0;
+        const totalPoints = temperatures.length;
+
+        // Tìm thời điểm của giá trị lớn nhất và nhỏ nhất
+        const maxTempRecord = data.find((item) => item.temperature === maxTemp);
+        const minTempRecord = data.find((item) => item.temperature === minTemp);
+        const maxTempTime = maxTempRecord
+          ? `${maxTempRecord.date} ${maxTempRecord.time}`
+          : "N/A";
+        const minTempTime = minTempRecord
+          ? `${minTempRecord.date} ${minTempRecord.time}`
+          : "N/A";
+
+        // Thời điểm ghi nhận sớm nhất và muộn nhất
+        const firstRecord =
+          data.length > 0 ? `${data[0].date} ${data[0].time}` : "N/A";
+        const lastRecord =
+          data.length > 0
+            ? `${data[data.length - 1].date} ${data[data.length - 1].time}`
+            : "N/A";
+
+        // Tính khoảng thời gian ghi nhận (elapsedTime)
+        const startMoment = moment(firstRecord, "YYYY-MM-DD HH:mm:ss");
+        const endMoment = moment(lastRecord, "YYYY-MM-DD HH:mm:ss");
+        const elapsedTime = endMoment.diff(startMoment, "hours") + " hours";
+
+        // Xác định Grouping Interval
+        const { interval: groupingInterval } = getGroupingInterval(
+          startDate,
+          endDate
+        );
+
+        // Trả về dữ liệu cùng với các giá trị tính toán
+        return res.json({
+          data,
+          temperatureStats: {
+            maxTemp,
+            maxTempTime,
+            minTemp,
+            minTempTime,
+            avgTemp,
+            totalPoints,
+            firstRecord,
+            lastRecord,
+            elapsedTime,
+            groupingInterval,
+          },
+        });
       } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Lỗi trích xuất dữ liệu." });
