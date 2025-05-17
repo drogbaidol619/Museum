@@ -454,9 +454,9 @@ function DatabasePage() {
               </h1>
               <div className="flex flex-col overflow-x-auto">
                 {/* Nhiệt độ */}
-                <div className="flex gap-2 text-black">
-                  <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
-                  <div className="grid grid-cols-2 rounded-md p-5">
+                <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
+                <div className="grid grid-cols-3 gap-2 text-black">
+                  <div className="col-span-1 grid grid-cols-2 rounded-md p-5">
                     <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
                       <p>Giá trị lớn nhất</p>
                       <p>Giá trị nhỏ nhất</p>
@@ -491,7 +491,7 @@ function DatabasePage() {
                     </div>
                   </div>
                   <div
-                    className="chart-container w-full min-h-[500px]"
+                    className="chart-container w-full min-h-[500px] col-span-2"
                     id="temperatureChart"
                   >
                     <Line data={temperatureData} options={chartOptions} />
