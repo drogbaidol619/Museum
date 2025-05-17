@@ -90,10 +90,10 @@ function DatabasePage() {
         }
       );
       const data = response.data;
-      setData(response.data); // Cập nhật state data với dữ liệu từ backend
-      setTemperatureStats(temperatureStats);
-      console.log("Data:", data);
-      console.log("Temperature Stats:", temperatureStats);
+      setData(response.data.data); // Cập nhật state data với dữ liệu từ backend
+      setTemperatureStats(response.data.temperatureStats);
+      console.log("Data:", response.data.data);
+      console.log("Temperature Stats:", response.data.temperatureStats);
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình trích xuất. Vui lòng thử lại.");
