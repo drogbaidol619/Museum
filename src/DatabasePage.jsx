@@ -1,4 +1,4 @@
-import { useState, React, useRef } from "react";
+import { useState, useEffect } from "react"; // Sửa import, loại bỏ 'React' không cần thiết
 import "./App.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -19,9 +19,7 @@ import {
   Tooltip,
   Legend,
   Filler,
-  TimeScale,
 } from "chart.js";
-import { registerables } from "chart.js";
 
 // Đăng ký các thành phần của Chart.js
 ChartJS.register(
@@ -32,9 +30,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler,
-  TimeScale,
-  ...registerables
+  Filler
 );
 
 const scrollToTop = (event) => {
@@ -70,8 +66,6 @@ function DatabasePage() {
     elapsedTime: "N/A",
     groupingInterval: "N/A",
   });
-
-  const chartRef = useRef(null); // Tạo ref cho biểu đồ
 
   const handleDeviceClick = (deviceName) => {
     setDevice(deviceName); // Cập nhật state khi click
@@ -187,6 +181,52 @@ function DatabasePage() {
   // Chuẩn bị dữ liệu cho biểu đồ
   const labels = data.map((item) => `${item.date} ${item.time}`); // Trục x: thời gian
 
+  // Tính độ chia thời gian từ hai nhãn gần nhau nhất
+  useEffect(() => {
+    if (labels.length > 1) {
+      // Chuyển labels thành timestamp (milliseconds)
+      const timestamps = labels
+        .map((label) => moment(label, "YYYY-MM-DD HH:mm:ss").valueOf())
+        .filter((timestamp) => !isNaN(timestamp)); // Lọc bỏ giá trị không hợp lệ
+
+      // Sắp xếp theo thời gian tăng dần
+      timestamps.sort((a, b) => a - b);
+
+      // Tìm chênh lệch nhỏ nhất giữa hai nhãn gần nhau nhất
+      let minIntervalMs = Infinity;
+      for (let i = 1; i < timestamps.length; i++) {
+        const diffMs = timestamps[i] - timestamps[i - 1];
+        if (diffMs > 0 && diffMs < minIntervalMs) {
+          minIntervalMs = diffMs;
+        }
+      }
+
+      let groupingInterval = "N/A";
+      if (minIntervalMs !== Infinity && minIntervalMs > 0) {
+        const duration = moment.duration(minIntervalMs);
+        const days = Math.floor(duration.asDays());
+        const hours = Math.floor(duration.asHours()) % 24;
+        const minutes = Math.floor(duration.asMinutes()) % 60;
+        const seconds = Math.floor(duration.asSeconds()) % 60;
+
+        const parts = [];
+        if (days > 0) parts.push(`${days} ngày`);
+        if (hours > 0) parts.push(`${hours} giờ`);
+        if (minutes > 0 || (days === 0 && hours === 0))
+          parts.push(`${minutes} phút`);
+        if (seconds > 0 || parts.length === 0) parts.push(`${seconds} giây`);
+
+        groupingInterval = parts.join(", ");
+      }
+
+      // Cập nhật temperatureStats với độ chia thời gian
+      setTemperatureStats((prevStats) => ({
+        ...prevStats,
+        groupingInterval,
+      }));
+    }
+  }, [labels]); // Chạy lại khi labels thay đổi
+
   const temperatureData = {
     labels,
     datasets: [
@@ -247,28 +287,20 @@ function DatabasePage() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: (ctx) => ctx.chart.data.datasets[0].label },
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: (ctx) => ctx.chart.data.datasets[0].label,
+      },
     },
     scales: {
       x: {
-        type: "time",
-        time: {
-          unit: null, // Để Chart.js tự động xác định đơn vị
-          tooltipFormat: "yyyy-MM-dd HH:mm:ss",
-          displayFormats: {
-            millisecond: "SSS",
-            second: "HH:mm:ss",
-            minute: "HH:mm",
-            hour: "HH",
-            day: "MM-dd",
-            week: "MM-dd",
-            month: "yyyy-MM",
-            quarter: "yyyy-MM",
-            year: "yyyy",
-          },
+        title: {
+          display: true,
+          text: "Thời gian",
         },
-        title: { display: true, text: "Thời gian" },
       },
       y: {
         beginAtZero: true,
