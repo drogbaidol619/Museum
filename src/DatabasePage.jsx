@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react"; // Sửa import, loại bỏ 'React' không cần thiết
 import "./App.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -72,8 +72,6 @@ function DatabasePage() {
     setDevice(deviceName); // Cập nhật state khi click
   };
 
-  const chartRef = useRef(null);
-
   const handleExtract = async (e) => {
     e.preventDefault();
     try {
@@ -93,10 +91,71 @@ function DatabasePage() {
         }
       );
       const extractedData = response.data.data;
-      setData(extractedData); // Cập nhật state data với dữ liệu từ backend
+      setData(extractedData);
       setTemperatureStats(response.data.temperatureStats);
       console.log("Data:", extractedData);
       console.log("Temperature Stats:", response.data.temperatureStats);
+
+      // Tính toán khoảng thời gian trung bình dựa trên điểm đầu và cuối
+      if (extractedData.length >= 2) {
+        const firstTime = moment(
+          `${extractedData[0].date} ${extractedData[0].time}`,
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        const lastTime = moment(
+          `${extractedData[extractedData.length - 1].date} ${
+            extractedData[extractedData.length - 1].time
+          }`,
+          "YYYY-MM-DD HH:mm:ss"
+        );
+
+        if (firstTime.isValid() && lastTime.isValid()) {
+          const totalDifferenceMs = lastTime.valueOf() - firstTime.valueOf();
+          const totalPoints = extractedData.length;
+          const averageDifferenceMs =
+            totalPoints > 1 ? totalDifferenceMs / (totalPoints - 1) : 0;
+
+          let groupingInterval = "N/A";
+          if (averageDifferenceMs > 0 && averageDifferenceMs !== Infinity) {
+            const duration = moment.duration(averageDifferenceMs);
+            const days = duration.days();
+            const hours = duration.hours();
+            const minutes = duration.minutes();
+            const seconds = duration.seconds();
+
+            const parts = [];
+            if (days > 0) parts.push(`${days} ngày`);
+            if (hours > 0) parts.push(`${hours} giờ`);
+            if (minutes > 0) parts.push(`${minutes} phút`);
+            if (seconds >= 0 && parts.length === 0)
+              parts.push(`${seconds} giây`);
+            else if (seconds > 0 && parts.length > 0)
+              parts.push(`${seconds} giây`);
+
+            groupingInterval = parts.join(", ") || "0 giây";
+          }
+
+          setTemperatureStats((prevStats) => ({
+            ...prevStats,
+            groupingInterval,
+          }));
+        } else {
+          setTemperatureStats((prevStats) => ({
+            ...prevStats,
+            groupingInterval: "Lỗi định dạng thời gian đầu hoặc cuối",
+          }));
+        }
+      } else if (extractedData.length === 1) {
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: "Dữ liệu đơn lẻ",
+        }));
+      } else {
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: "Không có dữ liệu",
+        }));
+      }
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình trích xuất. Vui lòng thử lại.");
@@ -183,68 +242,6 @@ function DatabasePage() {
 
   // Chuẩn bị dữ liệu cho biểu đồ
   const labels = data.map((item) => `${item.date} ${item.time}`); // Trục x: thời gian
-
-  useEffect(() => {
-    if (chartRef.current && chartRef.current.chart) {
-      const chart = chartRef.current.chart;
-      const xLabels = chart.config.data.labels; // Lấy labels ban đầu bạn cung cấp
-      const xScale = chart.scales.x;
-      const displayedLabels = xScale
-        ? xScale.getLabelForValue(0)
-          ? xScale.ticks.map((tick) => xScale.getLabelForValue(tick.value))
-          : xLabels
-        : [];
-
-      if (displayedLabels.length >= 2) {
-        const displayedTimestamps = displayedLabels
-          .map((label) => moment(label, "YYYY-MM-DD HH:mm:ss").valueOf())
-          .filter((ts) => !isNaN(ts))
-          .sort((a, b) => a - b);
-
-        let minDisplayedIntervalMs = Infinity;
-        for (let i = 1; i < displayedTimestamps.length; i++) {
-          const diffMs = displayedTimestamps[i] - displayedTimestamps[i - 1];
-          if (diffMs > 0 && diffMs < minDisplayedIntervalMs) {
-            minDisplayedIntervalMs = diffMs;
-          }
-        }
-
-        let displayedGroupingInterval = "N/A";
-        if (minDisplayedIntervalMs !== Infinity && minDisplayedIntervalMs > 0) {
-          const duration = moment.duration(minDisplayedIntervalMs);
-          const days = duration.days();
-          const hours = duration.hours();
-          const minutes = duration.minutes();
-          const seconds = duration.seconds();
-
-          const parts = [];
-          if (days > 0) parts.push(`${days} ngày`);
-          if (hours > 0) parts.push(`${hours} giờ`);
-          if (minutes > 0) parts.push(`${minutes} phút`);
-          if (seconds >= 0 && parts.length === 0) parts.push(`${seconds} giây`);
-          else if (seconds > 0 && parts.length > 0)
-            parts.push(`${seconds} giây`);
-
-          displayedGroupingInterval = parts.join(", ");
-        }
-
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: displayedGroupingInterval,
-        }));
-      } else if (displayedLabels.length === 1) {
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: "Một điểm dữ liệu hiển thị",
-        }));
-      } else {
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: "Không có nhãn hiển thị",
-        }));
-      }
-    }
-  }, [chartRef, data]); // Lắng nghe sự thay đổi của chartRef và data
 
   const temperatureData = {
     labels,
@@ -585,11 +582,7 @@ function DatabasePage() {
                     className="chart-container w-full min-h-[500px]"
                     id="temperatureChart"
                   >
-                    <Line
-                      data={temperatureData}
-                      options={chartOptions}
-                      ref={chartRef}
-                    />
+                    <Line data={temperatureData} options={chartOptions} />
                   </div>
                 </div>
                 {/* Độ ẩm */}
