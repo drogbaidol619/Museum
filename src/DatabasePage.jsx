@@ -108,6 +108,7 @@ function DatabasePage() {
 
         if (time1.isValid() && time2.isValid()) {
           const differenceMs = time2.valueOf() - time1.valueOf();
+          console.log("differenceMs", differenceMs);
           const duration = moment.duration(differenceMs);
 
           const days = duration.days();
