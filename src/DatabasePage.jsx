@@ -22,7 +22,6 @@ import {
   TimeScale,
 } from "chart.js";
 import { registerables } from "chart.js";
-import "chartjs-adapter-date-fns";
 
 // Đăng ký các thành phần của Chart.js
 ChartJS.register(
