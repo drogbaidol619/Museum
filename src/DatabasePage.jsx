@@ -20,6 +20,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+import moment from "moment";
 
 // Đăng ký các thành phần của Chart.js
 ChartJS.register(
