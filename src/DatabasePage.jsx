@@ -90,11 +90,60 @@ function DatabasePage() {
           withCredentials: true,
         }
       );
-      const data = response.data;
-      setData(response.data.data); // Cập nhật state data với dữ liệu từ backend
+      const extractedData = response.data.data;
+      setData(extractedData); // Cập nhật state data với dữ liệu từ backend
       setTemperatureStats(response.data.temperatureStats);
-      console.log("Data:", response.data.data);
+      console.log("Data:", extractedData);
       console.log("Temperature Stats:", response.data.temperatureStats);
+
+      // Tính toán groupingInterval ngay sau khi có dữ liệu
+      if (extractedData.length >= 2) {
+        const localLabels = extractedData.map(
+          (item) => `${item.date} ${item.time}`
+        );
+        const time1 = moment(localLabels[0], "YYYY-MM-DD HH:mm:ss");
+        const time2 = moment(localLabels[1], "YYYY-MM-DD HH:mm:ss");
+
+        if (time1.isValid() && time2.isValid()) {
+          const differenceMs = time2.valueOf() - time1.valueOf();
+          const duration = moment.duration(differenceMs);
+
+          const days = duration.days();
+          const hours = duration.hours();
+          const minutes = duration.minutes();
+          const seconds = duration.seconds();
+
+          const parts = [];
+          if (days > 0) parts.push(`${days} ngày`);
+          if (hours > 0) parts.push(`${hours} giờ`);
+          if (minutes > 0) parts.push(`${minutes} phút`);
+          if (seconds >= 0 && parts.length === 0) parts.push(`${seconds} giây`);
+          else if (seconds > 0 && parts.length > 0)
+            parts.push(`${seconds} giây`);
+
+          const groupingInterval = parts.join(", ") || "0 giây";
+
+          setTemperatureStats((prevStats) => ({
+            ...prevStats,
+            groupingInterval,
+          }));
+        } else {
+          setTemperatureStats((prevStats) => ({
+            ...prevStats,
+            groupingInterval: "Lỗi định dạng thời gian",
+          }));
+        }
+      } else if (extractedData.length === 1) {
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: "Dữ liệu đơn lẻ",
+        }));
+      } else {
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: "Không có dữ liệu",
+        }));
+      }
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình trích xuất. Vui lòng thử lại.");
@@ -181,53 +230,6 @@ function DatabasePage() {
 
   // Chuẩn bị dữ liệu cho biểu đồ
   const labels = data.map((item) => `${item.date} ${item.time}`); // Trục x: thời gian
-
-  // Tính độ chia thời gian từ hai nhãn gần nhau nhất
-  useEffect(() => {
-    if (labels.length >= 2) {
-      const time1 = moment(labels[0], "YYYY-MM-DD HH:mm:ss");
-      const time2 = moment(labels[1], "YYYY-MM-DD HH:mm:ss");
-
-      if (time1.isValid() && time2.isValid()) {
-        const differenceMs = time2.valueOf() - time1.valueOf();
-        const duration = moment.duration(differenceMs);
-
-        const days = duration.days();
-        const hours = duration.hours();
-        const minutes = duration.minutes();
-        const seconds = duration.seconds();
-
-        const parts = [];
-        if (days > 0) parts.push(`${days} ngày`);
-        if (hours > 0) parts.push(`${hours} giờ`);
-        if (minutes > 0) parts.push(`${minutes} phút`);
-        if (seconds >= 0 && parts.length === 0) parts.push(`${seconds} giây`);
-        else if (seconds > 0 && parts.length > 0) parts.push(`${seconds} giây`);
-
-        const groupingInterval = parts.join(", ") || "0 giây"; // Đảm bảo có giá trị nếu không có phần nào khác
-
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval,
-        }));
-      } else {
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: "Lỗi định dạng thời gian",
-        }));
-      }
-    } else if (labels.length === 1) {
-      setTemperatureStats((prevStats) => ({
-        ...prevStats,
-        groupingInterval: "Dữ liệu đơn lẻ",
-      }));
-    } else {
-      setTemperatureStats((prevStats) => ({
-        ...prevStats,
-        groupingInterval: "Không có dữ liệu",
-      }));
-    }
-  }, [labels]);
 
   const temperatureData = {
     labels,

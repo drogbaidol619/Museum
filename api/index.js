@@ -391,11 +391,6 @@ export default async (req, res) => {
           }
         }
 
-        const { interval: groupingInterval } = getGroupingInterval(
-          startDate,
-          endDate
-        );
-
         console.log("First Record:", firstRecord);
         console.log("Last Record:", lastRecord);
         console.log("Elapsed Time:", elapsedTime);
@@ -412,7 +407,6 @@ export default async (req, res) => {
             firstRecord,
             lastRecord,
             elapsedTime,
-            groupingInterval,
           },
         });
       } catch (error) {
