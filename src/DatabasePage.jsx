@@ -102,7 +102,9 @@ function DatabasePage() {
           (item) => `${item.date} ${item.time}`
         );
         const time1 = moment(localLabels[0], "YYYY-MM-DD HH:mm:ss");
+        console.log("time1", time1);
         const time2 = moment(localLabels[1], "YYYY-MM-DD HH:mm:ss");
+        console.log("time2", time2);
 
         if (time1.isValid() && time2.isValid()) {
           const differenceMs = time2.valueOf() - time1.valueOf();
