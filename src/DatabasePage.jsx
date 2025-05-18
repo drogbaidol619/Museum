@@ -281,55 +281,6 @@ function DatabasePage() {
     },
   };
 
-  useEffect(() => {
-    const chartInstance = chartRef.current;
-    if (chartInstance && data.length > 0) {
-      const xAxis = chartInstance.scales.x;
-      if (xAxis && xAxis.ticks && xAxis.ticks.length > 1) {
-        const firstTickTime = xAxis.ticks[0].value;
-        const secondTickTime = xAxis.ticks[1].value;
-        const timeDifferenceMs = secondTickTime - firstTickTime;
-
-        let intervalString = "N/A";
-        if (timeDifferenceMs > 0) {
-          const duration = moment.duration(timeDifferenceMs);
-          const days = Math.floor(duration.asDays());
-          const hours = Math.floor(duration.asHours()) % 24;
-          const minutes = Math.floor(duration.asMinutes()) % 60;
-          const seconds = Math.floor(duration.asSeconds()) % 60;
-
-          const parts = [];
-          if (days > 0) parts.push(`${days} ngày`);
-          if (hours > 0) parts.push(`${hours} giờ`);
-          if (minutes > 0 || (days === 0 && hours === 0))
-            parts.push(`${minutes} phút`);
-          if (seconds > 0 || parts.length === 0) parts.push(`${seconds} giây`);
-
-          intervalString = parts.join(", ");
-        }
-
-        console.log("First Tick:", new Date(firstTickTime).toISOString());
-        console.log("Second Tick:", new Date(secondTickTime).toISOString());
-        console.log("Time Difference (ms):", timeDifferenceMs);
-        console.log("Grouping Interval:", intervalString);
-
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: intervalString,
-        }));
-      } else {
-        console.log(
-          "Not enough ticks to calculate interval:",
-          xAxis?.ticks?.length
-        );
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: "N/A",
-        }));
-      }
-    }
-  }, [data]);
-
   return (
     <div className="flex flex-col max-w-screen overflow-x-clip">
       <NavBar />
