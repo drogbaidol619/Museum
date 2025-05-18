@@ -184,27 +184,14 @@ function DatabasePage() {
 
   // Tính độ chia thời gian từ hai nhãn gần nhau nhất
   useEffect(() => {
-    if (labels.length > 1) {
-      const timestamps = labels
-        .map((label) => {
-          const momentObj = moment(label, "YYYY-MM-DD HH:mm:ss");
-          return momentObj.isValid() ? momentObj.valueOf() : NaN;
-        })
-        .filter((timestamp) => !isNaN(timestamp));
+    if (labels.length >= 2) {
+      const time1 = moment(labels[0], "YYYY-MM-DD HH:mm:ss");
+      const time2 = moment(labels[1], "YYYY-MM-DD HH:mm:ss");
 
-      timestamps.sort((a, b) => a - b);
+      if (time1.isValid() && time2.isValid()) {
+        const differenceMs = time2.valueOf() - time1.valueOf();
+        const duration = moment.duration(differenceMs);
 
-      let minIntervalMs = Infinity;
-      for (let i = 1; i < timestamps.length; i++) {
-        const diffMs = timestamps[i] - timestamps[i - 1];
-        if (diffMs > 0 && diffMs < minIntervalMs) {
-          minIntervalMs = diffMs;
-        }
-      }
-
-      let groupingInterval = "N/A";
-      if (minIntervalMs !== Infinity && minIntervalMs > 0) {
-        const duration = moment.duration(minIntervalMs);
         const days = duration.days();
         const hours = duration.hours();
         const minutes = duration.minutes();
@@ -217,13 +204,18 @@ function DatabasePage() {
         if (seconds >= 0 && parts.length === 0) parts.push(`${seconds} giây`);
         else if (seconds > 0 && parts.length > 0) parts.push(`${seconds} giây`);
 
-        groupingInterval = parts.join(", ");
-      }
+        const groupingInterval = parts.join(", ") || "0 giây"; // Đảm bảo có giá trị nếu không có phần nào khác
 
-      setTemperatureStats((prevStats) => ({
-        ...prevStats,
-        groupingInterval,
-      }));
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval,
+        }));
+      } else {
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: "Lỗi định dạng thời gian",
+        }));
+      }
     } else if (labels.length === 1) {
       setTemperatureStats((prevStats) => ({
         ...prevStats,
