@@ -19,7 +19,10 @@ import {
   Tooltip,
   Legend,
   Filler,
+  TimeScale,
 } from "chart.js";
+import { registerables } from "chart.js";
+import "chartjs-adapter-date-fns";
 
 // Đăng ký các thành phần của Chart.js
 ChartJS.register(
@@ -30,7 +33,9 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
+  TimeScale,
+  ...registerables
 );
 
 const scrollToTop = (event) => {
@@ -66,6 +71,8 @@ function DatabasePage() {
     elapsedTime: "N/A",
     groupingInterval: "N/A",
   });
+
+  const chartRef = useRef(null); // Tạo ref cho biểu đồ
 
   const handleDeviceClick = (deviceName) => {
     setDevice(deviceName); // Cập nhật state khi click
@@ -241,20 +248,28 @@ function DatabasePage() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: (ctx) => ctx.chart.data.datasets[0].label,
-      },
+      legend: { position: "top" },
+      title: { display: true, text: (ctx) => ctx.chart.data.datasets[0].label },
     },
     scales: {
       x: {
-        title: {
-          display: true,
-          text: "Thời gian",
+        type: "time",
+        time: {
+          unit: null, // Để Chart.js tự động xác định đơn vị
+          tooltipFormat: "yyyy-MM-dd HH:mm:ss",
+          displayFormats: {
+            millisecond: "SSS",
+            second: "HH:mm:ss",
+            minute: "HH:mm",
+            hour: "HH",
+            day: "MM-dd",
+            week: "MM-dd",
+            month: "yyyy-MM",
+            quarter: "yyyy-MM",
+            year: "yyyy",
+          },
         },
+        title: { display: true, text: "Thời gian" },
       },
       y: {
         beginAtZero: true,
@@ -265,6 +280,55 @@ function DatabasePage() {
       },
     },
   };
+
+  useEffect(() => {
+    const chartInstance = chartRef.current;
+    if (chartInstance && data.length > 0) {
+      const xAxis = chartInstance.scales.x;
+      if (xAxis && xAxis.ticks && xAxis.ticks.length > 1) {
+        const firstTickTime = xAxis.ticks[0].value;
+        const secondTickTime = xAxis.ticks[1].value;
+        const timeDifferenceMs = secondTickTime - firstTickTime;
+
+        let intervalString = "N/A";
+        if (timeDifferenceMs > 0) {
+          const duration = moment.duration(timeDifferenceMs);
+          const days = Math.floor(duration.asDays());
+          const hours = Math.floor(duration.asHours()) % 24;
+          const minutes = Math.floor(duration.asMinutes()) % 60;
+          const seconds = Math.floor(duration.asSeconds()) % 60;
+
+          const parts = [];
+          if (days > 0) parts.push(`${days} ngày`);
+          if (hours > 0) parts.push(`${hours} giờ`);
+          if (minutes > 0 || (days === 0 && hours === 0))
+            parts.push(`${minutes} phút`);
+          if (seconds > 0 || parts.length === 0) parts.push(`${seconds} giây`);
+
+          intervalString = parts.join(", ");
+        }
+
+        console.log("First Tick:", new Date(firstTickTime).toISOString());
+        console.log("Second Tick:", new Date(secondTickTime).toISOString());
+        console.log("Time Difference (ms):", timeDifferenceMs);
+        console.log("Grouping Interval:", intervalString);
+
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: intervalString,
+        }));
+      } else {
+        console.log(
+          "Not enough ticks to calculate interval:",
+          xAxis?.ticks?.length
+        );
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: "N/A",
+        }));
+      }
+    }
+  }, [data]);
 
   return (
     <div className="flex flex-col max-w-screen overflow-x-clip">
