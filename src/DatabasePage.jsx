@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -68,12 +68,11 @@ function DatabasePage() {
     groupingInterval: "N/A",
   });
 
-  // Thêm ref để truy cập biểu đồ nhiệt độ
-  const chartRef = useRef(null);
-
   const handleDeviceClick = (deviceName) => {
     setDevice(deviceName); // Cập nhật state khi click
   };
+
+  const chartRef = useRef(null);
 
   const handleExtract = async (e) => {
     e.preventDefault();
@@ -94,11 +93,8 @@ function DatabasePage() {
         }
       );
       const extractedData = response.data.data;
-      setData(extractedData);
-      setTemperatureStats({
-        ...response.data.temperatureStats,
-        groupingInterval: "N/A", // Reset trước khi tính toán lại
-      });
+      setData(extractedData); // Cập nhật state data với dữ liệu từ backend
+      setTemperatureStats(response.data.temperatureStats);
       console.log("Data:", extractedData);
       console.log("Temperature Stats:", response.data.temperatureStats);
     } catch (error) {
@@ -188,88 +184,67 @@ function DatabasePage() {
   // Chuẩn bị dữ liệu cho biểu đồ
   const labels = data.map((item) => `${item.date} ${item.time}`); // Trục x: thời gian
 
-  // Tính toán groupingInterval dựa trên các nhãn hiển thị trên biểu đồ
   useEffect(() => {
-    if (data.length >= 2 && chartRef.current) {
-      const chart = chartRef.current;
-      const displayedTicks = chart.scales["x"].getTicks();
+    if (chartRef.current && chartRef.current.chart) {
+      const chart = chartRef.current.chart;
+      const xLabels = chart.config.data.labels; // Lấy labels ban đầu bạn cung cấp
+      const xScale = chart.scales.x;
+      const displayedLabels = xScale
+        ? xScale.getLabelForValue(0)
+          ? xScale.ticks.map((tick) => xScale.getLabelForValue(tick.value))
+          : xLabels
+        : [];
 
-      if (displayedTicks.length < 2) {
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: "Không đủ nhãn hiển thị",
-        }));
-        return;
-      }
+      if (displayedLabels.length >= 2) {
+        const displayedTimestamps = displayedLabels
+          .map((label) => moment(label, "YYYY-MM-DD HH:mm:ss").valueOf())
+          .filter((ts) => !isNaN(ts))
+          .sort((a, b) => a - b);
 
-      // Ánh xạ các tick hiển thị về thời gian
-      const displayedLabels = displayedTicks
-        .map((tick) => ({
-          label: tick.label,
-          time: moment(tick.label, "YYYY-MM-DD HH:mm:ss"),
-          timestamp: moment(tick.label, "YYYY-MM-DD HH:mm:ss").valueOf(),
-        }))
-        .filter((entry) => entry.time.isValid());
-
-      // Sắp xếp theo thời gian tăng dần
-      displayedLabels.sort((a, b) => a.timestamp - b.timestamp);
-
-      // Tìm độ chênh lệch nhỏ nhất giữa hai nhãn gần nhau nhất
-      let minDifferenceMs = Infinity;
-      for (let i = 1; i < displayedLabels.length; i++) {
-        const diffMs =
-          displayedLabels[i].timestamp - displayedLabels[i - 1].timestamp;
-        if (diffMs > 0 && diffMs < minDifferenceMs) {
-          minDifferenceMs = diffMs;
+        let minDisplayedIntervalMs = Infinity;
+        for (let i = 1; i < displayedTimestamps.length; i++) {
+          const diffMs = displayedTimestamps[i] - displayedTimestamps[i - 1];
+          if (diffMs > 0 && diffMs < minDisplayedIntervalMs) {
+            minDisplayedIntervalMs = diffMs;
+          }
         }
-      }
 
-      if (minDifferenceMs !== Infinity && minDifferenceMs >= 0) {
-        const duration = moment.duration(minDifferenceMs);
-        const days = duration.days();
-        const hours = duration.hours();
-        const minutes = duration.minutes();
-        const seconds = duration.seconds();
+        let displayedGroupingInterval = "N/A";
+        if (minDisplayedIntervalMs !== Infinity && minDisplayedIntervalMs > 0) {
+          const duration = moment.duration(minDisplayedIntervalMs);
+          const days = duration.days();
+          const hours = duration.hours();
+          const minutes = duration.minutes();
+          const seconds = duration.seconds();
 
-        const parts = [];
-        if (days > 0) parts.push(`${days} ngày`);
-        if (hours > 0) parts.push(`${hours} giờ`);
-        if (minutes > 0) parts.push(`${minutes} phút`);
-        if (seconds >= 0 && parts.length === 0) parts.push(`${seconds} giây`);
-        else if (seconds > 0 && parts.length > 0) parts.push(`${seconds} giây`);
+          const parts = [];
+          if (days > 0) parts.push(`${days} ngày`);
+          if (hours > 0) parts.push(`${hours} giờ`);
+          if (minutes > 0) parts.push(`${minutes} phút`);
+          if (seconds >= 0 && parts.length === 0) parts.push(`${seconds} giây`);
+          else if (seconds > 0 && parts.length > 0)
+            parts.push(`${seconds} giây`);
 
-        const groupingInterval = parts.join(", ") || "0 giây";
-
-        // Log để gỡ lỗi
-        console.log(
-          "Displayed Labels:",
-          displayedLabels.map((t) => t.label)
-        );
-        console.log("Min Difference (ms):", minDifferenceMs);
-        console.log("Grouping Interval:", groupingInterval);
+          displayedGroupingInterval = parts.join(", ");
+        }
 
         setTemperatureStats((prevStats) => ({
           ...prevStats,
-          groupingInterval,
+          groupingInterval: displayedGroupingInterval,
+        }));
+      } else if (displayedLabels.length === 1) {
+        setTemperatureStats((prevStats) => ({
+          ...prevStats,
+          groupingInterval: "Một điểm dữ liệu hiển thị",
         }));
       } else {
         setTemperatureStats((prevStats) => ({
           ...prevStats,
-          groupingInterval: "Lỗi tính toán thời gian",
+          groupingInterval: "Không có nhãn hiển thị",
         }));
       }
-    } else if (data.length === 1) {
-      setTemperatureStats((prevStats) => ({
-        ...prevStats,
-        groupingInterval: "Dữ liệu đơn lẻ",
-      }));
-    } else {
-      setTemperatureStats((prevStats) => ({
-        ...prevStats,
-        groupingInterval: "Không có dữ liệu",
-      }));
     }
-  }, [data]); // Chạy lại khi dữ liệu thay đổi
+  }, [chartRef, data]); // Lắng nghe sự thay đổi của chartRef và data
 
   const temperatureData = {
     labels,
@@ -610,7 +585,11 @@ function DatabasePage() {
                     className="chart-container w-full min-h-[500px]"
                     id="temperatureChart"
                   >
-                    <Line data={temperatureData} options={chartOptions} />
+                    <Line
+                      data={temperatureData}
+                      options={chartOptions}
+                      ref={chartRef}
+                    />
                   </div>
                 </div>
                 {/* Độ ẩm */}
