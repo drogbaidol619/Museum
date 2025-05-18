@@ -185,15 +185,15 @@ function DatabasePage() {
   // Tính độ chia thời gian từ hai nhãn gần nhau nhất
   useEffect(() => {
     if (labels.length > 1) {
-      // Chuyển labels thành timestamp (milliseconds)
       const timestamps = labels
-        .map((label) => moment(label, "YYYY-MM-DD HH:mm:ss").valueOf())
-        .filter((timestamp) => !isNaN(timestamp)); // Lọc bỏ giá trị không hợp lệ
+        .map((label) => {
+          const momentObj = moment(label, "YYYY-MM-DD HH:mm:ss");
+          return momentObj.isValid() ? momentObj.valueOf() : NaN;
+        })
+        .filter((timestamp) => !isNaN(timestamp));
 
-      // Sắp xếp theo thời gian tăng dần
       timestamps.sort((a, b) => a - b);
 
-      // Tìm chênh lệch nhỏ nhất giữa hai nhãn gần nhau nhất
       let minIntervalMs = Infinity;
       for (let i = 1; i < timestamps.length; i++) {
         const diffMs = timestamps[i] - timestamps[i - 1];
@@ -205,28 +205,37 @@ function DatabasePage() {
       let groupingInterval = "N/A";
       if (minIntervalMs !== Infinity && minIntervalMs > 0) {
         const duration = moment.duration(minIntervalMs);
-        const days = Math.floor(duration.asDays());
-        const hours = Math.floor(duration.asHours()) % 24;
-        const minutes = Math.floor(duration.asMinutes()) % 60;
-        const seconds = Math.floor(duration.asSeconds()) % 60;
+        const days = duration.days();
+        const hours = duration.hours();
+        const minutes = duration.minutes();
+        const seconds = duration.seconds();
 
         const parts = [];
         if (days > 0) parts.push(`${days} ngày`);
         if (hours > 0) parts.push(`${hours} giờ`);
-        if (minutes > 0 || (days === 0 && hours === 0))
-          parts.push(`${minutes} phút`);
-        if (seconds > 0 || parts.length === 0) parts.push(`${seconds} giây`);
+        if (minutes > 0) parts.push(`${minutes} phút`);
+        if (seconds >= 0 && parts.length === 0) parts.push(`${seconds} giây`);
+        else if (seconds > 0 && parts.length > 0) parts.push(`${seconds} giây`);
 
         groupingInterval = parts.join(", ");
       }
 
-      // Cập nhật temperatureStats với độ chia thời gian
       setTemperatureStats((prevStats) => ({
         ...prevStats,
         groupingInterval,
       }));
+    } else if (labels.length === 1) {
+      setTemperatureStats((prevStats) => ({
+        ...prevStats,
+        groupingInterval: "Dữ liệu đơn lẻ",
+      }));
+    } else {
+      setTemperatureStats((prevStats) => ({
+        ...prevStats,
+        groupingInterval: "Không có dữ liệu",
+      }));
     }
-  }, [labels]); // Chạy lại khi labels thay đổi
+  }, [labels]);
 
   const temperatureData = {
     labels,
