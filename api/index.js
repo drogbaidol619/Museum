@@ -98,7 +98,7 @@ export default async (req, res) => {
           const accessToken = jwt.sign(
             { userId: user.id, email: user.email },
             accessTokenSecret,
-            { expiresIn: "15m" }
+            { expiresIn: "30m" }
           );
           const refreshToken = jwt.sign(
             { userId: user.id, email: user.email },

@@ -229,29 +229,58 @@ function DatabasePage() {
 
       const elementsToCapture = [
         {
-          id: "reportTitleSection",
+          id: "reportTitle",
           label: "Bảng xem trước báo cáo biểu đồ",
           height: titleHeight,
+          type: "title",
         },
         {
-          id: "temperatureSection",
+          id: "temperatureChartTitle",
           label: "Biểu đồ nhiệt độ",
-          height: titleHeight + statsHeight + chartHeight + margin,
+          height: titleHeight,
+          type: "title",
         },
         {
-          id: "humiditySection",
+          id: "temperatureStats",
+          label: "Thống kê nhiệt độ",
+          height: statsHeight,
+        },
+        {
+          id: "temperatureChart",
+          label: "Biểu đồ nhiệt độ",
+          height: chartHeight,
+        },
+        {
+          id: "humidityChartTitle",
           label: "Biểu đồ độ ẩm",
-          height: titleHeight + statsHeight + chartHeight + margin,
+          height: titleHeight,
+          type: "title",
         },
+        { id: "humidityStats", label: "Thống kê độ ẩm", height: statsHeight },
+        { id: "humidityChart", label: "Biểu đồ độ ẩm", height: chartHeight },
         {
-          id: "lightSection",
+          id: "lightChartTitle",
           label: "Biểu đồ ánh sáng",
-          height: titleHeight + statsHeight + chartHeight + margin,
+          height: titleHeight,
+          type: "title",
+        },
+        { id: "lightStats", label: "Thống kê ánh sáng", height: statsHeight },
+        { id: "lightChart", label: "Biểu đồ ánh sáng", height: chartHeight },
+        {
+          id: "motionChartTitle",
+          label: "Biểu đồ chuyển động",
+          height: titleHeight,
+          type: "title",
         },
         {
-          id: "motionSection",
+          id: "motionStats",
+          label: "Thống kê chuyển động",
+          height: statsHeight,
+        },
+        {
+          id: "motionChart",
           label: "Biểu đồ chuyển động",
-          height: titleHeight + statsHeight + chartHeight + margin,
+          height: chartHeight,
         },
       ];
 
