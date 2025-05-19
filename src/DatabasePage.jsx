@@ -222,24 +222,43 @@ function DatabasePage() {
       let yPosition = 10;
       const margin = 10;
       const chartWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-      const chartHeight = 150; // Chiều cao cố định cho mỗi biểu đồ và bảng
+      // Điều chỉnh độ cao để cả thống kê và biểu đồ vừa trang
+      const statsHeight = 70; // Ước tính chiều cao cho phần thống kê
+      const chartHeight = 130; // Ước tính chiều cao cho biểu đồ
 
       const elementsToCapture = [
-        { id: "temperatureStats", label: "Thống kê nhiệt độ" },
-        { id: "temperatureChart", label: "Biểu đồ nhiệt độ" },
-        { id: "humidityStats", label: "Thống kê độ ẩm" },
-        { id: "humidityChart", label: "Biểu đồ độ ẩm" },
-        { id: "lightStats", label: "Thống kê ánh sáng" },
-        { id: "lightChart", label: "Biểu đồ ánh sáng" },
-        { id: "motionStats", label: "Thống kê chuyển động" },
-        { id: "motionChart", label: "Biểu đồ chuyển động" },
+        {
+          id: "temperatureStats",
+          label: "Thống kê nhiệt độ",
+          height: statsHeight,
+        },
+        {
+          id: "temperatureChart",
+          label: "Biểu đồ nhiệt độ",
+          height: chartHeight,
+        },
+        { id: "humidityStats", label: "Thống kê độ ẩm", height: statsHeight },
+        { id: "humidityChart", label: "Biểu đồ độ ẩm", height: chartHeight },
+        { id: "lightStats", label: "Thống kê ánh sáng", height: statsHeight },
+        { id: "lightChart", label: "Biểu đồ ánh sáng", height: chartHeight },
+        {
+          id: "motionStats",
+          label: "Thống kê chuyển động",
+          height: statsHeight,
+        },
+        {
+          id: "motionChart",
+          label: "Biểu đồ chuyển động",
+          height: chartHeight,
+        },
       ];
 
       for (const elementInfo of elementsToCapture) {
         const element = document.getElementById(elementInfo.id);
         if (element) {
+          const totalElementHeight = elementInfo.height;
           if (
-            yPosition + chartHeight >
+            yPosition + totalElementHeight >
             pdf.internal.pageSize.getHeight() - margin
           ) {
             pdf.addPage();
@@ -254,9 +273,9 @@ function DatabasePage() {
             margin,
             yPosition,
             chartWidth,
-            chartHeight
+            elementInfo.height // Sử dụng chiều cao đã điều chỉnh
           );
-          yPosition += chartHeight + margin;
+          yPosition += totalElementHeight + margin;
         } else {
           console.warn(`Không tìm thấy phần tử với ID: ${elementInfo.id}`);
         }
