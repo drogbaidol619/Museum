@@ -223,9 +223,9 @@ function DatabasePage() {
       const margin = 10;
       const chartWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
       // Ước tính chiều cao bao gồm cả tiêu đề
-      const titleHeight = 10;
-      const statsHeight = 70; // Điều chỉnh nếu cần
-      const chartHeight = 150; // Điều chỉnh nếu cần
+      const titleHeight = 20;
+      const statsHeight = 70;
+      const chartHeight = 120;
 
       const elementsToCapture = [
         {
