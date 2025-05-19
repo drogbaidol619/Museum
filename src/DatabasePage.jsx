@@ -225,13 +225,13 @@ function DatabasePage() {
       const chartHeight = 150; // Chiều cao cố định cho mỗi biểu đồ và bảng
 
       const elementsToCapture = [
-        // { id: "temperatureStats", label: "Thống kê nhiệt độ" },
+        { id: "temperatureStats", label: "Thống kê nhiệt độ" },
         { id: "temperatureChart", label: "Biểu đồ nhiệt độ" },
-        // { id: "humidityStats", label: "Thống kê độ ẩm" },
+        { id: "humidityStats", label: "Thống kê độ ẩm" },
         { id: "humidityChart", label: "Biểu đồ độ ẩm" },
-        // { id: "lightStats", label: "Thống kê ánh sáng" },
+        { id: "lightStats", label: "Thống kê ánh sáng" },
         { id: "lightChart", label: "Biểu đồ ánh sáng" },
-        // { id: "motionStats", label: "Thống kê chuyển động" },
+        { id: "motionStats", label: "Thống kê chuyển động" },
         { id: "motionChart", label: "Biểu đồ chuyển động" },
       ];
 
@@ -486,20 +486,20 @@ function DatabasePage() {
           {/*Khung table*/}
           {data.length > 0 && (
             <div className="col-span-2 max-h-screen overflow-y-scroll w-full">
-              <table className="table-auto roboto text-center w-full border-separate border border-gray-400 ">
+              <table className="table-auto roboto text-center w-full border-separate border  ">
                 <thead
                   className=" text-xl font-medium"
                   style={{ backgroundColor: "#68D69D", color: "#401D83" }}
                 >
                   <tr>
-                    <td className="border border-gray-400">Id</td>
-                    <td className="border border-gray-400">Temperature</td>
-                    <td className="border border-gray-400">Humidity</td>
-                    <td className="border border-gray-400">Light</td>
-                    <td className="border border-gray-400">Motion</td>
-                    <td className="border border-gray-400">Ssid</td>
-                    <td className="border border-gray-400">Time</td>
-                    <td className="border border-gray-400">Date</td>
+                    <td className="border ">Id</td>
+                    <td className="border ">Temperature</td>
+                    <td className="border ">Humidity</td>
+                    <td className="border ">Light</td>
+                    <td className="border ">Motion</td>
+                    <td className="border ">Ssid</td>
+                    <td className="border ">Time</td>
+                    <td className="border ">Date</td>
                   </tr>
                 </thead>
                 <tbody
@@ -508,30 +508,30 @@ function DatabasePage() {
                 >
                   {data.map((item, index) => (
                     <tr key={index}>
-                      <td className="border border-gray-400">{index}</td>
-                      <td className="border border-gray-400">
+                      <td className="border ">{index}</td>
+                      <td className="border ">
                         {item.temperature !== null ? item.temperature : "null"}
                       </td>
-                      <td className="border border-gray-400">
+                      <td className="border ">
                         {item.humidity !== null ? item.humidity : "null"}
                       </td>
-                      <td className="border border-gray-400">
+                      <td className="border ">
                         {item.light !== null ? item.light : "null"}
                       </td>
-                      <td className="border border-gray-400">
+                      <td className="border ">
                         {item.motion === true
                           ? "True"
                           : item.motion === false
                           ? "False"
                           : "N/A"}
                       </td>
-                      <td className="border border-gray-400">
+                      <td className="border ">
                         {item.ssid !== null ? item.ssid : "null"}
                       </td>
-                      <td className="border border-gray-400">
+                      <td className="border ">
                         {item.time !== null ? item.time : "null"}
                       </td>
-                      <td className="border border-gray-400">
+                      <td className="border ">
                         {item.date !== null ? item.date : "null"}
                       </td>
                     </tr>
@@ -554,61 +554,49 @@ function DatabasePage() {
                     className=" grid grid-cols-2 rounded-md p-5"
                     id="temperatureStats"
                   >
-                    <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị lớn nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị nhỏ nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị trung bình
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                    <div className="grid grid-rows-7 gap-1 border-r-2 ">
+                      <p className="border-b-2 ">Giá trị lớn nhất</p>
+                      <p className="border-b-2 ">Giá trị nhỏ nhất</p>
+                      <p className="border-b-2 ">Giá trị trung bình</p>
+                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
+                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
+                      <p className="border-b-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 border-gray-400">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
+                      <p className="border-b-2 ">
                         Khoảng thời gian giữa các lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.maxTemp !== null
                           ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.minTemp !== null
                           ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.avgTemp !== null
                           ? `${temperatureStats.avgTemp.toFixed(2)}°C`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
@@ -627,61 +615,49 @@ function DatabasePage() {
                     className=" grid grid-cols-2 rounded-md p-5"
                     id="humidityStats"
                   >
-                    <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị lớn nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị nhỏ nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị trung bình
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                    <div className="grid grid-rows-7 gap-1 border-r-2 ">
+                      <p className="border-b-2 ">Giá trị lớn nhất</p>
+                      <p className="border-b-2 ">Giá trị nhỏ nhất</p>
+                      <p className="border-b-2 ">Giá trị trung bình</p>
+                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
+                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
+                      <p className="border-b-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 border-gray-400">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
+                      <p className="border-b-2 ">
                         Thời gian giữa 2 lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {humidityStats.maxHumidity !== null
                           ? `${humidityStats.maxHumidity}%`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {humidityStats.minHumidity !== null
                           ? `${humidityStats.minHumidity}%`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {humidityStats.avgHumidity !== null
                           ? `${humidityStats.avgHumidity?.toFixed(2)}%`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
@@ -700,61 +676,49 @@ function DatabasePage() {
                     className=" grid grid-cols-2 rounded-md p-5"
                     id="lightStats"
                   >
-                    <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị lớn nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị nhỏ nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Giá trị trung bình
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                    <div className="grid grid-rows-7 gap-1 border-r-2 ">
+                      <p className="border-b-2 ">Giá trị lớn nhất</p>
+                      <p className="border-b-2 ">Giá trị nhỏ nhất</p>
+                      <p className="border-b-2 ">Giá trị trung bình</p>
+                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
+                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
+                      <p className="border-b-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 border-gray-400">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
+                      <p className="border-b-2 ">
                         Thời gian giữa 2 lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {lightStats.maxLight !== null
                           ? `${lightStats.maxLight} lux`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {lightStats.minLight !== null
                           ? `${lightStats.minLight} lux`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {lightStats.avgLight !== null
                           ? `${lightStats.avgLight?.toFixed(2)} lux`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
@@ -773,45 +737,39 @@ function DatabasePage() {
                 </p>
                 <div className="flex flex-col gap-2 text-black">
                   <div className=" grid grid-cols-2 rounded-md p-5">
-                    <div className="grid grid-rows-6 gap-1 border-r-2 border-gray-400">
-                      <p className="border-b-2 border-gray-400">
+                    <div className="grid grid-rows-6 gap-1 border-r-2 ">
+                      <p className="border-b-2 ">
                         Tổng số lần phát hiện chuyển động
                       </p>
-                      <p className="border-b-2 border-gray-400">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 border-gray-400">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
+                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
+                      <p className="border-b-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 border-gray-400">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
+                      <p className="border-b-2 ">
                         Thời gian giữa 2 lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-6 gap-1">
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {motionStats.motionCount !== null
                           ? `${motionStats.motionCount} lần`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 border-gray-400">
+                      <p className="border-b-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
