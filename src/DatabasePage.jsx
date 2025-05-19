@@ -98,6 +98,9 @@ function DatabasePage() {
       const extractedData = response.data.data;
       setData(extractedData);
       setTemperatureStats(response.data.temperatureStats);
+      setHumidityStats(response.data.humidityStats);
+      setLightStats(response.data.lightStats);
+      setMotionStats(response.data.motionStats);
 
       // Tính toán khoảng thời gian trung bình dựa trên điểm đầu và cuối
       if (extractedData.length >= 2) {
