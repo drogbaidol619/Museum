@@ -222,65 +222,36 @@ function DatabasePage() {
       let yPosition = 10;
       const margin = 10;
       const chartWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-      // Ước tính chiều cao bao gồm cả tiêu đề
-      const titleHeight = 20;
-      const statsHeight = 70;
-      const chartHeight = 120;
+
+      // Ước tính chiều cao cho từng section (bao gồm cả tiêu đề, thống kê và biểu đồ)
+      const reportTitleHeight = 20;
+      const sectionHeight = 20 + 70 + 120 + margin; // Tiêu đề + Thống kê + Biểu đồ + Margin
 
       const elementsToCapture = [
         {
-          id: "reportTitle",
+          id: "reportTitleSection",
           label: "Bảng xem trước báo cáo biểu đồ",
-          height: titleHeight,
-          type: "title",
+          height: reportTitleHeight,
         },
         {
-          id: "temperatureChartTitle",
+          id: "temperatureSection",
           label: "Biểu đồ nhiệt độ",
-          height: titleHeight,
-          type: "title",
+          height: sectionHeight,
         },
         {
-          id: "temperatureStats",
-          label: "Thống kê nhiệt độ",
-          height: statsHeight,
-        },
-        {
-          id: "temperatureChart",
-          label: "Biểu đồ nhiệt độ",
-          height: chartHeight,
-        },
-        {
-          id: "humidityChartTitle",
+          id: "humiditySection",
           label: "Biểu đồ độ ẩm",
-          height: titleHeight,
-          type: "title",
+          height: sectionHeight,
         },
-        { id: "humidityStats", label: "Thống kê độ ẩm", height: statsHeight },
-        { id: "humidityChart", label: "Biểu đồ độ ẩm", height: chartHeight },
         {
-          id: "lightChartTitle",
+          id: "lightSection",
           label: "Biểu đồ ánh sáng",
-          height: titleHeight,
-          type: "title",
+          height: sectionHeight,
         },
-        { id: "lightStats", label: "Thống kê ánh sáng", height: statsHeight },
-        { id: "lightChart", label: "Biểu đồ ánh sáng", height: chartHeight },
         {
-          id: "motionChartTitle",
+          id: "motionSection",
           label: "Biểu đồ chuyển động",
-          height: titleHeight,
-          type: "title",
-        },
-        {
-          id: "motionStats",
-          label: "Thống kê chuyển động",
-          height: statsHeight,
-        },
-        {
-          id: "motionChart",
-          label: "Biểu đồ chuyển động",
-          height: chartHeight,
+          height: sectionHeight,
         },
       ];
 
@@ -591,288 +562,279 @@ function DatabasePage() {
           )}
           {/* Biểu đồ */}
           {data.length > 0 && (
-            <div className="flex flex-col gap-5 w-full" id="reportPreview">
-              <h1 className="text-2xl font-bold mb-5" id="reportTitle">
-                Bảng xem trước báo cáo biểu đồ
-              </h1>
+            <div className="flex flex-col gap-5 w-full">
+              <div id="reportTitleSection">
+                <h1 className="text-2xl font-bold mb-5">
+                  Bảng xem trước báo cáo biểu đồ
+                </h1>
+              </div>
+
               <div className="flex flex-col overflow-x-auto">
                 {/* Nhiệt độ */}
-                <p className="text-xl font-semibold" id="temperatureChartTitle">
-                  Biểu đồ nhiệt độ
-                </p>
-                <div className="flex flex-col gap-2 text-black">
-                  <div
-                    className=" grid grid-cols-2 rounded-md p-5"
-                    id="temperatureStats"
-                  >
-                    <div className="grid grid-rows-7 gap-1 border-r-2 ">
-                      <p className="border-b-2 pl-2 pb-2 ">Giá trị lớn nhất</p>
-                      <p className="border-b-2 pl-2 pb-2 ">Giá trị nhỏ nhất</p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Giá trị trung bình
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận muộn nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Khoảng thời gian giữa các lần ghi nhận
-                      </p>
+                <div id="temperatureSection">
+                  <p className="text-xl font-semibold">Biểu đồ nhiệt độ</p>
+                  <div className="flex flex-col gap-2 text-black">
+                    <div className=" grid grid-cols-2 rounded-md p-5">
+                      <div className="grid grid-rows-7 gap-1 border-r-2 ">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị lớn nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị nhỏ nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị trung bình
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Tổng các điểm giá trị
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận sớm nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận muộn nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Khoảng thời gian ghi nhận
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Khoảng thời gian giữa các lần ghi nhận
+                        </p>
+                      </div>
+                      <div className="grid grid-rows-7 gap-1">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.maxTemp !== null
+                            ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.minTemp !== null
+                            ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.avgTemp !== null
+                            ? `${temperatureStats.avgTemp.toFixed(2)}°C`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.totalPoints}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.firstRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.lastRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.elapsedTime}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.groupingInterval}
+                        </p>
+                      </div>
                     </div>
-                    <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.maxTemp !== null
-                          ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.minTemp !== null
-                          ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.avgTemp !== null
-                          ? `${temperatureStats.avgTemp.toFixed(2)}°C`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.totalPoints}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.firstRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.lastRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.elapsedTime}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.groupingInterval}
-                      </p>
+                    <div className="chart-container w-full min-h-[500px]">
+                      <Line data={temperatureData} options={chartOptions} />
                     </div>
-                  </div>
-                  <div
-                    className="chart-container w-full min-h-[500px]"
-                    id="temperatureChart"
-                  >
-                    <Line data={temperatureData} options={chartOptions} />
                   </div>
                 </div>
+
                 {/* Độ ẩm */}
-                <p
-                  className="text-xl font-semibold mt-10"
-                  id="humidityChartTitle"
-                >
-                  Biểu đồ độ ẩm
-                </p>
-                <div className="flex flex-col gap-2 text-black">
-                  <div
-                    className=" grid grid-cols-2 rounded-md p-5"
-                    id="humidityStats"
-                  >
-                    <div className="grid grid-rows-7 gap-1 border-r-2 ">
-                      <p className="border-b-2 pl-2 pb-2 ">Giá trị lớn nhất</p>
-                      <p className="border-b-2 pl-2 pb-2 ">Giá trị nhỏ nhất</p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Giá trị trung bình
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận muộn nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời gian giữa 2 lần ghi nhận
-                      </p>
+                <div id="humiditySection">
+                  <p className="text-xl font-semibold mt-10">Biểu đồ độ ẩm</p>
+                  <div className="flex flex-col gap-2 text-black">
+                    <div className=" grid grid-cols-2 rounded-md p-5">
+                      <div className="grid grid-rows-7 gap-1 border-r-2 ">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị lớn nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị nhỏ nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị trung bình
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Tổng các điểm giá trị
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận sớm nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận muộn nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Khoảng thời gian ghi nhận
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời gian giữa 2 lần ghi nhận
+                        </p>
+                      </div>
+                      <div className="grid grid-rows-7 gap-1">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {humidityStats.maxHumidity !== null
+                            ? `${humidityStats.maxHumidity}%`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {humidityStats.minHumidity !== null
+                            ? `${humidityStats.minHumidity}%`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {humidityStats.avgHumidity !== null
+                            ? `${humidityStats.avgHumidity?.toFixed(2)}%`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.totalPoints}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.firstRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.lastRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.elapsedTime}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.groupingInterval}
+                        </p>
+                      </div>
                     </div>
-                    <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {humidityStats.maxHumidity !== null
-                          ? `${humidityStats.maxHumidity}%`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {humidityStats.minHumidity !== null
-                          ? `${humidityStats.minHumidity}%`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {humidityStats.avgHumidity !== null
-                          ? `${humidityStats.avgHumidity?.toFixed(2)}%`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.totalPoints}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.firstRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.lastRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.elapsedTime}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.groupingInterval}
-                      </p>
+                    <div className="chart-container w-full min-h-[500px]">
+                      <Line data={humidityData} options={chartOptions} />
                     </div>
-                  </div>
-                  <div
-                    className="chart-container w-full min-h-[500px]"
-                    id="humidityChart"
-                  >
-                    <Line data={humidityData} options={chartOptions} />
                   </div>
                 </div>
+
                 {/* Ánh sáng */}
-                <p className="text-xl font-semibold mt-10" id="lightChartTitle">
-                  Biểu đồ ánh sáng
-                </p>
-                <div className="flex flex-col gap-2 text-black">
-                  <div
-                    className=" grid grid-cols-2 rounded-md p-5"
-                    id="lightStats"
-                  >
-                    <div className="grid grid-rows-7 gap-1 border-r-2 ">
-                      <p className="border-b-2 pl-2 pb-2 ">Giá trị lớn nhất</p>
-                      <p className="border-b-2 pl-2 pb-2 ">Giá trị nhỏ nhất</p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Giá trị trung bình
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận muộn nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời gian giữa 2 lần ghi nhận
-                      </p>
+                <div id="lightSection">
+                  <p className="text-xl font-semibold mt-10">
+                    Biểu đồ ánh sáng
+                  </p>
+                  <div className="flex flex-col gap-2 text-black">
+                    <div className=" grid grid-cols-2 rounded-md p-5">
+                      <div className="grid grid-rows-7 gap-1 border-r-2 ">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị lớn nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị nhỏ nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Giá trị trung bình
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Tổng các điểm giá trị
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận sớm nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận muộn nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Khoảng thời gian ghi nhận
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời gian giữa 2 lần ghi nhận
+                        </p>
+                      </div>
+                      <div className="grid grid-rows-7 gap-1">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {lightStats.maxLight !== null
+                            ? `${lightStats.maxLight} lux`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {lightStats.minLight !== null
+                            ? `${lightStats.minLight} lux`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {lightStats.avgLight !== null
+                            ? `${lightStats.avgLight?.toFixed(2)} lux`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.totalPoints}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.firstRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.lastRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.elapsedTime}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.groupingInterval}
+                        </p>
+                      </div>
                     </div>
-                    <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {lightStats.maxLight !== null
-                          ? `${lightStats.maxLight} lux`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {lightStats.minLight !== null
-                          ? `${lightStats.minLight} lux`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {lightStats.avgLight !== null
-                          ? `${lightStats.avgLight?.toFixed(2)} lux`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.totalPoints}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.firstRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.lastRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.elapsedTime}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.groupingInterval}
-                      </p>
+                    <div className="chart-container w-full min-h-[500px]">
+                      <Line data={lightData} options={chartOptions} />
                     </div>
-                  </div>
-                  <div
-                    className="chart-container w-full min-h-[500px]"
-                    id="lightChart"
-                  >
-                    <Line data={lightData} options={chartOptions} />
                   </div>
                 </div>
 
                 {/* Chuyển động */}
-                <p
-                  className="text-xl font-semibold mt-10"
-                  id="motionChartTitle"
-                >
-                  Biểu đồ chuyển động
-                </p>
-                <div className="flex flex-col gap-2 text-black">
-                  <div
-                    className=" grid grid-cols-2 rounded-md p-5"
-                    id="motionStats"
-                  >
-                    <div className="grid grid-rows-6 gap-1 border-r-2 ">
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Tổng số lần phát hiện chuyển động
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Tổng các điểm giá trị
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận sớm nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời điểm ghi nhận muộn nhất
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Khoảng thời gian ghi nhận
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        Thời gian giữa 2 lần ghi nhận
-                      </p>
+                <div id="motionSection">
+                  <p className="text-xl font-semibold mt-10">
+                    Biểu đồ chuyển động
+                  </p>
+                  <div className="flex flex-col gap-2 text-black">
+                    <div className=" grid grid-cols-2 rounded-md p-5">
+                      <div className="grid grid-rows-6 gap-1 border-r-2 ">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Tổng số lần phát hiện chuyển động
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Tổng các điểm giá trị
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận sớm nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời điểm ghi nhận muộn nhất
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Khoảng thời gian ghi nhận
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          Thời gian giữa 2 lần ghi nhận
+                        </p>
+                      </div>
+                      <div className="grid grid-rows-6 gap-1">
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {motionStats.motionCount !== null
+                            ? `${motionStats.motionCount} lần`
+                            : "N/A"}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.totalPoints}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.firstRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.lastRecord}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.elapsedTime}
+                        </p>
+                        <p className="border-b-2 pl-2 pb-2 ">
+                          {temperatureStats.groupingInterval}
+                        </p>
+                      </div>
                     </div>
-                    <div className="grid grid-rows-6 gap-1">
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {motionStats.motionCount !== null
-                          ? `${motionStats.motionCount} lần`
-                          : "N/A"}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.totalPoints}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.firstRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.lastRecord}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.elapsedTime}
-                      </p>
-                      <p className="border-b-2 pl-2 pb-2 ">
-                        {temperatureStats.groupingInterval}
-                      </p>
+                    <div className="chart-container w-full min-h-[500px]">
+                      <Line data={motionData} options={chartOptions} />
                     </div>
-                  </div>
-                  <div
-                    className="chart-container w-full min-h-[500px]"
-                    id="motionChart"
-                  >
-                    <Line data={motionData} options={chartOptions} />
                   </div>
                 </div>
               </div>
