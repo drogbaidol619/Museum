@@ -396,7 +396,7 @@ export default async (req, res) => {
           elapsedTime = parts.join(", ");
         }
 
-        // Tính toán khoảng thời gian ngắn nhất giữa các lần ghi nhận (giây)
+        // Tính toán khoảng thời gian xuất hiện nhiều nhất giữa các lần ghi nhận (giây)
         let groupingInterval = "N/A";
         if (data.length >= 2) {
           const timeDifferences = [];
@@ -410,15 +410,32 @@ export default async (req, res) => {
               "YYYY-MM-DD HH:mm:ss"
             );
             if (currentTime.isValid() && previousTime.isValid()) {
-              timeDifferences.push(currentTime.diff(previousTime, "seconds"));
+              const diff = currentTime.diff(previousTime, "seconds");
+              timeDifferences.push(diff);
             }
           }
 
           if (timeDifferences.length > 0) {
-            const minDifferenceSeconds = Math.min(...timeDifferences);
-            groupingInterval = `${minDifferenceSeconds} giây`;
+            // Tìm giá trị xuất hiện nhiều nhất (mode)
+            const frequencyMap = {};
+            let maxFrequency = 0;
+            let mostFrequentInterval = timeDifferences[0];
+
+            timeDifferences.forEach((diff) => {
+              frequencyMap[diff] = (frequencyMap[diff] || 0) + 1;
+              if (frequencyMap[diff] > maxFrequency) {
+                maxFrequency = frequencyMap[diff];
+                mostFrequentInterval = diff;
+              }
+            });
+
+            groupingInterval = `${mostFrequentInterval} giây`;
+            console.log(
+              `Khoảng thời gian xuất hiện nhiều nhất: ${groupingInterval} (xuất hiện ${maxFrequency} lần)`
+            );
           } else {
             groupingInterval = "Không đủ dữ liệu để tính toán";
+            console.log("Không có dữ liệu hợp lệ để tính khoảng thời gian.");
           }
         }
 
