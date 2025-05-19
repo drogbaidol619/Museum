@@ -219,35 +219,69 @@ function DatabasePage() {
     e.preventDefault();
     try {
       const pdf = new jsPDF("p", "mm", "a4");
-      const chartIds = [
-        "temperatureChart",
-        "humidityChart",
-        "lightChart",
-        "motionChart",
-      ];
       let yPosition = 10;
 
-      for (let i = 0; i < chartIds.length; i++) {
-        const chartElement = document.getElementById(chartIds[i]);
-        if (chartElement) {
-          const canvas = await html2canvas(chartElement, { scale: 2 });
-          const imgData = canvas.toDataURL("image/png");
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      // Tìm phần tử chứa toàn bộ bảng xem trước báo cáo
+      const reportPreviewElement = document.querySelector(
+        ".flex.flex-col.gap-5.w-full"
+      );
 
-          pdf.addImage(imgData, "PNG", 10, yPosition, pdfWidth, pdfHeight);
-          yPosition += pdfHeight + 10;
+      if (reportPreviewElement) {
+        const canvasReport = await html2canvas(reportPreviewElement, {
+          scale: 2,
+        });
+        const imgDataReport = canvasReport.toDataURL("image/png");
+        const imgPropsReport = pdf.getImageProperties(imgDataReport);
+        const pdfWidthReport = pdf.internal.pageSize.getWidth() - 20;
+        const pdfHeightReport =
+          (imgPropsReport.height * pdfWidthReport) / imgPropsReport.width;
 
-          if (yPosition > 250 && i < chartIds.length - 1) {
-            pdf.addPage();
-            yPosition = 10;
+        // Kiểm tra nếu chiều cao vượt quá một trang, nếu có thì thêm trang mới
+        if (pdfHeightReport > pdf.internal.pageSize.getHeight() - 20) {
+          let currentHeight = 0;
+          let remainingHeight = pdfHeightReport;
+          while (remainingHeight > 0) {
+            const pageHeight = Math.min(
+              remainingHeight,
+              pdf.internal.pageSize.getHeight() - 20
+            );
+            pdf.addImage(
+              imgDataReport,
+              "PNG",
+              10,
+              10 + currentHeight,
+              pdfWidthReport,
+              pdfHeightReport,
+              undefined,
+              "FAST",
+              0,
+              currentHeight,
+              pageHeight
+            );
+            remainingHeight -= pageHeight;
+            currentHeight += pageHeight;
+            if (remainingHeight > 0) {
+              pdf.addPage();
+            }
           }
+        } else {
+          pdf.addImage(
+            imgDataReport,
+            "PNG",
+            10,
+            yPosition,
+            pdfWidthReport,
+            pdfHeightReport
+          );
         }
+
+        yPosition += pdfHeightReport + 10;
       }
 
-      pdf.save(`${device}_charts_${day.start}_${day.end}.pdf`);
-      alert("Báo cáo biểu đồ đã được tải xuống thành công!");
+      pdf.save(`${device}_report_${day.start}_${day.end}.pdf`);
+      alert(
+        "Báo cáo biểu đồ và dữ liệu xem trước đã được tải xuống thành công!"
+      );
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình xuất báo cáo. Vui lòng thử lại.");
