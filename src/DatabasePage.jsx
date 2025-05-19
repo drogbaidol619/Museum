@@ -225,13 +225,13 @@ function DatabasePage() {
       const chartHeight = 150; // Chiều cao cố định cho mỗi biểu đồ và bảng
 
       const elementsToCapture = [
-        { id: "temperatureStats", label: "Thống kê nhiệt độ" },
+        // { id: "temperatureStats", label: "Thống kê nhiệt độ" },
         { id: "temperatureChart", label: "Biểu đồ nhiệt độ" },
-        { id: "humidityStats", label: "Thống kê độ ẩm" },
+        // { id: "humidityStats", label: "Thống kê độ ẩm" },
         { id: "humidityChart", label: "Biểu đồ độ ẩm" },
-        { id: "lightStats", label: "Thống kê ánh sáng" },
+        // { id: "lightStats", label: "Thống kê ánh sáng" },
         { id: "lightChart", label: "Biểu đồ ánh sáng" },
-        { id: "motionStats", label: "Thống kê chuyển động" },
+        // { id: "motionStats", label: "Thống kê chuyển động" },
         { id: "motionChart", label: "Biểu đồ chuyển động" },
       ];
 
