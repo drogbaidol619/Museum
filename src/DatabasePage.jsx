@@ -71,18 +71,21 @@ function DatabasePage() {
     maxHumidity: null,
     minHumidity: null,
     avgHumidity: null,
+    groupingInterval: "N/A", // Thêm groupingInterval cho đồng bộ
   });
   const [lightStats, setLightStats] = useState({
     maxLight: null,
     minLight: null,
     avgLight: null,
+    groupingInterval: "N/A", // Thêm groupingInterval cho đồng bộ
   });
   const [motionStats, setMotionStats] = useState({
     motionCount: 0,
+    groupingInterval: "N/A", // Thêm groupingInterval cho đồng bộ
   });
 
   const handleDeviceClick = (deviceName) => {
-    setDevice(deviceName); // Cập nhật state khi click
+    setDevice(deviceName);
   };
 
   const handleExtract = async (e) => {
@@ -91,9 +94,9 @@ function DatabasePage() {
       const response = await axios.post(
         "/api/extract",
         {
-          deviceSelect: device, // tên device
-          startDate: day.start, // ngày trích xuất
-          endDate: day.end, // ngày kết thúc trích xuất
+          deviceSelect: device,
+          startDate: day.start,
+          endDate: day.end,
           temperature_alarm: checkBox.temperature_alarm,
           humidity_alarm: checkBox.humidity_alarm,
           light_alarm: checkBox.light_alarm,
@@ -106,15 +109,17 @@ function DatabasePage() {
       const extractedData = response.data.data;
       setData(extractedData);
       setTemperatureStats(response.data.temperatureStats);
-      setHumidityStats(response.data.humidityStats);
-      setLightStats(response.data.lightStats);
-      setMotionStats(response.data.motionStats);
-
-      // Lấy khoảng thời gian giữa các lần ghi nhận từ response
-      const groupingInterval = response.data.groupingInterval || "N/A";
-      setTemperatureStats((prevStats) => ({
-        ...prevStats,
-        groupingInterval,
+      setHumidityStats((prev) => ({
+        ...response.data.humidityStats,
+        groupingInterval: response.data.temperatureStats.groupingInterval,
+      }));
+      setLightStats((prev) => ({
+        ...response.data.lightStats,
+        groupingInterval: response.data.temperatureStats.groupingInterval,
+      }));
+      setMotionStats((prev) => ({
+        ...response.data.motionStats,
+        groupingInterval: response.data.temperatureStats.groupingInterval,
       }));
     } catch (error) {
       console.error(error);
