@@ -222,9 +222,7 @@ function DatabasePage() {
       let yPosition = 10;
 
       // Tìm phần tử chứa toàn bộ bảng xem trước báo cáo
-      const reportPreviewElement = document.querySelector(
-        ".flex.flex-col.gap-5.w-full"
-      );
+      const reportPreviewElement = document.getElementById("reportPreview");
 
       if (reportPreviewElement) {
         const canvasReport = await html2canvas(reportPreviewElement, {
@@ -338,7 +336,7 @@ function DatabasePage() {
     datasets: [
       {
         label: "Chuyển động",
-        data: data.map((item) => (item.motion ? 1 : 0)), // Chuyển thành 1/0 để vẽ
+        data: data.map((item) => (item.motion ? 1 : 0)),
         fill: true,
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
@@ -558,7 +556,7 @@ function DatabasePage() {
           )}
           {/* Biểu đồ */}
           {data.length > 0 && (
-            <div className="flex flex-col gap-5 w-full">
+            <div className="flex flex-col gap-5 w-full" id="reportPreview">
               <h1 className="text-2xl font-bold mb-5">
                 Bảng xem trước báo cáo biểu đồ
               </h1>
