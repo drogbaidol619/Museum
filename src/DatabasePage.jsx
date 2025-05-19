@@ -574,48 +574,56 @@ function DatabasePage() {
                     id="temperatureStats"
                   >
                     <div className="grid grid-rows-7 gap-1 border-r-2 ">
-                      <p className="border-b-2 ">Giá trị lớn nhất</p>
-                      <p className="border-b-2 ">Giá trị nhỏ nhất</p>
-                      <p className="border-b-2 ">Giá trị trung bình</p>
-                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
-                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">Giá trị lớn nhất</p>
+                      <p className="border-b-2 pl-2 pb-2 ">Giá trị nhỏ nhất</p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Giá trị trung bình
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Khoảng thời gian giữa các lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.maxTemp !== null
                           ? `${temperatureStats.maxTemp}°C tại ${temperatureStats.maxTempTime}`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.minTemp !== null
                           ? `${temperatureStats.minTemp}°C tại ${temperatureStats.minTempTime}`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.avgTemp !== null
                           ? `${temperatureStats.avgTemp.toFixed(2)}°C`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
@@ -635,48 +643,56 @@ function DatabasePage() {
                     id="humidityStats"
                   >
                     <div className="grid grid-rows-7 gap-1 border-r-2 ">
-                      <p className="border-b-2 ">Giá trị lớn nhất</p>
-                      <p className="border-b-2 ">Giá trị nhỏ nhất</p>
-                      <p className="border-b-2 ">Giá trị trung bình</p>
-                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
-                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">Giá trị lớn nhất</p>
+                      <p className="border-b-2 pl-2 pb-2 ">Giá trị nhỏ nhất</p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Giá trị trung bình
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Thời gian giữa 2 lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {humidityStats.maxHumidity !== null
                           ? `${humidityStats.maxHumidity}%`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {humidityStats.minHumidity !== null
                           ? `${humidityStats.minHumidity}%`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {humidityStats.avgHumidity !== null
                           ? `${humidityStats.avgHumidity?.toFixed(2)}%`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
@@ -696,48 +712,56 @@ function DatabasePage() {
                     id="lightStats"
                   >
                     <div className="grid grid-rows-7 gap-1 border-r-2 ">
-                      <p className="border-b-2 ">Giá trị lớn nhất</p>
-                      <p className="border-b-2 ">Giá trị nhỏ nhất</p>
-                      <p className="border-b-2 ">Giá trị trung bình</p>
-                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
-                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">Giá trị lớn nhất</p>
+                      <p className="border-b-2 pl-2 pb-2 ">Giá trị nhỏ nhất</p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Giá trị trung bình
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Thời gian giữa 2 lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {lightStats.maxLight !== null
                           ? `${lightStats.maxLight} lux`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {lightStats.minLight !== null
                           ? `${lightStats.minLight} lux`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {lightStats.avgLight !== null
                           ? `${lightStats.avgLight?.toFixed(2)} lux`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
@@ -755,40 +779,49 @@ function DatabasePage() {
                   Biểu đồ chuyển động
                 </p>
                 <div className="flex flex-col gap-2 text-black">
-                  <div className=" grid grid-cols-2 rounded-md p-5">
+                  <div
+                    className=" grid grid-cols-2 rounded-md p-5"
+                    id="motionStats"
+                  >
                     <div className="grid grid-rows-6 gap-1 border-r-2 ">
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Tổng số lần phát hiện chuyển động
                       </p>
-                      <p className="border-b-2 ">Tổng các điểm giá trị</p>
-                      <p className="border-b-2 ">Thời điểm ghi nhận sớm nhất</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Thời điểm ghi nhận muộn nhất
                       </p>
-                      <p className="border-b-2 ">Khoảng thời gian ghi nhận</p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 pl-2 pb-2 ">
                         Thời gian giữa 2 lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-6 gap-1">
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {motionStats.motionCount !== null
                           ? `${motionStats.motionCount} lần`
                           : "N/A"}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.totalPoints}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.firstRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.lastRecord}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.elapsedTime}
                       </p>
-                      <p className="border-b-2 ">
+                      <p className="border-b-2 pl-2 pb-2 ">
                         {temperatureStats.groupingInterval}
                       </p>
                     </div>
