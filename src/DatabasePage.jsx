@@ -222,98 +222,63 @@ function DatabasePage() {
       let yPosition = 10;
       const margin = 10;
       const chartWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-      const titleHeight = 10; // Chiều cao cho tiêu đề
-      const statsHeight = 50;
-      const chartHeight = 130;
+      // Ước tính chiều cao bao gồm cả tiêu đề
+      const titleHeight = 10;
+      const statsHeight = 70; // Điều chỉnh nếu cần
+      const chartHeight = 150; // Điều chỉnh nếu cần
 
       const elementsToCapture = [
         {
-          id: "reportTitle",
+          id: "reportTitleSection",
           label: "Bảng xem trước báo cáo biểu đồ",
           height: titleHeight,
-          type: "title",
         },
         {
-          id: "temperatureChartTitle",
+          id: "temperatureSection",
           label: "Biểu đồ nhiệt độ",
-          height: titleHeight,
-          type: "title",
+          height: titleHeight + statsHeight + chartHeight + margin,
         },
         {
-          id: "temperatureStats",
-          label: "Thống kê nhiệt độ",
-          height: statsHeight,
-        },
-        {
-          id: "temperatureChart",
-          label: "Biểu đồ nhiệt độ",
-          height: chartHeight,
-        },
-        {
-          id: "humidityChartTitle",
+          id: "humiditySection",
           label: "Biểu đồ độ ẩm",
-          height: titleHeight,
-          type: "title",
+          height: titleHeight + statsHeight + chartHeight + margin,
         },
-        { id: "humidityStats", label: "Thống kê độ ẩm", height: statsHeight },
-        { id: "humidityChart", label: "Biểu đồ độ ẩm", height: chartHeight },
         {
-          id: "lightChartTitle",
+          id: "lightSection",
           label: "Biểu đồ ánh sáng",
-          height: titleHeight,
-          type: "title",
+          height: titleHeight + statsHeight + chartHeight + margin,
         },
-        { id: "lightStats", label: "Thống kê ánh sáng", height: statsHeight },
-        { id: "lightChart", label: "Biểu đồ ánh sáng", height: chartHeight },
         {
-          id: "motionChartTitle",
+          id: "motionSection",
           label: "Biểu đồ chuyển động",
-          height: titleHeight,
-          type: "title",
-        },
-        {
-          id: "motionStats",
-          label: "Thống kê chuyển động",
-          height: statsHeight,
-        },
-        {
-          id: "motionChart",
-          label: "Biểu đồ chuyển động",
-          height: chartHeight,
+          height: titleHeight + statsHeight + chartHeight + margin,
         },
       ];
 
       for (const elementInfo of elementsToCapture) {
-        if (
-          yPosition + elementInfo.height >
-          pdf.internal.pageSize.getHeight() - margin
-        ) {
-          pdf.addPage();
-          yPosition = margin;
-        }
-
-        if (elementInfo.type === "title") {
-          pdf.setFontSize(16);
-          pdf.setTextColor(0);
-          pdf.text(elementInfo.label, margin, yPosition + titleHeight - 5);
-          yPosition += elementInfo.height + margin / 2;
-        } else {
-          const element = document.getElementById(elementInfo.id);
-          if (element) {
-            const canvas = await html2canvas(element, { scale: 2 });
-            const imgData = canvas.toDataURL("image/png");
-            pdf.addImage(
-              imgData,
-              "PNG",
-              margin,
-              yPosition,
-              chartWidth,
-              elementInfo.height
-            );
-            yPosition += elementInfo.height + margin;
-          } else {
-            console.warn(`Không tìm thấy phần tử với ID: ${elementInfo.id}`);
+        const element = document.getElementById(elementInfo.id);
+        if (element) {
+          if (
+            yPosition + elementInfo.height >
+            pdf.internal.pageSize.getHeight() - margin
+          ) {
+            pdf.addPage();
+            yPosition = margin;
           }
+
+          const canvas = await html2canvas(element, { scale: 2 });
+          const imgData = canvas.toDataURL("image/png");
+          pdf.addImage(
+            imgData,
+            "PNG",
+            margin,
+            yPosition,
+            chartWidth,
+            elementInfo.height
+          );
+          yPosition += elementInfo.height + margin;
+        } else {
+          console.warn(`Không tìm thấy phần tử với ID: ${elementInfo.id}`);
         }
       }
 
