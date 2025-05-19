@@ -417,22 +417,7 @@ export default async (req, res) => {
           if (timeDifferences.length > 0) {
             // Lấy khoảng thời gian ngắn nhất (tính bằng giây)
             const minDifferenceSeconds = Math.min(...timeDifferences);
-            const duration = moment.duration(minDifferenceSeconds, "seconds");
-            const days = duration.days();
-            const hours = duration.hours();
-            const minutes = duration.minutes();
-            const seconds = duration.seconds();
-
-            const parts = [];
-            if (days > 0) parts.push(`${days} ngày`);
-            if (hours > 0) parts.push(`${hours} giờ`);
-            if (minutes > 0) parts.push(`${minutes} phút`);
-            if (seconds >= 0 && parts.length === 0)
-              parts.push(`${seconds} giây`);
-            else if (seconds > 0 && parts.length > 0)
-              parts.push(`${seconds} giây`);
-
-            groupingInterval = parts.join(", ") || "0 giây";
+            groupingInterval = `${minDifferenceSeconds} giây`;
           } else {
             groupingInterval = "Không đủ dữ liệu để tính toán";
           }
