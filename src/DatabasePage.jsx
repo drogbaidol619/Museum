@@ -67,6 +67,19 @@ function DatabasePage() {
     elapsedTime: "N/A",
     groupingInterval: "N/A",
   });
+  const [humidityStats, setHumidityStats] = useState({
+    maxHumidity: null,
+    minHumidity: null,
+    avgHumidity: null,
+  });
+  const [lightStats, setLightStats] = useState({
+    maxLight: null,
+    minLight: null,
+    avgLight: null,
+  });
+  const [motionStats, setMotionStats] = useState({
+    motionCount: 0,
+  });
 
   const handleDeviceClick = (deviceName) => {
     setDevice(deviceName); // Cập nhật state khi click
