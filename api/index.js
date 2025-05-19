@@ -518,9 +518,19 @@ export default async (req, res) => {
       }
 
       try {
-        // Truy vấn dữ liệu từ database
+        // Truy vấn dữ liệu từ database với định dạng giống /api/extract
         const tableName = deviceSelect;
-        let query = `SELECT * FROM "${tableName}"`;
+        let query = `
+      SELECT
+        temperature,
+        humidity,
+        light,
+        motion,
+        ssid,
+        TO_CHAR(date, 'YYYY-MM-DD') as date,
+        TO_CHAR(time, 'HH24:MI:SS') as time
+      FROM "${tableName}"
+    `;
         const queryParams = [];
         let whereClauses = [];
 
@@ -546,6 +556,7 @@ export default async (req, res) => {
         if (whereClauses.length > 0) {
           query += ` WHERE ${whereClauses.join(" AND ")}`;
         }
+        query += ` ORDER BY date, time`;
 
         const result = await db.query(query, queryParams);
         const data = result.rows;
@@ -568,14 +579,14 @@ export default async (req, res) => {
           ],
         });
 
-        // Chuẩn bị dữ liệu để tạo CSV
+        // Chuẩn bị dữ liệu để tạo CSV với định dạng giống /api/extract
         const csvData = data.map((row) => ({
           temperature: row.temperature,
           humidity: row.humidity,
           light: row.light,
           motion: row.motion ? "Yes" : "No",
-          time: row.time,
-          date: row.date,
+          time: row.time, // Định dạng HH24:MI:SS từ query
+          date: row.date, // Định dạng YYYY-MM-DD từ query
         }));
 
         // Tạo nội dung CSV dưới dạng chuỗi
