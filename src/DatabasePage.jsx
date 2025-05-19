@@ -220,69 +220,55 @@ function DatabasePage() {
     try {
       const pdf = new jsPDF("p", "mm", "a4");
       let yPosition = 10;
+      const margin = 10;
+      const chartWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
+      const chartHeight = 150; // Chiều cao cố định cho mỗi biểu đồ và bảng
 
-      // Tìm phần tử chứa toàn bộ bảng xem trước báo cáo
-      const reportPreviewElement = document.getElementById("reportPreview");
+      const elementsToCapture = [
+        { id: "temperatureStats", label: "Thống kê nhiệt độ" },
+        { id: "temperatureChart", label: "Biểu đồ nhiệt độ" },
+        { id: "humidityStats", label: "Thống kê độ ẩm" },
+        { id: "humidityChart", label: "Biểu đồ độ ẩm" },
+        { id: "lightStats", label: "Thống kê ánh sáng" },
+        { id: "lightChart", label: "Biểu đồ ánh sáng" },
+        { id: "motionStats", label: "Thống kê chuyển động" },
+        { id: "motionChart", label: "Biểu đồ chuyển động" },
+      ];
 
-      if (reportPreviewElement) {
-        const canvasReport = await html2canvas(reportPreviewElement, {
-          scale: 2,
-        });
-        const imgDataReport = canvasReport.toDataURL("image/png");
-        const imgPropsReport = pdf.getImageProperties(imgDataReport);
-        const pdfWidthReport = pdf.internal.pageSize.getWidth() - 20;
-        const pdfHeightReport =
-          (imgPropsReport.height * pdfWidthReport) / imgPropsReport.width;
-
-        // Kiểm tra nếu chiều cao vượt quá một trang, nếu có thì thêm trang mới
-        if (pdfHeightReport > pdf.internal.pageSize.getHeight() - 20) {
-          let currentHeight = 0;
-          let remainingHeight = pdfHeightReport;
-          while (remainingHeight > 0) {
-            const pageHeight = Math.min(
-              remainingHeight,
-              pdf.internal.pageSize.getHeight() - 20
-            );
-            pdf.addImage(
-              imgDataReport,
-              "PNG",
-              10,
-              10 + currentHeight,
-              pdfWidthReport,
-              pdfHeightReport,
-              undefined,
-              "FAST",
-              0,
-              currentHeight,
-              pageHeight
-            );
-            remainingHeight -= pageHeight;
-            currentHeight += pageHeight;
-            if (remainingHeight > 0) {
-              pdf.addPage();
-            }
+      for (const elementInfo of elementsToCapture) {
+        const element = document.getElementById(elementInfo.id);
+        if (element) {
+          if (
+            yPosition + chartHeight >
+            pdf.internal.pageSize.getHeight() - margin
+          ) {
+            pdf.addPage();
+            yPosition = margin;
           }
-        } else {
-          pdf.addImage(
-            imgDataReport,
-            "PNG",
-            10,
-            yPosition,
-            pdfWidthReport,
-            pdfHeightReport
-          );
-        }
 
-        yPosition += pdfHeightReport + 10;
+          const canvas = await html2canvas(element, { scale: 2 });
+          const imgData = canvas.toDataURL("image/png");
+          pdf.addImage(
+            imgData,
+            "PNG",
+            margin,
+            yPosition,
+            chartWidth,
+            chartHeight
+          );
+          yPosition += chartHeight + margin;
+        } else {
+          console.warn(`Không tìm thấy phần tử với ID: ${elementInfo.id}`);
+        }
       }
 
       pdf.save(`${device}_report_${day.start}_${day.end}.pdf`);
-      alert(
-        "Báo cáo biểu đồ và dữ liệu xem trước đã được tải xuống thành công!"
-      );
+      alert("Báo cáo biểu đồ và thống kê đã được tải xuống thành công!");
     } catch (error) {
       console.error(error);
-      alert("Đã xảy ra lỗi trong quá trình xuất báo cáo. Vui lòng thử lại.");
+      alert(
+        "Đã xảy ra lỗi trong quá trình xuất báo cáo biểu đồ. Vui lòng thử lại."
+      );
     }
   };
 
@@ -564,7 +550,10 @@ function DatabasePage() {
                 {/* Nhiệt độ */}
                 <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
                 <div className="flex flex-col gap-2 text-black">
-                  <div className=" grid grid-cols-2 rounded-md p-5">
+                  <div
+                    className=" grid grid-cols-2 rounded-md p-5"
+                    id="temperatureStats"
+                  >
                     <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
                       <p className="border-b-2 border-gray-400">
                         Giá trị lớn nhất
@@ -634,7 +623,10 @@ function DatabasePage() {
                 {/* Độ ẩm */}
                 <p className="text-xl font-semibold mt-10">Biểu đồ độ ẩm</p>
                 <div className="flex flex-col gap-2 text-black">
-                  <div className=" grid grid-cols-2 rounded-md p-5">
+                  <div
+                    className=" grid grid-cols-2 rounded-md p-5"
+                    id="humidityStats"
+                  >
                     <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
                       <p className="border-b-2 border-gray-400">
                         Giá trị lớn nhất
@@ -704,7 +696,10 @@ function DatabasePage() {
                 {/* Ánh sáng */}
                 <p className="text-xl font-semibold mt-10">Biểu đồ ánh sáng</p>
                 <div className="flex flex-col gap-2 text-black">
-                  <div className=" grid grid-cols-2 rounded-md p-5">
+                  <div
+                    className=" grid grid-cols-2 rounded-md p-5"
+                    id="lightStats"
+                  >
                     <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
                       <p className="border-b-2 border-gray-400">
                         Giá trị lớn nhất
