@@ -68,11 +68,6 @@ function DatabasePage() {
     groupingInterval: "N/A",
   });
 
-  setTemperatureStats(response.data.temperatureStats);
-  setHumidityStats(response.data.humidityStats);
-  setLightStats(response.data.lightStats);
-  setMotionStats(response.data.motionStats);
-
   const handleDeviceClick = (deviceName) => {
     setDevice(deviceName); // Cập nhật state khi click
   };
