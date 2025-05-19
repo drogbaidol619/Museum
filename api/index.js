@@ -559,7 +559,6 @@ export default async (req, res) => {
         // Tạo CSV stringifier
         const csvStringifier = createObjectCsvStringifier({
           header: [
-            { id: "id", title: "ID" },
             { id: "temperature", title: "Temperature (°C)" },
             { id: "humidity", title: "Humidity (%)" },
             { id: "light", title: "Light (lux)" },
@@ -571,7 +570,6 @@ export default async (req, res) => {
 
         // Chuẩn bị dữ liệu để tạo CSV
         const csvData = data.map((row) => ({
-          id: row.id,
           temperature: row.temperature,
           humidity: row.humidity,
           light: row.light,
