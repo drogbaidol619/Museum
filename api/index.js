@@ -396,7 +396,7 @@ export default async (req, res) => {
           elapsedTime = parts.join(", ");
         }
 
-        // Tính toán khoảng thời gian ngắn nhất giữa các lần ghi nhận
+        // Tính toán khoảng thời gian ngắn nhất giữa các lần ghi nhận (giây)
         let groupingInterval = "N/A";
         if (data.length >= 2) {
           const timeDifferences = [];
@@ -415,7 +415,6 @@ export default async (req, res) => {
           }
 
           if (timeDifferences.length > 0) {
-            // Lấy khoảng thời gian ngắn nhất (tính bằng giây)
             const minDifferenceSeconds = Math.min(...timeDifferences);
             groupingInterval = `${minDifferenceSeconds} giây`;
           } else {
