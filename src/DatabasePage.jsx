@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // Sửa import, loại bỏ 'React' không cần thiết
+import { useState, useEffect } from "react";
 import "./App.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -68,6 +68,11 @@ function DatabasePage() {
     groupingInterval: "N/A",
   });
 
+  setTemperatureStats(response.data.temperatureStats);
+  setHumidityStats(response.data.humidityStats);
+  setLightStats(response.data.lightStats);
+  setMotionStats(response.data.motionStats);
+
   const handleDeviceClick = (deviceName) => {
     setDevice(deviceName); // Cập nhật state khi click
   };
@@ -93,8 +98,6 @@ function DatabasePage() {
       const extractedData = response.data.data;
       setData(extractedData);
       setTemperatureStats(response.data.temperatureStats);
-      console.log("Data:", extractedData);
-      console.log("Temperature Stats:", response.data.temperatureStats);
 
       // Tính toán khoảng thời gian trung bình dựa trên điểm đầu và cuối
       if (extractedData.length >= 2) {
@@ -542,7 +545,7 @@ function DatabasePage() {
                         Khoảng thời gian ghi nhận
                       </p>
                       <p className="border-b-2 border-gray-400">
-                        Độ chia thời gian
+                        Khoảng thời gian giữa các lần ghi nhận
                       </p>
                     </div>
                     <div className="grid grid-rows-7 gap-1">
@@ -586,27 +589,206 @@ function DatabasePage() {
                   </div>
                 </div>
                 {/* Độ ẩm */}
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="humidityChart"
-                >
-                  <Line data={humidityData} options={chartOptions} />
+                <p className="text-xl font-semibold mt-10">Biểu đồ độ ẩm</p>
+                <div className="flex flex-col gap-2 text-black">
+                  <div className=" grid grid-cols-2 rounded-md p-5">
+                    <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị lớn nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị nhỏ nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị trung bình
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận muộn nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời gian giữa 2 lần ghi nhận
+                      </p>
+                    </div>
+                    <div className="grid grid-rows-7 gap-1">
+                      <p className="border-b-2 border-gray-400">
+                        {humidityStats.maxHumidity !== null
+                          ? `${humidityStats.maxHumidity}%`
+                          : "N/A"}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {humidityStats.minHumidity !== null
+                          ? `${humidityStats.minHumidity}%`
+                          : "N/A"}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {humidityStats.avgHumidity !== null
+                          ? `${humidityStats.avgHumidity?.toFixed(2)}%`
+                          : "N/A"}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.totalPoints}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.firstRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.lastRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.elapsedTime}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.groupingInterval}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className="chart-container w-full min-h-[500px]"
+                    id="humidityChart"
+                  >
+                    <Line data={humidityData} options={chartOptions} />
+                  </div>
                 </div>
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="lightChart"
-                >
-                  <Line data={lightData} options={chartOptions} />
+                {/* Ánh sáng */}
+                <p className="text-xl font-semibold mt-10">Biểu đồ ánh sáng</p>
+                <div className="flex flex-col gap-2 text-black">
+                  <div className=" grid grid-cols-2 rounded-md p-5">
+                    <div className="grid grid-rows-7 gap-1 border-r-2 border-gray-400">
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị lớn nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị nhỏ nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Giá trị trung bình
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận muộn nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời gian giữa 2 lần ghi nhận
+                      </p>
+                    </div>
+                    <div className="grid grid-rows-7 gap-1">
+                      <p className="border-b-2 border-gray-400">
+                        {lightStats.maxLight !== null
+                          ? `${lightStats.maxLight} lux`
+                          : "N/A"}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {lightStats.minLight !== null
+                          ? `${lightStats.minLight} lux`
+                          : "N/A"}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {lightStats.avgLight !== null
+                          ? `${lightStats.avgLight?.toFixed(2)} lux`
+                          : "N/A"}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.totalPoints}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.firstRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.lastRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.elapsedTime}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.groupingInterval}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className="chart-container w-full min-h-[500px]"
+                    id="lightChart"
+                  >
+                    <Line data={lightData} options={chartOptions} />
+                  </div>
                 </div>
-                <div
-                  className="chart-container w-full min-h-[500px]"
-                  id="motionChart"
-                >
-                  <Line data={motionData} options={chartOptions} />
+
+                {/* Chuyển động */}
+                <p className="text-xl font-semibold mt-10">
+                  Biểu đồ chuyển động
+                </p>
+                <div className="flex flex-col gap-2 text-black">
+                  <div className=" grid grid-cols-2 rounded-md p-5">
+                    <div className="grid grid-rows-6 gap-1 border-r-2 border-gray-400">
+                      <p className="border-b-2 border-gray-400">
+                        Tổng số lần phát hiện chuyển động
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Tổng các điểm giá trị
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận sớm nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời điểm ghi nhận muộn nhất
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Khoảng thời gian ghi nhận
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        Thời gian giữa 2 lần ghi nhận
+                      </p>
+                    </div>
+                    <div className="grid grid-rows-6 gap-1">
+                      <p className="border-b-2 border-gray-400">
+                        {motionStats.motionCount !== null
+                          ? `${motionStats.motionCount} lần`
+                          : "N/A"}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.totalPoints}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.firstRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.lastRecord}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.elapsedTime}
+                      </p>
+                      <p className="border-b-2 border-gray-400">
+                        {temperatureStats.groupingInterval}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className="chart-container w-full min-h-[500px]"
+                    id="motionChart"
+                  >
+                    <Line data={motionData} options={chartOptions} />
+                  </div>
                 </div>
               </div>
             </div>
           )}
+          {/* Hết*/}
         </div>
       </div>
       <Footer />

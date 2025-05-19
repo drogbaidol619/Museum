@@ -14,21 +14,21 @@ const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
 const refreshTokens = [];
 
 // Hàm tính khoảng thời gian và xác định Grouping Interval
-const getGroupingInterval = (startDate, endDate) => {
-  const start = moment(startDate);
-  const end = moment(endDate);
-  const daysDiff = end.diff(start, "days");
+// const getGroupingInterval = (startDate, endDate) => {
+//   const start = moment(startDate);
+//   const end = moment(endDate);
+//   const daysDiff = end.diff(start, "days");
 
-  if (daysDiff <= 1) {
-    return { interval: "10 minutes" }; // Cùng ngày
-  } else if (daysDiff <= 7) {
-    return { interval: "30 minutes" }; // 1 tuần
-  } else if (daysDiff <= 31) {
-    return { interval: "2 hours" }; // 1 tháng
-  } else {
-    return { interval: "1 day" }; // Lớn hơn 1 tháng
-  }
-};
+//   if (daysDiff <= 1) {
+//     return { interval: "10 minutes" }; // Cùng ngày
+//   } else if (daysDiff <= 7) {
+//     return { interval: "30 minutes" }; // 1 tuần
+//   } else if (daysDiff <= 31) {
+//     return { interval: "2 hours" }; // 1 tháng
+//   } else {
+//     return { interval: "1 day" }; // Lớn hơn 1 tháng
+//   }
+// };
 
 // Hàm kiểm tra  token
 const authenticateJWT = (req) => {
@@ -339,6 +339,7 @@ export default async (req, res) => {
             .json({ error: "Không có dữ liệu để trích xuất." });
         }
 
+        // Tính toán thống kê nhiệt độ
         const temperatures = data
           .map((item) => item.temperature)
           .filter((val) => val !== null);
@@ -391,9 +392,32 @@ export default async (req, res) => {
           }
         }
 
-        console.log("First Record:", firstRecord);
-        console.log("Last Record:", lastRecord);
-        console.log("Elapsed Time:", elapsedTime);
+        // Tính toán thống kê độ ẩm
+        const humidities = data
+          .map((item) => item.humidity)
+          .filter((val) => val !== null);
+        const maxHumidity =
+          humidities.length > 0 ? Math.max(...humidities) : null;
+        const minHumidity =
+          humidities.length > 0 ? Math.min(...humidities) : null;
+        const avgHumidity =
+          humidities.length > 0
+            ? humidities.reduce((a, b) => a + b, 0) / humidities.length
+            : null;
+
+        // Tính toán thống kê ánh sáng
+        const lights = data
+          .map((item) => item.light)
+          .filter((val) => val !== null);
+        const maxLight = lights.length > 0 ? Math.max(...lights) : null;
+        const minLight = lights.length > 0 ? Math.min(...lights) : null;
+        const avgLight =
+          lights.length > 0
+            ? lights.reduce((a, b) => a + b, 0) / lights.length
+            : null;
+
+        // Tính toán tổng số lần chuyển động
+        const motionCount = data.filter((item) => item.motion === true).length;
 
         return res.json({
           data,
@@ -407,6 +431,19 @@ export default async (req, res) => {
             firstRecord,
             lastRecord,
             elapsedTime,
+          },
+          humidityStats: {
+            maxHumidity,
+            minHumidity,
+            avgHumidity,
+          },
+          lightStats: {
+            maxLight,
+            minLight,
+            avgLight,
+          },
+          motionStats: {
+            motionCount,
           },
         });
       } catch (error) {
