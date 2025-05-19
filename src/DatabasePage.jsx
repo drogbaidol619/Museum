@@ -110,66 +110,12 @@ function DatabasePage() {
       setLightStats(response.data.lightStats);
       setMotionStats(response.data.motionStats);
 
-      // Tính toán khoảng thời gian trung bình dựa trên điểm đầu và cuối
-      if (extractedData.length >= 2) {
-        const firstTime = moment(
-          `${extractedData[0].date} ${extractedData[0].time}`,
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        const lastTime = moment(
-          `${extractedData[extractedData.length - 1].date} ${
-            extractedData[extractedData.length - 1].time
-          }`,
-          "YYYY-MM-DD HH:mm:ss"
-        );
-
-        if (firstTime.isValid() && lastTime.isValid()) {
-          const totalDifferenceMs = lastTime.valueOf() - firstTime.valueOf();
-          const totalPoints = extractedData.length;
-          const averageDifferenceMs =
-            totalPoints > 1 ? totalDifferenceMs / (totalPoints - 1) : 0;
-
-          let groupingInterval = "N/A";
-          if (averageDifferenceMs > 0 && averageDifferenceMs !== Infinity) {
-            const duration = moment.duration(averageDifferenceMs);
-            const days = duration.days();
-            const hours = duration.hours();
-            const minutes = duration.minutes();
-            const seconds = duration.seconds();
-
-            const parts = [];
-            if (days > 0) parts.push(`${days} ngày`);
-            if (hours > 0) parts.push(`${hours} giờ`);
-            if (minutes > 0) parts.push(`${minutes} phút`);
-            if (seconds >= 0 && parts.length === 0)
-              parts.push(`${seconds} giây`);
-            else if (seconds > 0 && parts.length > 0)
-              parts.push(`${seconds} giây`);
-
-            groupingInterval = parts.join(", ") || "0 giây";
-          }
-
-          setTemperatureStats((prevStats) => ({
-            ...prevStats,
-            groupingInterval,
-          }));
-        } else {
-          setTemperatureStats((prevStats) => ({
-            ...prevStats,
-            groupingInterval: "Lỗi định dạng thời gian đầu hoặc cuối",
-          }));
-        }
-      } else if (extractedData.length === 1) {
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: "Dữ liệu đơn lẻ",
-        }));
-      } else {
-        setTemperatureStats((prevStats) => ({
-          ...prevStats,
-          groupingInterval: "Không có dữ liệu",
-        }));
-      }
+      // Lấy khoảng thời gian giữa các lần ghi nhận từ response
+      const groupingInterval = response.data.groupingInterval || "N/A";
+      setTemperatureStats((prevStats) => ({
+        ...prevStats,
+        groupingInterval,
+      }));
     } catch (error) {
       console.error(error);
       alert("Đã xảy ra lỗi trong quá trình trích xuất. Vui lòng thử lại.");

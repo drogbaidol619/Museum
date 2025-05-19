@@ -234,47 +234,46 @@ export default async (req, res) => {
         })
       );
       return res.json({ message: "Logout success." });
-    }
-    // } else if (url === "/api/esp8266_1_update" && method === "POST") {
-    //   const apiKey = req.headers["x-api-key"]; // Lấy API Key từ header 'x-api-key'
-    //   if (!apiKey || apiKey !== process.env.ESP8266_API_KEY) {
-    //     return res
-    //       .status(401)
-    //       .json({ error: { status: 401, message: "Invalid API Key." } });
-    //   }
-    //   // Lấy dữ liệu từ body
-    //   const { temperature, humidity, light, motion, ssid, time, date, name } =
-    //     req.body;
+      // } else if (url === "/api/esp8266_1_update" && method === "POST") {
+      //   const apiKey = req.headers["x-api-key"]; // Lấy API Key từ header 'x-api-key'
+      //   if (!apiKey || apiKey !== process.env.ESP8266_API_KEY) {
+      //     return res
+      //       .status(401)
+      //       .json({ error: { status: 401, message: "Invalid API Key." } });
+      //   }
+      //   // Lấy dữ liệu từ body
+      //   const { temperature, humidity, light, motion, ssid, time, date, name } =
+      //     req.body;
 
-    //   try {
-    //     // Đảm bảo số lượng giá trị khớp với số cột
-    //     await db.query(
-    //       'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-    //       [
-    //         temperature || null,
-    //         humidity || null,
-    //         light || null,
-    //         motion || false,
-    //         ssid || "",
-    //         time || new Date().toLocaleTimeString(),
-    //         date || new Date().toISOString().split("T")[0],
-    //         name || "ESP8266_1",
-    //       ]
-    //     );
-    //     return res.json({ message: "Data saved to database" });
-    //   } catch (error) {
-    //     console.error("Detailed error: Database ", {
-    //       message: error.message,
-    //       query: error.query, // PostgreSQL sẽ trả về câu query bị lỗi
-    //       stack: error.stack,
-    //     });
-    //     return res.status(500).json({
-    //       message: "Database error",
-    //       detail: error.message,
-    //     });
-    //   }
-    // }
-    else if (url === "/api/extract" && method === "POST") {
+      //   try {
+      //     // Đảm bảo số lượng giá trị khớp với số cột
+      //     await db.query(
+      //       'INSERT INTO "ESP8266_1" (temperature, humidity, light, motion, ssid, time, date, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+      //       [
+      //         temperature || null,
+      //         humidity || null,
+      //         light || null,
+      //         motion || false,
+      //         ssid || "",
+      //         time || new Date().toLocaleTimeString(),
+      //         date || new Date().toISOString().split("T")[0],
+      //         name || "ESP8266_1",
+      //       ]
+      //     );
+      //     return res.json({ message: "Data saved to database" });
+      //   } catch (error) {
+      //     console.error("Detailed error: Database ", {
+      //       message: error.message,
+      //       query: error.query, // PostgreSQL sẽ trả về câu query bị lỗi
+      //       stack: error.stack,
+      //     });
+      //     return res.status(500).json({
+      //       message: "Database error",
+      //       detail: error.message,
+      //     });
+      //   }
+      // }
+    } else if (url === "/api/extract" && method === "POST") {
       const {
         deviceSelect,
         startDate,
@@ -287,7 +286,7 @@ export default async (req, res) => {
       try {
         const tableName = deviceSelect;
         let query = `
-      SELECT 
+      SELECT
         temperature,
         humidity,
         light,
@@ -360,35 +359,82 @@ export default async (req, res) => {
           ? `${minTempRecord.date} ${minTempRecord.time}`
           : "N/A";
 
-        const firstRecord =
+        const firstRecordTime =
           data.length > 0 && data[0].date && data[0].time
-            ? `${data[0].date} ${data[0].time}`
-            : "N/A";
-        const lastRecord =
+            ? moment(`${data[0].date} ${data[0].time}`, "YYYY-MM-DD HH:mm:ss")
+            : null;
+        const lastRecordTime =
           data.length > 0 &&
           data[data.length - 1].date &&
           data[data.length - 1].time
-            ? `${data[data.length - 1].date} ${data[data.length - 1].time}`
-            : "N/A";
+            ? moment(
+                `${data[data.length - 1].date} ${data[data.length - 1].time}`,
+                "YYYY-MM-DD HH:mm:ss"
+              )
+            : null;
 
         let elapsedTime = "N/A";
-        if (firstRecord !== "N/A" && lastRecord !== "N/A") {
-          const startMoment = moment(firstRecord, "YYYY-MM-DD HH:mm:ss");
-          const endMoment = moment(lastRecord, "YYYY-MM-DD HH:mm:ss");
-          if (startMoment.isValid() && endMoment.isValid()) {
-            const duration = moment.duration(endMoment.diff(startMoment));
-            const days = Math.floor(duration.asDays());
-            const hours = Math.floor(duration.asHours()) % 24;
-            const minutes = Math.floor(duration.asMinutes()) % 60;
-            const seconds = Math.floor(duration.asSeconds()) % 60;
+        if (
+          firstRecordTime &&
+          lastRecordTime &&
+          firstRecordTime.isValid() &&
+          lastRecordTime.isValid()
+        ) {
+          const duration = moment.duration(
+            lastRecordTime.diff(firstRecordTime)
+          );
+          const days = Math.floor(duration.asDays());
+          const hours = Math.floor(duration.asHours()) % 24;
+          const minutes = Math.floor(duration.asMinutes()) % 60;
+          const seconds = Math.floor(duration.asSeconds()) % 60;
+          const parts = [];
+          if (days > 0) parts.push(`${days} ngày`);
+          if (hours > 0) parts.push(`${hours} giờ`);
+          if (minutes > 0 || (days === 0 && hours === 0))
+            parts.push(`${minutes} phút`);
+          if (seconds > 0 || parts.length === 0) parts.push(`${seconds} giây`);
+          elapsedTime = parts.join(", ");
+        }
+
+        // Tính toán khoảng thời gian ngắn nhất giữa các lần ghi nhận
+        let groupingInterval = "N/A";
+        if (data.length >= 2) {
+          const timeDifferences = [];
+          for (let i = 1; i < data.length; i++) {
+            const currentTime = moment(
+              `${data[i].date} ${data[i].time}`,
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            const previousTime = moment(
+              `${data[i - 1].date} ${data[i - 1].time}`,
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            if (currentTime.isValid() && previousTime.isValid()) {
+              timeDifferences.push(currentTime.diff(previousTime, "seconds"));
+            }
+          }
+
+          if (timeDifferences.length > 0) {
+            // Lấy khoảng thời gian ngắn nhất (tính bằng giây)
+            const minDifferenceSeconds = Math.min(...timeDifferences);
+            const duration = moment.duration(minDifferenceSeconds, "seconds");
+            const days = duration.days();
+            const hours = duration.hours();
+            const minutes = duration.minutes();
+            const seconds = duration.seconds();
+
             const parts = [];
             if (days > 0) parts.push(`${days} ngày`);
             if (hours > 0) parts.push(`${hours} giờ`);
-            if (minutes > 0 || (days === 0 && hours === 0))
-              parts.push(`${minutes} phút`);
-            if (seconds > 0 || parts.length === 0)
+            if (minutes > 0) parts.push(`${minutes} phút`);
+            if (seconds >= 0 && parts.length === 0)
               parts.push(`${seconds} giây`);
-            elapsedTime = parts.join(", ");
+            else if (seconds > 0 && parts.length > 0)
+              parts.push(`${seconds} giây`);
+
+            groupingInterval = parts.join(", ") || "0 giây";
+          } else {
+            groupingInterval = "Không đủ dữ liệu để tính toán";
           }
         }
 
@@ -428,9 +474,14 @@ export default async (req, res) => {
             minTempTime,
             avgTemp,
             totalPoints,
-            firstRecord,
-            lastRecord,
+            firstRecord: firstRecordTime
+              ? firstRecordTime.format("YYYY-MM-DD HH:mm:ss")
+              : "N/A",
+            lastRecord: lastRecordTime
+              ? lastRecordTime.format("YYYY-MM-DD HH:mm:ss")
+              : "N/A",
             elapsedTime,
+            groupingInterval,
           },
           humidityStats: {
             maxHumidity,
