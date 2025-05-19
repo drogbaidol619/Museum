@@ -585,12 +585,16 @@ export default async (req, res) => {
 
         // Tạo tên file: deviceSelect_startDate_endDate.csv
         const fileName = `${deviceSelect}_${startDate}_${endDate}.csv`;
+        // Mã hóa filename để tránh ký tự không hợp lệ
+        const encodedFileName = encodeURIComponent(fileName)
+          .replace(/'/g, "%27")
+          .replace(/"/g, "%22");
 
         // Thiết lập header để tải file
         res.setHeader("Content-Type", "text/csv");
         res.setHeader(
           "Content-Disposition",
-          `attachment; filename="${fileName}"`
+          `attachment; filename*=UTF-8''${encodedFileName}`
         );
 
         // Gửi nội dung CSV về client
