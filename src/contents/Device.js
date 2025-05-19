@@ -1,43 +1,23 @@
 const Devices = [
   {
     id: "1",
-    name: "ESP8266_1",
+    name: "Trống_Đồng_Ngọc_Lũ",
   },
   {
     id: "2",
-    name: "ESP8266_2",
+    name: "Chân_Đế_Phật_Thích_Ca",
   },
   {
     id: "3",
-    name: "ESP8266_3",
+    name: "Gươm_Đồng_Làng_Vạc",
   },
   {
     id: "4",
-    name: "ESP8266_4",
+    name: "Ấn_Hoàng_đế_chi_bảo",
   },
   {
     id: "5",
-    name: "ESP8266_5",
-  },
-  {
-    id: "6",
-    name: "ESP8266_6",
-  },
-  {
-    id: "7",
-    name: "ESP8266_7",
-  },
-  {
-    id: "8",
-    name: "ESP8266_8",
-  },
-  {
-    id: "9",
-    name: "ESP8266_9",
-  },
-  {
-    id: "10",
-    name: "ESP8266_10",
+    name: "Bình_Tỳ_Bà_men_ngọc",
   },
   {
     id: "11",
