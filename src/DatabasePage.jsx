@@ -222,11 +222,23 @@ function DatabasePage() {
       let yPosition = 10;
       const margin = 10;
       const chartWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-      // Điều chỉnh độ cao để cả thống kê và biểu đồ vừa trang
-      const statsHeight = 70; // Ước tính chiều cao cho phần thống kê
-      const chartHeight = 130; // Ước tính chiều cao cho biểu đồ
+      const titleHeight = 10; // Chiều cao cho tiêu đề
+      const statsHeight = 50;
+      const chartHeight = 130;
 
       const elementsToCapture = [
+        {
+          id: "reportTitle",
+          label: "Bảng xem trước báo cáo biểu đồ",
+          height: titleHeight,
+          type: "title",
+        },
+        {
+          id: "temperatureChartTitle",
+          label: "Biểu đồ nhiệt độ",
+          height: titleHeight,
+          type: "title",
+        },
         {
           id: "temperatureStats",
           label: "Thống kê nhiệt độ",
@@ -237,10 +249,28 @@ function DatabasePage() {
           label: "Biểu đồ nhiệt độ",
           height: chartHeight,
         },
+        {
+          id: "humidityChartTitle",
+          label: "Biểu đồ độ ẩm",
+          height: titleHeight,
+          type: "title",
+        },
         { id: "humidityStats", label: "Thống kê độ ẩm", height: statsHeight },
         { id: "humidityChart", label: "Biểu đồ độ ẩm", height: chartHeight },
+        {
+          id: "lightChartTitle",
+          label: "Biểu đồ ánh sáng",
+          height: titleHeight,
+          type: "title",
+        },
         { id: "lightStats", label: "Thống kê ánh sáng", height: statsHeight },
         { id: "lightChart", label: "Biểu đồ ánh sáng", height: chartHeight },
+        {
+          id: "motionChartTitle",
+          label: "Biểu đồ chuyển động",
+          height: titleHeight,
+          type: "title",
+        },
         {
           id: "motionStats",
           label: "Thống kê chuyển động",
@@ -254,30 +284,36 @@ function DatabasePage() {
       ];
 
       for (const elementInfo of elementsToCapture) {
-        const element = document.getElementById(elementInfo.id);
-        if (element) {
-          const totalElementHeight = elementInfo.height;
-          if (
-            yPosition + totalElementHeight >
-            pdf.internal.pageSize.getHeight() - margin
-          ) {
-            pdf.addPage();
-            yPosition = margin;
-          }
+        if (
+          yPosition + elementInfo.height >
+          pdf.internal.pageSize.getHeight() - margin
+        ) {
+          pdf.addPage();
+          yPosition = margin;
+        }
 
-          const canvas = await html2canvas(element, { scale: 2 });
-          const imgData = canvas.toDataURL("image/png");
-          pdf.addImage(
-            imgData,
-            "PNG",
-            margin,
-            yPosition,
-            chartWidth,
-            elementInfo.height // Sử dụng chiều cao đã điều chỉnh
-          );
-          yPosition += totalElementHeight + margin;
+        if (elementInfo.type === "title") {
+          pdf.setFontSize(16);
+          pdf.setTextColor(0);
+          pdf.text(elementInfo.label, margin, yPosition + titleHeight - 5);
+          yPosition += elementInfo.height + margin / 2;
         } else {
-          console.warn(`Không tìm thấy phần tử với ID: ${elementInfo.id}`);
+          const element = document.getElementById(elementInfo.id);
+          if (element) {
+            const canvas = await html2canvas(element, { scale: 2 });
+            const imgData = canvas.toDataURL("image/png");
+            pdf.addImage(
+              imgData,
+              "PNG",
+              margin,
+              yPosition,
+              chartWidth,
+              elementInfo.height
+            );
+            yPosition += elementInfo.height + margin;
+          } else {
+            console.warn(`Không tìm thấy phần tử với ID: ${elementInfo.id}`);
+          }
         }
       }
 
@@ -562,12 +598,14 @@ function DatabasePage() {
           {/* Biểu đồ */}
           {data.length > 0 && (
             <div className="flex flex-col gap-5 w-full" id="reportPreview">
-              <h1 className="text-2xl font-bold mb-5">
+              <h1 className="text-2xl font-bold mb-5" id="reportTitle">
                 Bảng xem trước báo cáo biểu đồ
               </h1>
               <div className="flex flex-col overflow-x-auto">
                 {/* Nhiệt độ */}
-                <p className="text-xl font-semibold ">Biểu đồ nhiệt độ</p>
+                <p className="text-xl font-semibold" id="temperatureChartTitle">
+                  Biểu đồ nhiệt độ
+                </p>
                 <div className="flex flex-col gap-2 text-black">
                   <div
                     className=" grid grid-cols-2 rounded-md p-5"
@@ -636,7 +674,12 @@ function DatabasePage() {
                   </div>
                 </div>
                 {/* Độ ẩm */}
-                <p className="text-xl font-semibold mt-10">Biểu đồ độ ẩm</p>
+                <p
+                  className="text-xl font-semibold mt-10"
+                  id="humidityChartTitle"
+                >
+                  Biểu đồ độ ẩm
+                </p>
                 <div className="flex flex-col gap-2 text-black">
                   <div
                     className=" grid grid-cols-2 rounded-md p-5"
@@ -705,7 +748,9 @@ function DatabasePage() {
                   </div>
                 </div>
                 {/* Ánh sáng */}
-                <p className="text-xl font-semibold mt-10">Biểu đồ ánh sáng</p>
+                <p className="text-xl font-semibold mt-10" id="lightChartTitle">
+                  Biểu đồ ánh sáng
+                </p>
                 <div className="flex flex-col gap-2 text-black">
                   <div
                     className=" grid grid-cols-2 rounded-md p-5"
@@ -775,7 +820,10 @@ function DatabasePage() {
                 </div>
 
                 {/* Chuyển động */}
-                <p className="text-xl font-semibold mt-10">
+                <p
+                  className="text-xl font-semibold mt-10"
+                  id="motionChartTitle"
+                >
                   Biểu đồ chuyển động
                 </p>
                 <div className="flex flex-col gap-2 text-black">
