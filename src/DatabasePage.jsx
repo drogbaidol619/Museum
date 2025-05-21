@@ -464,13 +464,14 @@ function DatabasePage() {
                 >
                   <tr>
                     <td className="border ">Id</td>
-                    <td className="border ">Temperature</td>
-                    <td className="border ">Humidity</td>
-                    <td className="border ">Light</td>
-                    <td className="border ">Motion</td>
-                    <td className="border ">Ssid</td>
-                    <td className="border ">Time</td>
-                    <td className="border ">Date</td>
+                    <td className="border ">Nhiệt độ</td>
+                    <td className="border ">Độ ẩm</td>
+                    <td className="border ">Ánh sáng</td>
+                    <td className="border ">Rung động</td>
+                    <td className="border ">Tên Wifi</td>
+                    <td className="border ">Thời gian</td>
+                    <td className="border ">Ngày tháng</td>
+                    <td className="border ">Thông tin thêm</td>
                   </tr>
                 </thead>
                 <tbody
@@ -504,6 +505,9 @@ function DatabasePage() {
                       </td>
                       <td className="border ">
                         {item.date !== null ? item.date : "null"}
+                      </td>
+                      <td className="border ">
+                        {item.debug !== null ? item.debug : "null"}
                       </td>
                     </tr>
                   ))}

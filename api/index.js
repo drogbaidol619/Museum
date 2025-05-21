@@ -11,23 +11,6 @@ const accessTokenSecret = process.env.JWT_SECRET;
 const refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
 const refreshTokens = [];
 
-// Hàm tính khoảng thời gian và xác định Grouping Interval
-// const getGroupingInterval = (startDate, endDate) => {
-//   const start = moment(startDate);
-//   const end = moment(endDate);
-//   const daysDiff = end.diff(start, "days");
-
-//   if (daysDiff <= 1) {
-//     return { interval: "10 minutes" }; // Cùng ngày
-//   } else if (daysDiff <= 7) {
-//     return { interval: "30 minutes" }; // 1 tuần
-//   } else if (daysDiff <= 31) {
-//     return { interval: "2 hours" }; // 1 tháng
-//   } else {
-//     return { interval: "1 day" }; // Lớn hơn 1 tháng
-//   }
-// };
-
 // Hàm kiểm tra  token
 const authenticateJWT = (req) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -290,6 +273,7 @@ export default async (req, res) => {
         light,
         motion,
         ssid,
+        debug,
         TO_CHAR(date, 'YYYY-MM-DD') as date,
         TO_CHAR(time, 'HH24:MI:SS') as time
       FROM "${tableName}"
@@ -527,6 +511,7 @@ export default async (req, res) => {
         light,
         motion,
         ssid,
+        debug,
         TO_CHAR(date, 'YYYY-MM-DD') as date,
         TO_CHAR(time, 'HH24:MI:SS') as time
       FROM "${tableName}"
@@ -576,6 +561,7 @@ export default async (req, res) => {
             { id: "motion", title: "Motion" },
             { id: "time", title: "Time" },
             { id: "date", title: "Date" },
+            { id: "debug", title: "Date" },
           ],
         });
 
@@ -586,7 +572,8 @@ export default async (req, res) => {
           light: row.light,
           motion: row.motion ? "Yes" : "No",
           time: row.time, // Định dạng HH24:MI:SS từ query
-          date: row.date, // Định dạng YYYY-MM-DD từ query
+          date: row.date,
+          debug: row.debug, // Định dạng YYYY-MM-DD từ query
         }));
 
         // Tạo nội dung CSV dưới dạng chuỗi
