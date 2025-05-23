@@ -730,15 +730,9 @@ export default async (req, res) => {
         ];
 
         // Tạo header cho CSV với cột trống giữa các bảng
-        const header = [
-          { id: "stats", title: "Thống kê" }, // Cột thống kê chung
-        ];
-
+        const header = [];
         for (const table of tables) {
-          header.push({
-            id: `deviceName_${table}`,
-            title: `Tên thiết bị - ${table}`,
-          });
+          header.push({ id: `stats_${table}`, title: `Thống kê - ${table}` });
           header.push({
             id: `temperature_${table}`,
             title: `Nhiệt độ (°C) - ${table}`,
@@ -839,15 +833,15 @@ export default async (req, res) => {
         }
 
         // Tạo các dòng thống kê
-        const statRow1 = { stats: "Tên thiết bị" };
-        const statRow2 = { stats: "Giá trị trung bình" };
-        const statRow3 = { stats: "Giá trị lớn nhất" };
-        const statRow4 = { stats: "Giá trị bé nhất" };
-        const emptyRow = { stats: "" };
+        const statRow1 = {};
+        const statRow2 = {};
+        const statRow3 = {};
+        const statRow4 = {};
+        const emptyRow = {};
 
         for (const table of tables) {
           const stats = tableStats[table];
-          statRow1[`deviceName_${table}`] = table;
+          statRow1[`stats_${table}`] = `Tên thiết bị: ${table}`;
           statRow1[`temperature_${table}`] = "";
           statRow1[`humidity_${table}`] = "";
           statRow1[`light_${table}`] = "";
@@ -859,7 +853,7 @@ export default async (req, res) => {
             statRow1[`empty_${table}`] = "";
           }
 
-          statRow2[`deviceName_${table}`] = "";
+          statRow2[`stats_${table}`] = "Giá trị trung bình";
           statRow2[`temperature_${table}`] = stats.avgTemp;
           statRow2[`humidity_${table}`] = stats.avgHumidity;
           statRow2[`light_${table}`] = stats.avgLight;
@@ -871,7 +865,7 @@ export default async (req, res) => {
             statRow2[`empty_${table}`] = "";
           }
 
-          statRow3[`deviceName_${table}`] = "";
+          statRow3[`stats_${table}`] = "Giá trị lớn nhất";
           statRow3[`temperature_${table}`] = stats.maxTemp;
           statRow3[`humidity_${table}`] = stats.maxHumidity;
           statRow3[`light_${table}`] = stats.maxLight;
@@ -883,7 +877,7 @@ export default async (req, res) => {
             statRow3[`empty_${table}`] = "";
           }
 
-          statRow4[`deviceName_${table}`] = "";
+          statRow4[`stats_${table}`] = "Giá trị bé nhất";
           statRow4[`temperature_${table}`] = stats.minTemp;
           statRow4[`humidity_${table}`] = stats.minHumidity;
           statRow4[`light_${table}`] = stats.minLight;
@@ -895,7 +889,7 @@ export default async (req, res) => {
             statRow4[`empty_${table}`] = "";
           }
 
-          emptyRow[`deviceName_${table}`] = "";
+          emptyRow[`stats_${table}`] = "";
           emptyRow[`temperature_${table}`] = "";
           emptyRow[`humidity_${table}`] = "";
           emptyRow[`light_${table}`] = "";
@@ -910,29 +904,21 @@ export default async (req, res) => {
 
         statsRows.push(statRow1, statRow2, statRow3, statRow4, emptyRow);
 
-        // Tạo danh sách tất cả các thời điểm duy nhất (date + time) từ tất cả các bảng
-        const allTimestamps = new Set();
-        for (const table of tables) {
-          allTableData[table].forEach((row) => {
-            const timestamp = `${row.date} ${row.time}`;
-            allTimestamps.add(timestamp);
-          });
-        }
-        const sortedTimestamps = Array.from(allTimestamps).sort();
+        // Tìm số lượng hàng dữ liệu tối đa từ tất cả các bảng
+        const maxRows = Math.max(
+          ...tables.map((table) => allTableData[table].length)
+        );
 
-        // Tạo dữ liệu chính: xếp song song theo hàng với cột trống
+        // Tạo dữ liệu chính: không đồng bộ thời gian, điền tuần tự
         const csvData = [];
-        for (const timestamp of sortedTimestamps) {
-          const [date, time] = timestamp.split(" ");
-          const row = { stats: "" };
+        for (let i = 0; i < maxRows; i++) {
+          const row = {};
 
           for (const table of tables) {
             const tableData = allTableData[table];
-            const matchingRow = tableData.find(
-              (r) => r.date === date && r.time === time
-            );
+            const matchingRow = i < tableData.length ? tableData[i] : null;
 
-            row[`deviceName_${table}`] = "";
+            row[`stats_${table}`] = "";
             row[`temperature_${table}`] = matchingRow
               ? matchingRow.temperature
               : "";
