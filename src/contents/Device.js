@@ -21,7 +21,7 @@ const Devices = [
   },
   {
     id: "11",
-    name: "Lựa chọn thiết bị",
+    name: "Toàn_bộ_thiết_bị",
   },
 ];
 

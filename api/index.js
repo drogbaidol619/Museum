@@ -294,13 +294,17 @@ export default async (req, res) => {
         }
 
         if (temperature_alarm) {
-          whereClauses.push(`(temperature >= 40 OR temperature <= 10)`);
+          whereClauses.push(
+            `(temperature >= 40 OR temperature <= 10 OR temperature IS NULL)`
+          );
         }
         if (humidity_alarm) {
-          whereClauses.push(`(humidity >= 75 OR humidity <= 25)`);
+          whereClauses.push(
+            `(humidity >= 75 OR humidity <= 25 OR humidity IS NULL)`
+          );
         }
         if (light_alarm) {
-          whereClauses.push(`light <= 50`);
+          whereClauses.push(`(light <= 50 OR light IS NULL)`);
         }
         if (motion_alarm) {
           whereClauses.push(`motion = true`);
@@ -526,13 +530,17 @@ export default async (req, res) => {
         );
 
         if (temperature_alarm) {
-          whereClauses.push(`(temperature >= 40 OR temperature <= 10)`);
+          whereClauses.push(
+            `(temperature >= 40 OR temperature <= 10 OR temperature IS NULL)`
+          );
         }
         if (humidity_alarm) {
-          whereClauses.push(`(humidity >= 75 OR humidity <= 25)`);
+          whereClauses.push(
+            `(humidity >= 75 OR humidity <= 25 OR humidity IS NULL)`
+          );
         }
         if (light_alarm) {
-          whereClauses.push(`light <= 50`);
+          whereClauses.push(`(light <= 50 OR light IS NULL)`);
         }
         if (motion_alarm) {
           whereClauses.push(`motion = true`);
@@ -552,44 +560,95 @@ export default async (req, res) => {
             .json({ message: "Không có dữ liệu để xuất CSV." });
         }
 
+        // Tính toán thống kê
+        const temperatures = data
+          .map((item) => item.temperature)
+          .filter((val) => val !== null);
+        const humidities = data
+          .map((item) => item.humidity)
+          .filter((val) => val !== null);
+        const lights = data
+          .map((item) => item.light)
+          .filter((val) => val !== null);
+        const motionCount = data.filter((item) => item.motion === true).length;
+
+        const avgTemp =
+          temperatures.length > 0
+            ? (
+                temperatures.reduce((a, b) => a + b, 0) / temperatures.length
+              ).toFixed(2)
+            : "N/A";
+        const maxTemp =
+          temperatures.length > 0 ? Math.max(...temperatures) : "N/A";
+        const minTemp =
+          temperatures.length > 0 ? Math.min(...temperatures) : "N/A";
+
+        const avgHumidity =
+          humidities.length > 0
+            ? (
+                humidities.reduce((a, b) => a + b, 0) / humidities.length
+              ).toFixed(2)
+            : "N/A";
+        const maxHumidity =
+          humidities.length > 0 ? Math.max(...humidities) : "N/A";
+        const minHumidity =
+          humidities.length > 0 ? Math.min(...humidities) : "N/A";
+
+        const avgLight =
+          lights.length > 0
+            ? (lights.reduce((a, b) => a + b, 0) / lights.length).toFixed(2)
+            : "N/A";
+        const maxLight = lights.length > 0 ? Math.max(...lights) : "N/A";
+        const minLight = lights.length > 0 ? Math.min(...lights) : "N/A";
+
         // Tạo CSV stringifier
         const csvStringifier = createObjectCsvStringifier({
           header: [
-            { id: "temperature", title: "Temperature (°C)" },
-            { id: "humidity", title: "Humidity (%)" },
-            { id: "light", title: "Light (lux)" },
-            { id: "motion", title: "Motion" },
-            { id: "time", title: "Time" },
-            { id: "date", title: "Date" },
-            { id: "debug", title: "Date" },
+            { id: "temperature", title: "Nhiệt độ (°C)" },
+            { id: "humidity", title: "Độ ẩm (%)" },
+            { id: "light", title: "Ánh sáng (lux)" },
+            { id: "motion", title: "Rung động" },
+            { id: "time", title: "Thời gian" },
+            { id: "date", title: "Ngày tháng" },
+            { id: "debug", title: "Thông tin thêm" },
           ],
         });
 
-        // Chuẩn bị dữ liệu để tạo CSV với định dạng giống /api/extract
+        // Chuẩn bị dữ liệu để tạo CSV
         const csvData = data.map((row) => ({
           temperature: row.temperature,
           humidity: row.humidity,
           light: row.light,
           motion: row.motion ? "Yes" : "No",
           time: row.time, // Định dạng HH24:MI:SS từ query
-          date: row.date,
-          debug: row.debug, // Định dạng YYYY-MM-DD từ query
+          date: row.date, // Định dạng YYYY-MM-DD từ query
+          debug: row.debug,
         }));
 
-        // Tạo nội dung CSV dưới dạng chuỗi
+        // Tạo nội dung thống kê
+        const statsContent = [
+          `Tên thiết bị: ${deviceSelect}\n`,
+          `"Giá trị trung bình","${avgTemp}","${avgHumidity}","${avgLight}","${motionCount}"\n`,
+          `"Giá trị lớn nhất","${maxTemp}","${maxHumidity}","${maxLight}"\n`,
+          `"Giá trị nhỏ nhất","${minTemp}","${minHumidity}","${minLight}"\n`,
+          `\n`, // Dòng trống để phân tách
+        ].join("");
+
+        // Tạo nội dung CSV
         const csvContent =
+          "\uFEFF" + // Thêm BOM để đảm bảo UTF-8 hiển thị đúng tiếng Việt
+          statsContent +
           csvStringifier.getHeaderString() +
           csvStringifier.stringifyRecords(csvData);
 
         // Tạo tên file: deviceSelect_startDate_endDate.csv
         const fileName = `${deviceSelect}_${startDate}_${endDate}.csv`;
-        // Mã hóa filename để tránh ký tự không hợp lệ
         const encodedFileName = encodeURIComponent(fileName)
           .replace(/'/g, "%27")
           .replace(/"/g, "%22");
 
         // Thiết lập header để tải file
-        res.setHeader("Content-Type", "text/csv");
+        res.setHeader("Content-Type", "text/csv; charset=utf-8");
         res.setHeader(
           "Content-Disposition",
           `attachment; filename*=UTF-8''${encodedFileName}`
