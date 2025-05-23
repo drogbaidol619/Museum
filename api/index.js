@@ -690,8 +690,17 @@ export default async (req, res) => {
           csvStringifier.getHeaderString() +
           csvStringifier.stringifyRecords(combinedData);
 
-        // Tạo tên file: deviceSelect_startDate_endDate.csv
-        const fileName = `${deviceSelect}_${startDate}_${endDate}.csv`;
+        // Tạo tên file với các alarm nếu có
+        let fileName = `${deviceSelect}_${startDate}_${endDate}`;
+        const alarms = [];
+        if (temperature_alarm) alarms.push("temperature_alarm");
+        if (humidity_alarm) alarms.push("humidity_alarm");
+        if (light_alarm) alarms.push("light_alarm");
+        if (motion_alarm) alarms.push("motion_alarm");
+        if (alarms.length > 0) {
+          fileName += `_${alarms.join("_")}`;
+        }
+        fileName += ".csv";
         const encodedFileName = encodeURIComponent(fileName)
           .replace(/'/g, "%27")
           .replace(/"/g, "%22");
@@ -955,17 +964,8 @@ export default async (req, res) => {
           csvStringifier.getHeaderString() +
           csvStringifier.stringifyRecords(combinedData);
 
-        // Tạo tên file với các alarm nếu có
-        let fileName = `${deviceSelect}_${startDate}_${endDate}`;
-        const alarms = [];
-        if (temperature_alarm) alarms.push("temperature_alarm");
-        if (humidity_alarm) alarms.push("humidity_alarm");
-        if (light_alarm) alarms.push("light_alarm");
-        if (motion_alarm) alarms.push("motion_alarm");
-        if (alarms.length > 0) {
-          fileName += `_${alarms.join("_")}`;
-        }
-        fileName += ".csv";
+        // Tạo tên file: all_devices_startDate_endDate.csv
+        const fileName = `Toàn_bộ_thiết_bị_${startDate}_${endDate}.csv`;
         const encodedFileName = encodeURIComponent(fileName)
           .replace(/'/g, "%27")
           .replace(/"/g, "%22");
