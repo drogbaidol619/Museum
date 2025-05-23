@@ -693,10 +693,10 @@ export default async (req, res) => {
         // Tạo tên file với các alarm nếu có
         let fileName = `${deviceSelect}_${startDate}_${endDate}`;
         const alarms = [];
-        if (temperature_alarm === true) alarms.push("temperature_alarm");
-        if (humidity_alarm === true) alarms.push("humidity_alarm");
-        if (light_alarm === true) alarms.push("light_alarm");
-        if (motion_alarm === true) alarms.push("motion_alarm");
+        if (temperature_alarm) alarms.push("temperature_alarm");
+        if (humidity_alarm) alarms.push("humidity_alarm");
+        if (light_alarm) alarms.push("light_alarm");
+        if (motion_alarm) alarms.push("motion_alarm");
         if (alarms.length > 0) {
           fileName += `_${alarms.join("_")}`;
         }
