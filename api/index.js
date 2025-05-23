@@ -690,17 +690,8 @@ export default async (req, res) => {
           csvStringifier.getHeaderString() +
           csvStringifier.stringifyRecords(combinedData);
 
-        // Tạo tên file với các alarm nếu có
-        let fileName = `${deviceSelect}_${startDate}_${endDate}`;
-        const alarms = [];
-        if (temperature_alarm) alarms.push("temperature_alarm");
-        if (humidity_alarm) alarms.push("humidity_alarm");
-        if (light_alarm) alarms.push("light_alarm");
-        if (motion_alarm) alarms.push("motion_alarm");
-        if (alarms.length > 0) {
-          fileName += `_${alarms.join("_")}`;
-        }
-        fileName += ".csv";
+        // Tạo tên file: deviceSelect_startDate_endDate.csv
+        const fileName = `${deviceSelect}_${startDate}_${endDate}.csv`;
         const encodedFileName = encodeURIComponent(fileName)
           .replace(/'/g, "%27")
           .replace(/"/g, "%22");
@@ -741,14 +732,26 @@ export default async (req, res) => {
         // Tạo header cho CSV với cột trống giữa các bảng
         const header = [];
         for (const table of tables) {
-          header.push({ id: `stats_${table}`, title: `Thống kê - ${table}` }); // Giữ tên bảng ở cột Thống kê
-          header.push({ id: `temperature_${table}`, title: `Nhiệt độ (°C)` }); // Không thêm tên bảng
-          header.push({ id: `humidity_${table}`, title: `Độ ẩm (%)` });
-          header.push({ id: `light_${table}`, title: `Ánh sáng (lux)` });
-          header.push({ id: `motion_${table}`, title: `Rung động` });
-          header.push({ id: `time_${table}`, title: `Thời gian` });
-          header.push({ id: `date_${table}`, title: `Ngày tháng` });
-          header.push({ id: `debug_${table}`, title: `Thông tin thêm` });
+          header.push({ id: `stats_${table}`, title: `Thống kê - ${table}` });
+          header.push({
+            id: `temperature_${table}`,
+            title: `Nhiệt độ (°C) - ${table}`,
+          });
+          header.push({
+            id: `humidity_${table}`,
+            title: `Độ ẩm (%) - ${table}`,
+          });
+          header.push({
+            id: `light_${table}`,
+            title: `Ánh sáng (lux) - ${table}`,
+          });
+          header.push({ id: `motion_${table}`, title: `Rung động - ${table}` });
+          header.push({ id: `time_${table}`, title: `Thời gian - ${table}` });
+          header.push({ id: `date_${table}`, title: `Ngày tháng - ${table}` });
+          header.push({
+            id: `debug_${table}`,
+            title: `Thông tin thêm - ${table}`,
+          });
           if (table !== tables[tables.length - 1]) {
             header.push({ id: `empty_${table}`, title: "" }); // Cột trống giữa các bảng
           }
@@ -952,8 +955,17 @@ export default async (req, res) => {
           csvStringifier.getHeaderString() +
           csvStringifier.stringifyRecords(combinedData);
 
-        // Tạo tên file: all_devices_startDate_endDate.csv
-        const fileName = `all_devices_${startDate}_${endDate}.csv`;
+        // Tạo tên file với các alarm nếu có
+        let fileName = `${deviceSelect}_${startDate}_${endDate}`;
+        const alarms = [];
+        if (temperature_alarm) alarms.push("temperature_alarm");
+        if (humidity_alarm) alarms.push("humidity_alarm");
+        if (light_alarm) alarms.push("light_alarm");
+        if (motion_alarm) alarms.push("motion_alarm");
+        if (alarms.length > 0) {
+          fileName += `_${alarms.join("_")}`;
+        }
+        fileName += ".csv";
         const encodedFileName = encodeURIComponent(fileName)
           .replace(/'/g, "%27")
           .replace(/"/g, "%22");
