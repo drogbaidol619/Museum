@@ -657,6 +657,16 @@ export default async (req, res) => {
             date: "",
             debug: "",
           },
+          {
+            stats: "", // Dòng trống để phân tách
+            temperature: "",
+            humidity: "",
+            light: "",
+            motion: "",
+            time: "",
+            date: "",
+            debug: "",
+          },
         ];
 
         // Chuẩn bị dữ liệu chính
