@@ -601,9 +601,10 @@ export default async (req, res) => {
         const maxLight = lights.length > 0 ? Math.max(...lights) : "N/A";
         const minLight = lights.length > 0 ? Math.min(...lights) : "N/A";
 
-        // Tạo CSV stringifier
+        // Tạo CSV stringifier với cột "Thống kê" thêm vào trước
         const csvStringifier = createObjectCsvStringifier({
           header: [
+            { id: "stats", title: "Thống kê" }, // Cột mới
             { id: "temperature", title: "Nhiệt độ (°C)" },
             { id: "humidity", title: "Độ ẩm (%)" },
             { id: "light", title: "Ánh sáng (lux)" },
@@ -614,32 +615,70 @@ export default async (req, res) => {
           ],
         });
 
-        // Chuẩn bị dữ liệu để tạo CSV
+        // Chuẩn bị dữ liệu thống kê dưới dạng các dòng CSV
+        const statsRows = [
+          {
+            stats: `Tên thiết bị: ${deviceSelect}`,
+            temperature: "",
+            humidity: "",
+            light: "",
+            motion: "",
+            time: "",
+            date: "",
+            debug: "",
+          },
+          {
+            stats: "Giá trị trung bình",
+            temperature: avgTemp,
+            humidity: avgHumidity,
+            light: avgLight,
+            motion: motionCount,
+            time: "",
+            date: "",
+            debug: "",
+          },
+          {
+            stats: "Giá trị lớn nhất",
+            temperature: maxTemp,
+            humidity: maxHumidity,
+            light: maxLight,
+            motion: "",
+            time: "",
+            date: "",
+            debug: "",
+          },
+          {
+            stats: "Giá trị nhỏ nhất",
+            temperature: minTemp,
+            humidity: minHumidity,
+            light: minLight,
+            motion: "",
+            time: "",
+            date: "",
+            debug: "",
+          },
+        ];
+
+        // Chuẩn bị dữ liệu chính
         const csvData = data.map((row) => ({
+          stats: "", // Cột "Thống kê" để trống cho các dòng dữ liệu
           temperature: row.temperature,
           humidity: row.humidity,
           light: row.light,
           motion: row.motion ? "Yes" : "No",
-          time: row.time, // Định dạng HH24:MI:SS từ query
-          date: row.date, // Định dạng YYYY-MM-DD từ query
+          time: row.time,
+          date: row.date,
           debug: row.debug,
         }));
 
-        // Tạo nội dung thống kê
-        const statsContent = [
-          `Tên thiết bị: ${deviceSelect}\n`,
-          `"Giá trị trung bình","${avgTemp}","${avgHumidity}","${avgLight}","${motionCount}"\n`,
-          `"Giá trị lớn nhất","${maxTemp}","${maxHumidity}","${maxLight}"\n`,
-          `"Giá trị nhỏ nhất","${minTemp}","${minHumidity}","${minLight}"\n`,
-          `\n`, // Dòng trống để phân tách
-        ].join("");
+        // Kết hợp dữ liệu thống kê và dữ liệu chính
+        const combinedData = [...statsRows, ...csvData];
 
         // Tạo nội dung CSV
         const csvContent =
           "\uFEFF" + // Thêm BOM để đảm bảo UTF-8 hiển thị đúng tiếng Việt
-          statsContent +
           csvStringifier.getHeaderString() +
-          csvStringifier.stringifyRecords(csvData);
+          csvStringifier.stringifyRecords(combinedData);
 
         // Tạo tên file: deviceSelect_startDate_endDate.csv
         const fileName = `${deviceSelect}_${startDate}_${endDate}.csv`;
