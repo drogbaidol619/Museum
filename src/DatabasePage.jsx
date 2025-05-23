@@ -166,6 +166,43 @@ function DatabasePage() {
     }
   };
 
+  const handleExcelAll = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "/api/csvAll",
+        {
+          startDate: day.start, // ngày trích xuất
+          endDate: day.end, // ngày kết thúc trích xuất
+        },
+        {
+          responseType: "blob", // Chỉ giữ responseType: "blob" để nhận file
+        }
+      );
+
+      // Tạo URL từ blob và tự động tải file
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: "text/csv" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `Toàn_bộ_thiết _bị_${day.start}_${day.end}.csv`
+      ); // Tên file
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      console.log("File CSV downloaded successfully");
+      alert("File CSV đã được tải xuống thành công!");
+    } catch (error) {
+      console.error(error);
+      alert("Đã xảy ra lỗi trong quá trình xuất CSV. Vui lòng thử lại.");
+    }
+  };
+
   const handleExportCharts = async (e) => {
     e.preventDefault();
     try {
@@ -439,7 +476,15 @@ function DatabasePage() {
               }}
               className="flex justify-center items-center rounded-md bg-green-500 text-white roboto text-xl mt-10 h-10 p-2"
             >
-              Xuất excel
+              Xuất excel từng thiết bị
+            </button>
+            <button
+              onClick={(e) => {
+                handleExcelAll(e);
+              }}
+              className="flex justify-center items-center rounded-md bg-green-500 text-white roboto text-xl mt-10 h-10 p-2"
+            >
+              Xuất excel toàn bộ thiết bị
             </button>
             <button
               onClick={(e) => {

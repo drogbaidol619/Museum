@@ -709,6 +709,287 @@ export default async (req, res) => {
         console.error("Error generating CSV file:", error);
         return res.status(500).json({ message: "Lỗi khi xuất file CSV." });
       }
+    } else if (url === "/api/csvAll" && method === "POST") {
+      const { startDate, endDate } = req.body;
+
+      // Kiểm tra tham số startDate và endDate
+      if (!startDate || !endDate) {
+        return res.status(400).json({
+          message: "Thiếu thông tin: startDate hoặc endDate.",
+        });
+      }
+
+      try {
+        // Danh sách các bảng cần xuất dữ liệu
+        const tables = [
+          "Ấn_Hoàng_đế_chi_bảo",
+          "Bình_Tỳ_Bà_men_ngọc",
+          "Chân_Đế_Phật_Thích_Ca",
+          "Gươm_Đồng_Làng_Vạc",
+          "Trống_Đồng_Ngọc_Lũ",
+        ];
+
+        // Tạo header cho CSV với cột trống giữa các bảng
+        const header = [
+          { id: "stats", title: "Thống kê" }, // Cột thống kê chung
+        ];
+
+        for (const table of tables) {
+          header.push({
+            id: `deviceName_${table}`,
+            title: `Tên thiết bị - ${table}`,
+          });
+          header.push({
+            id: `temperature_${table}`,
+            title: `Nhiệt độ (°C) - ${table}`,
+          });
+          header.push({
+            id: `humidity_${table}`,
+            title: `Độ ẩm (%) - ${table}`,
+          });
+          header.push({
+            id: `light_${table}`,
+            title: `Ánh sáng (lux) - ${table}`,
+          });
+          header.push({ id: `motion_${table}`, title: `Rung động - ${table}` });
+          header.push({ id: `time_${table}`, title: `Thời gian - ${table}` });
+          header.push({ id: `date_${table}`, title: `Ngày tháng - ${table}` });
+          header.push({
+            id: `debug_${table}`,
+            title: `Thông tin thêm - ${table}`,
+          });
+          if (table !== tables[tables.length - 1]) {
+            header.push({ id: `empty_${table}`, title: "" }); // Cột trống giữa các bảng
+          }
+        }
+
+        // Tạo CSV stringifier với header đã xây dựng
+        const csvStringifier = createObjectCsvStringifier({ header });
+
+        // Lấy dữ liệu từ tất cả các bảng
+        const allTableData = {};
+        for (const tableName of tables) {
+          let query = `
+        SELECT
+          temperature,
+          humidity,
+          light,
+          motion,
+          ssid,
+          debug,
+          TO_CHAR(date, 'YYYY-MM-DD') as date,
+          TO_CHAR(time, 'HH24:MI:SS') as time
+        FROM "${tableName}"
+        WHERE date >= $1 AND date <= $2
+        ORDER BY date, time
+      `;
+          const result = await db.query(query, [startDate, endDate]);
+          allTableData[tableName] = result.rows;
+        }
+
+        // Tính toán thống kê cho từng bảng
+        const statsRows = [];
+        const tableStats = {};
+
+        for (const tableName of tables) {
+          const data = allTableData[tableName];
+          const temperatures = data
+            .map((item) => item.temperature)
+            .filter((val) => val !== null);
+          const humidities = data
+            .map((item) => item.humidity)
+            .filter((val) => val !== null);
+          const lights = data
+            .map((item) => item.light)
+            .filter((val) => val !== null);
+          const motionCount = data.filter(
+            (item) => item.motion === true
+          ).length;
+
+          tableStats[tableName] = {
+            avgTemp:
+              temperatures.length > 0
+                ? (
+                    temperatures.reduce((a, b) => a + b, 0) /
+                    temperatures.length
+                  ).toFixed(2)
+                : "N/A",
+            maxTemp:
+              temperatures.length > 0 ? Math.max(...temperatures) : "N/A",
+            minTemp:
+              temperatures.length > 0 ? Math.min(...temperatures) : "N/A",
+            avgHumidity:
+              humidities.length > 0
+                ? (
+                    humidities.reduce((a, b) => a + b, 0) / humidities.length
+                  ).toFixed(2)
+                : "N/A",
+            maxHumidity:
+              humidities.length > 0 ? Math.max(...humidities) : "N/A",
+            minHumidity:
+              humidities.length > 0 ? Math.min(...humidities) : "N/A",
+            avgLight:
+              lights.length > 0
+                ? (lights.reduce((a, b) => a + b, 0) / lights.length).toFixed(2)
+                : "N/A",
+            maxLight: lights.length > 0 ? Math.max(...lights) : "N/A",
+            minLight: lights.length > 0 ? Math.min(...lights) : "N/A",
+            motionCount,
+          };
+        }
+
+        // Tạo các dòng thống kê
+        const statRow1 = { stats: "Tên thiết bị" };
+        const statRow2 = { stats: "Giá trị trung bình" };
+        const statRow3 = { stats: "Giá trị lớn nhất" };
+        const statRow4 = { stats: "Giá trị bé nhất" };
+        const emptyRow = { stats: "" };
+
+        for (const table of tables) {
+          const stats = tableStats[table];
+          statRow1[`deviceName_${table}`] = table;
+          statRow1[`temperature_${table}`] = "";
+          statRow1[`humidity_${table}`] = "";
+          statRow1[`light_${table}`] = "";
+          statRow1[`motion_${table}`] = "";
+          statRow1[`time_${table}`] = "";
+          statRow1[`date_${table}`] = "";
+          statRow1[`debug_${table}`] = "";
+          if (table !== tables[tables.length - 1]) {
+            statRow1[`empty_${table}`] = "";
+          }
+
+          statRow2[`deviceName_${table}`] = "";
+          statRow2[`temperature_${table}`] = stats.avgTemp;
+          statRow2[`humidity_${table}`] = stats.avgHumidity;
+          statRow2[`light_${table}`] = stats.avgLight;
+          statRow2[`motion_${table}`] = stats.motionCount;
+          statRow2[`time_${table}`] = "";
+          statRow2[`date_${table}`] = "";
+          statRow2[`debug_${table}`] = "";
+          if (table !== tables[tables.length - 1]) {
+            statRow2[`empty_${table}`] = "";
+          }
+
+          statRow3[`deviceName_${table}`] = "";
+          statRow3[`temperature_${table}`] = stats.maxTemp;
+          statRow3[`humidity_${table}`] = stats.maxHumidity;
+          statRow3[`light_${table}`] = stats.maxLight;
+          statRow3[`motion_${table}`] = "";
+          statRow3[`time_${table}`] = "";
+          statRow3[`date_${table}`] = "";
+          statRow3[`debug_${table}`] = "";
+          if (table !== tables[tables.length - 1]) {
+            statRow3[`empty_${table}`] = "";
+          }
+
+          statRow4[`deviceName_${table}`] = "";
+          statRow4[`temperature_${table}`] = stats.minTemp;
+          statRow4[`humidity_${table}`] = stats.minHumidity;
+          statRow4[`light_${table}`] = stats.minLight;
+          statRow4[`motion_${table}`] = "";
+          statRow4[`time_${table}`] = "";
+          statRow4[`date_${table}`] = "";
+          statRow4[`debug_${table}`] = "";
+          if (table !== tables[tables.length - 1]) {
+            statRow4[`empty_${table}`] = "";
+          }
+
+          emptyRow[`deviceName_${table}`] = "";
+          emptyRow[`temperature_${table}`] = "";
+          emptyRow[`humidity_${table}`] = "";
+          emptyRow[`light_${table}`] = "";
+          emptyRow[`motion_${table}`] = "";
+          emptyRow[`time_${table}`] = "";
+          emptyRow[`date_${table}`] = "";
+          emptyRow[`debug_${table}`] = "";
+          if (table !== tables[tables.length - 1]) {
+            emptyRow[`empty_${table}`] = "";
+          }
+        }
+
+        statsRows.push(statRow1, statRow2, statRow3, statRow4, emptyRow);
+
+        // Tạo danh sách tất cả các thời điểm duy nhất (date + time) từ tất cả các bảng
+        const allTimestamps = new Set();
+        for (const table of tables) {
+          allTableData[table].forEach((row) => {
+            const timestamp = `${row.date} ${row.time}`;
+            allTimestamps.add(timestamp);
+          });
+        }
+        const sortedTimestamps = Array.from(allTimestamps).sort();
+
+        // Tạo dữ liệu chính: xếp song song theo hàng với cột trống
+        const csvData = [];
+        for (const timestamp of sortedTimestamps) {
+          const [date, time] = timestamp.split(" ");
+          const row = { stats: "" };
+
+          for (const table of tables) {
+            const tableData = allTableData[table];
+            const matchingRow = tableData.find(
+              (r) => r.date === date && r.time === time
+            );
+
+            row[`deviceName_${table}`] = "";
+            row[`temperature_${table}`] = matchingRow
+              ? matchingRow.temperature
+              : "";
+            row[`humidity_${table}`] = matchingRow ? matchingRow.humidity : "";
+            row[`light_${table}`] = matchingRow ? matchingRow.light : "";
+            row[`motion_${table}`] = matchingRow
+              ? matchingRow.motion
+                ? "Yes"
+                : "No"
+              : "";
+            row[`time_${table}`] = matchingRow ? matchingRow.time : "";
+            row[`date_${table}`] = matchingRow ? matchingRow.date : "";
+            row[`debug_${table}`] = matchingRow ? matchingRow.debug : "";
+            if (table !== tables[tables.length - 1]) {
+              row[`empty_${table}`] = "";
+            }
+          }
+
+          csvData.push(row);
+        }
+
+        // Kết hợp dữ liệu thống kê và dữ liệu chính
+        const combinedData = [...statsRows, ...csvData];
+
+        if (combinedData.length === statsRows.length) {
+          return res
+            .status(404)
+            .json({
+              message: "Không có dữ liệu để xuất CSV từ bất kỳ bảng nào.",
+            });
+        }
+
+        // Tạo nội dung CSV
+        const csvContent =
+          "\uFEFF" +
+          csvStringifier.getHeaderString() +
+          csvStringifier.stringifyRecords(combinedData);
+
+        // Tạo tên file: all_devices_startDate_endDate.csv
+        const fileName = `all_devices_${startDate}_${endDate}.csv`;
+        const encodedFileName = encodeURIComponent(fileName)
+          .replace(/'/g, "%27")
+          .replace(/"/g, "%22");
+
+        // Thiết lập header để tải file
+        res.setHeader("Content-Type", "text/csv; charset=utf-8");
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename*=UTF-8''${encodedFileName}`
+        );
+
+        // Gửi nội dung CSV về client
+        return res.send(csvContent);
+      } catch (error) {
+        console.error("Error generating CSV file:", error);
+        return res.status(500).json({ message: "Lỗi khi xuất file CSV." });
+      }
     } else {
       return res.status(404).json({ message: "Endpoint not found." });
     }
