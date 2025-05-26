@@ -295,16 +295,16 @@ export default async (req, res) => {
 
         if (temperature_alarm) {
           whereClauses.push(
-            `(temperature >= 40 OR temperature <= 10 OR temperature IS NULL)`
+            `(temperature >= 35 OR temperature <= 25 OR temperature IS NULL)`
           );
         }
         if (humidity_alarm) {
           whereClauses.push(
-            `(humidity >= 75 OR humidity <= 25 OR humidity IS NULL)`
+            `(humidity >= 85 OR humidity <= 35 OR humidity IS NULL)`
           );
         }
         if (light_alarm) {
-          whereClauses.push(`(light <= 50 OR light IS NULL)`);
+          whereClauses.push(`(light <= 200 OR light >= 500 light IS NULL)`);
         }
         if (motion_alarm) {
           whereClauses.push(`motion = true`);
@@ -531,16 +531,16 @@ export default async (req, res) => {
 
         if (temperature_alarm) {
           whereClauses.push(
-            `(temperature >= 40 OR temperature <= 10 OR temperature IS NULL)`
+            `(temperature >= 35 OR temperature <= 25 OR temperature IS NULL)`
           );
         }
         if (humidity_alarm) {
           whereClauses.push(
-            `(humidity >= 75 OR humidity <= 25 OR humidity IS NULL)`
+            `(humidity >= 85 OR humidity <= 35 OR humidity IS NULL)`
           );
         }
         if (light_alarm) {
-          whereClauses.push(`(light <= 50 OR light IS NULL)`);
+          whereClauses.push(`(light <= 200 OR light >= 500 light IS NULL)`);
         }
         if (motion_alarm) {
           whereClauses.push(`motion = true`);
