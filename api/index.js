@@ -719,7 +719,14 @@ export default async (req, res) => {
         return res.status(500).json({ message: "Lỗi khi xuất file CSV." });
       }
     } else if (url === "/api/csvAll" && method === "POST") {
-      const { startDate, endDate } = req.body;
+      const {
+        startDate,
+        endDate,
+        temperature_alarm,
+        humidity_alarm,
+        light_alarm,
+        motion_alarm,
+      } = req.body;
 
       // Kiểm tra tham số startDate và endDate
       if (!startDate || !endDate) {
@@ -769,7 +776,7 @@ export default async (req, res) => {
         // Tạo CSV stringifier với header đã xây dựng
         const csvStringifier = createObjectCsvStringifier({ header });
 
-        // Lấy dữ liệu từ tất cả các bảng
+        // Lấy dữ liệu từ tất cả các bảng với điều kiện lọc alarm
         const allTableData = {};
         for (const tableName of tables) {
           let query = `
@@ -783,10 +790,41 @@ export default async (req, res) => {
           TO_CHAR(date, 'YYYY-MM-DD') as date,
           TO_CHAR(time, 'HH24:MI:SS') as time
         FROM "${tableName}"
-        WHERE date >= $1 AND date <= $2
-        ORDER BY date, time
       `;
-          const result = await db.query(query, [startDate, endDate]);
+          const queryParams = [];
+          let whereClauses = [];
+
+          whereClauses.push(
+            `date >= $${queryParams.push(
+              startDate
+            )} AND date <= $${queryParams.push(endDate)}`
+          );
+
+          if (temperature_alarm) {
+            whereClauses.push(
+              `(temperature >= 35 OR temperature <= 25 OR temperature IS NULL)`
+            );
+          }
+          if (humidity_alarm) {
+            whereClauses.push(
+              `(humidity >= 85 OR humidity <= 35 OR humidity IS NULL)`
+            );
+          }
+          if (light_alarm) {
+            whereClauses.push(
+              `(light <= 200 OR light >= 500 OR light IS NULL)`
+            );
+          }
+          if (motion_alarm) {
+            whereClauses.push(`motion = true`);
+          }
+
+          if (whereClauses.length > 0) {
+            query += ` WHERE ${whereClauses.join(" AND ")}`;
+          }
+          query += ` ORDER BY date, time`;
+
+          const result = await db.query(query, queryParams);
           allTableData[tableName] = result.rows;
         }
 
@@ -964,8 +1002,17 @@ export default async (req, res) => {
           csvStringifier.getHeaderString() +
           csvStringifier.stringifyRecords(combinedData);
 
-        // Tạo tên file: all_devices_startDate_endDate.csv
-        const fileName = `Toàn_bộ_thiết_bị_${startDate}_${endDate}.csv`;
+        // Tạo tên file: all_devices_startDate_endDate_alarms.csv
+        let fileName = `Toàn_bộ_thiết_bị_${startDate}_${endDate}`;
+        const alarms = [];
+        if (temperature_alarm) alarms.push("temperature_alarm");
+        if (humidity_alarm) alarms.push("humidity_alarm");
+        if (light_alarm) alarms.push("light_alarm");
+        if (motion_alarm) alarms.push("motion_alarm");
+        if (alarms.length > 0) {
+          fileName += `_${alarms.join("_")}`;
+        }
+        fileName += ".csv";
         const encodedFileName = encodeURIComponent(fileName)
           .replace(/'/g, "%27")
           .replace(/"/g, "%22");
